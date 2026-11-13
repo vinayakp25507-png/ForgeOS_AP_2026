@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
+<<<<<<< HEAD
 import { Bell, Check, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
 import { ProjectSelector } from './ProjectSelector'
 import { getCurrentRole, getCurrentUser, getAssignedProject } from '../../authentication/utils/permissions'
+=======
+import { Bell, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
+import { ProjectSelector } from './ProjectSelector'
+import { useAuth } from '../../authentication/auth/useAuth'
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 interface TopbarProps {
   collapsed: boolean
   onOpenMobileNav: () => void
+<<<<<<< HEAD
   projectSelector?: {
     value: string
     options: Array<{ id: string; name: string }>
@@ -22,6 +29,17 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
   const roleTitle = isPm ? 'Project Manager' : 'Administrator'
   const email = currentUser?.email || (isPm ? 'pm@forgeos.com' : 'admin@forgeos.com')
   const initials = isPm ? 'PM' : 'AD'
+=======
+}
+
+export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
+  const { user, logout } = useAuth()
+  const isPm = user?.role === 'PM'
+
+  const roleTitle = isPm ? 'Project Manager' : 'Administrator'
+  const email = user?.email ?? ''
+  const initials = user?.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? ''
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   const [profileOpen, setProfileOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
@@ -44,6 +62,7 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [])
 
+<<<<<<< HEAD
   const handleLogout = () => {
     localStorage.removeItem('forgeos_demo_user')
     window.location.href = '/'
@@ -65,6 +84,8 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
     window.location.href = nextRole === 'admin' ? '/app/admin/dashboard' : '/app/pm/dashboard'
   }
 
+=======
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const commands = [
     { label: 'Open dashboard', detail: isPm ? 'Project Manager cockpit' : 'Portfolio command center', icon: FolderKanban, path: isPm ? '/app/pm/dashboard' : '/app/admin/dashboard' },
     { label: 'View projects', detail: 'Browse the project workspace', icon: FolderKanban, path: '/app/projects' },
@@ -90,7 +111,11 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
           >
             <Menu className="h-5 w-5" />
           </button>
+<<<<<<< HEAD
           <ProjectSelector {...projectSelector} />
+=======
+          <ProjectSelector />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
           <span className="dashboard-live-pill hidden rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide sm:inline-flex">
             {isPm ? 'ACTIVE SITE' : 'ORGANIZATION VIEW'}
           </span>
@@ -130,8 +155,13 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
                 {initials}
               </div>
               <div className="hidden md:block">
+<<<<<<< HEAD
                 <p className="text-xs font-semibold text-white">{roleTitle}</p>
                 <p className="max-w-40 truncate text-[10px] text-white/40">{email}</p>
+=======
+                <p className="text-xs font-semibold text-white">{user?.name ?? roleTitle}</p>
+                <p className="max-w-40 truncate text-[10px] text-white/40">{roleTitle} · {email}</p>
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-[#8E827A]" />
             </button>
@@ -141,6 +171,7 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
                 <div className="border-b border-[#E8DCD4] px-3 py-3">
                   <div className="flex items-center gap-2 text-sm font-semibold text-[#323232]">
                     <UserCircle size={17} />
+<<<<<<< HEAD
                     {roleTitle}
                   </div>
                   <p className="mt-1 truncate text-xs text-[#8E827A]">{email}</p>
@@ -174,6 +205,15 @@ export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarPr
                 <button
                   type="button"
                   onClick={handleLogout}
+=======
+                    {user?.name ?? roleTitle}
+                  </div>
+                  <p className="mt-1 truncate text-xs text-[#8E827A]">{email}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { logout(); window.history.replaceState({}, '', '/login'); window.dispatchEvent(new PopStateEvent('popstate')) }}
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
                   className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8A5143] hover:bg-[#F7F3EE]"
                 >
                   <LogOut size={16} />

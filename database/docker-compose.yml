@@ -1,11 +1,15 @@
+<<<<<<< HEAD
 version: '3.8'
 
+=======
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 services:
   postgres:
     image: postgres:16-alpine
     container_name: forgeos_postgres
     restart: unless-stopped
     environment:
+<<<<<<< HEAD
       POSTGRES_DB: forgeos_db
       POSTGRES_USER: forgeos_user
       POSTGRES_PASSWORD: forgeos_secure_password
@@ -19,6 +23,18 @@ services:
       - ./seeds/0001_seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U forgeos_user -d forgeos_db']
+=======
+      POSTGRES_DB: ${POSTGRES_DB:-forgeos_db}
+      POSTGRES_USER: ${POSTGRES_USER:-forgeos_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forgeos_dev_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-forgeos_user} -d $${POSTGRES_DB:-forgeos_db}']
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
       interval: 5s
       timeout: 5s
       retries: 5

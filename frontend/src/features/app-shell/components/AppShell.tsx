@@ -6,6 +6,7 @@ import { Topbar } from './Topbar'
 interface AppShellProps {
   currentPath: string
   children: ReactNode
+<<<<<<< HEAD
   projectSelector?: {
     value: string
     options: Array<{ id: string; name: string }>
@@ -14,6 +15,11 @@ interface AppShellProps {
 }
 
 export function AppShell({ currentPath, children, projectSelector }: AppShellProps) {
+=======
+}
+
+export function AppShell({ currentPath, children }: AppShellProps) {
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   return <div className="dashboard-shell min-h-screen text-[var(--dashboard-ink)]">
@@ -23,7 +29,10 @@ export function AppShell({ currentPath, children, projectSelector }: AppShellPro
         <Topbar
           collapsed={collapsed}
           onOpenMobileNav={() => setMobileOpen(true)}
+<<<<<<< HEAD
           projectSelector={projectSelector}
+=======
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
         />
         <main className="dashboard-page-transition min-h-screen pt-16">{children}</main>
       </div>

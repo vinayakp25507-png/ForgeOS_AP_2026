@@ -1,6 +1,10 @@
 # ForgeOS Database Infrastructure
 
+<<<<<<< HEAD
 This directory contains the complete, production-ready PostgreSQL (16+) database schema, seed data, constraints, analytics views, and container setup for the **ForgeOS Construction Management Platform**.
+=======
+This directory contains PostgreSQL (16+) container setup and database reference material for the **ForgeOS Construction Management Platform**. Prisma at `server/prisma/schema.prisma` is the authoritative schema; use Prisma Migrate to create and apply database changes.
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 ---
 
@@ -9,9 +13,15 @@ This directory contains the complete, production-ready PostgreSQL (16+) database
 ```text
 database/
 ├── docker-compose.yml          # 1-click containerized PostgreSQL 16 setup
+<<<<<<< HEAD
 ├── schema.sql                  # Complete standalone SQL DDL (15 tables, enums, checks, views)
 ├── seeds/
 │   └── 0001_seed_data.sql      # Realistic domain seeds (users, projects, materials, bills, logs)
+=======
+├── schema.sql                  # Generated SQL reference from the Prisma migration
+├── seeds/
+│   └── 0001_seed_data.sql      # Legacy SQL reference; Prisma seed is authoritative
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 └── README.md                   # This setup & operations guide
 ```
 
@@ -30,9 +40,14 @@ docker compose up -d
 
 This will:
 1. Start an official **PostgreSQL 16 Alpine** container on port `5432`.
+<<<<<<< HEAD
 2. Automatically execute `schema.sql` to build all tables, enums, and views.
 3. Automatically execute `seeds/0001_seed_data.sql` with rich demo data.
 4. Mount persistent storage in a Docker volume `pgdata`.
+=======
+2. Provide an empty PostgreSQL database for Prisma Migrate.
+3. Mount persistent storage in a Docker volume `pgdata`.
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 To stop the container:
 ```bash
@@ -49,11 +64,19 @@ If you have PostgreSQL installed on your machine:
 # 1. Create the database
 createdb forgeos_db
 
+<<<<<<< HEAD
 # 2. Run the schema DDL
 psql -U postgres -d forgeos_db -f database/schema.sql
 
 # 3. Load the seed dataset
 psql -U postgres -d forgeos_db -f database/seeds/0001_seed_data.sql
+=======
+# 2. Configure `server/.env` with the connection URL
+# 3. Apply the Prisma migration and seed
+cd server
+npm run db:migrate
+npm run db:seed
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 ```
 
 ---
@@ -62,6 +85,7 @@ psql -U postgres -d forgeos_db -f database/seeds/0001_seed_data.sql
 
 1. Open your cloud database dashboard (e.g. [Supabase](https://supabase.com/) or [Neon](https://neon.tech/)).
 2. Navigate to the **SQL Editor**.
+<<<<<<< HEAD
 3. Copy and run the contents of [`schema.sql`](./schema.sql).
 4. Copy and run the contents of [`seeds/0001_seed_data.sql`](./seeds/0001_seed_data.sql).
 5. Copy your connection URL into `server/.env`.
@@ -69,6 +93,14 @@ psql -U postgres -d forgeos_db -f database/seeds/0001_seed_data.sql
 ---
 
 ## 3. Database Credentials (Default)
+=======
+3. Configure `server/.env` with the hosted connection URL.
+4. Run `npm run db:migrate` and `npm run db:seed` from `server/`.
+
+---
+
+## 3. Database Credentials (Development Defaults)
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 | Parameter | Value |
 |---|---|
@@ -76,8 +108,15 @@ psql -U postgres -d forgeos_db -f database/seeds/0001_seed_data.sql
 | **Port** | `5432` |
 | **Database** | `forgeos_db` |
 | **User** | `forgeos_user` |
+<<<<<<< HEAD
 | **Password** | `forgeos_secure_password` |
 | **Connection URL** | `postgresql://forgeos_user:forgeos_secure_password@localhost:5432/forgeos_db?schema=public` |
+=======
+| **Password** | `forgeos_dev_password` |
+| **Connection URL** | `postgresql://forgeos_user:forgeos_dev_password@localhost:5432/forgeos_db?schema=public` |
+
+These are local development defaults only. Override them with environment variables; do not use them in production.
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 ---
 

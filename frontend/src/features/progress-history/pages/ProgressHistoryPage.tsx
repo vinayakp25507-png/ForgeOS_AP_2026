@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ArrowUpRight, BarChart3, CheckCircle2, Circle, TrendingUp } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { AppShell } from '../../app-shell/components/AppShell'
@@ -16,4 +17,23 @@ export function ProgressHistoryPage() {
 
 function Metric({ icon, label, value, note }: { icon: ReactNode; label: string; value: string; note: string }) {
   return <div className="rounded-2xl border border-[#E8E0DA] bg-white p-5 shadow-[0_8px_24px_rgba(50,50,50,0.04)]"><div className="flex items-center gap-2 text-[#9A5E3A]"><span className="h-4 w-4 [&>svg]:h-4 [&>svg]:w-4">{icon}</span><span className="text-xs font-medium text-[#8E827A]">{label}</span></div><p className="mt-3 text-2xl font-bold">{value}</p><p className="mt-1 text-xs text-[#8E827A]">{note}</p></div>
+=======
+import { AppShell } from '../../app-shell/components/AppShell'
+import { useProjects } from '../../projects/useProjects'
+import { ProjectProgressPage } from './ProjectProgressPage'
+
+export function ProgressHistoryPage() {
+  const { selectedProject, isLoading, error, retry } = useProjects()
+
+  if (isLoading) {
+    return <AppShell currentPath="/app/progress-history"><div aria-live="polite" className="mx-auto max-w-5xl p-8 text-sm text-[#8E827A]">Loading your selected project…</div></AppShell>
+  }
+  if (error) {
+    return <AppShell currentPath="/app/progress-history"><div role="alert" className="mx-auto max-w-5xl p-8"><p className="text-sm text-rose-700">{error}</p><button type="button" onClick={retry} className="mt-4 rounded-lg bg-[#323232] px-4 py-2 text-sm text-white">Retry</button></div></AppShell>
+  }
+  if (!selectedProject) {
+    return <AppShell currentPath="/app/progress-history"><div className="mx-auto max-w-5xl p-8"><h1 className="text-xl font-semibold">No accessible project selected</h1><p className="mt-2 text-sm text-[#8E827A]">Select a project to view its progress history.</p></div></AppShell>
+  }
+  return <ProjectProgressPage projectId={String(selectedProject.id)} />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 }

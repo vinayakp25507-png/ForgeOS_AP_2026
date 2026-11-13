@@ -1,5 +1,9 @@
 node_modules/
 .env*
+<<<<<<< HEAD
+=======
+!.env.example
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 dist/
 build/
 .next/

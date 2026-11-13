@@ -1,4 +1,8 @@
 import { hasPermission, isAdmin } from './features/authentication/utils/permissions'
+<<<<<<< HEAD
+=======
+import { useAuth } from './features/authentication/auth/useAuth'
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 import { LandsPage } from './features/lands/pages/LandsPage'
 import { ProjectsPage } from './features/projects/pages/ProjectsPage'
 import { ProjectDetailsPage } from './features/projects/pages/ProjectDetailsPage'
@@ -34,6 +38,10 @@ import { AdminDashboardPage } from './features/app-shell/pages/AdminDashboardPag
 import { ProjectManagerDashboardPage } from './features/app-shell/pages/ProjectManagerDashboardPage'
 
 export function App() {
+<<<<<<< HEAD
+=======
+  const { user, status, error, retrySessionRestore, logout } = useAuth()
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const [pathname, setPathname] = useState(
     window.location.hash === '#login' ? '#login' : window.location.pathname
   )
@@ -64,10 +72,36 @@ export function App() {
     pathParts[0] === 'projects' ||
     pathname === '/daily-logs'
 
+<<<<<<< HEAD
 
   if (isProtectedRoute && !hasPermission(['Admin', 'Project Manager'])) {
     return <LoginPage />
   }
+=======
+  useEffect(() => {
+    if (status === 'unauthenticated' && isProtectedRoute) {
+      window.history.replaceState({}, '', '/login')
+    }
+  }, [status, isProtectedRoute])
+
+  if (status === 'loading') {
+    return <AuthStatusPage title="Checking your session…" />
+  }
+  if (status === 'error') {
+    return <AuthStatusPage
+      title="Unable to verify your session"
+      message={error ?? 'Check your connection and try again.'}
+      onRetry={retrySessionRestore}
+      onLogout={logout}
+    />
+  }
+  if (isProtectedRoute && !user) {
+    return <LoginPage />
+  }
+  if ((pathname === '#login' || pathname === '/login') && user) {
+    return isAdmin() ? <AdminDashboardPage /> : <ProjectManagerDashboardPage />
+  }
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   if (pathname === '#login' || pathname === '/login') {
     return <LoginPage />
@@ -121,9 +155,13 @@ export function App() {
     return <ProjectsPage />
   }
   if (pathname === '/app/lands') {
+<<<<<<< HEAD
     return hasPermission(['Admin'])
       ? <LandsPage />
       : <ComingSoonPage title="Access Denied - Admin Only" />
+=======
+    return <LandsPage />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   }
   if (pathname === '/app/bills/upload') {
     return <BillsPage openUpload />
@@ -132,9 +170,13 @@ export function App() {
     return <BillsPage />
   }
   if (pathname === '/app/vendors') {
+<<<<<<< HEAD
     return hasPermission(['Admin'])
       ? <VendorsPage />
       : <ComingSoonPage title="Access Denied - Admin Only" />
+=======
+    return <VendorsPage />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   }
   if (pathname === '/app/materials') {
     return <MaterialsPage />
@@ -182,4 +224,31 @@ export function App() {
   )
 }
 
+<<<<<<< HEAD
+=======
+function AuthStatusPage({
+  title,
+  message,
+  onRetry,
+  onLogout,
+}: {
+  title: string
+  message?: string
+  onRetry?: () => void
+  onLogout?: () => void
+}) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#F7F3EE] p-6 text-[#323232]">
+      <section className="w-full max-w-md rounded-2xl border border-[#E8E0DA] bg-white p-8 text-center shadow-sm">
+        <h1 className="text-xl font-semibold">{title}</h1>
+        {message && <p role="alert" className="mt-3 text-sm text-[#8E5143]">{message}</p>}
+        {!message && <p className="mt-3 text-sm text-[#8E827A]">Please wait while ForgeOS validates your credentials.</p>}
+        {onRetry && <button className="mt-5 rounded-xl bg-[#323232] px-4 py-2.5 text-sm font-semibold text-white" onClick={onRetry} type="button">Retry</button>}
+        {onLogout && <button className="ml-2 mt-5 rounded-xl border border-[#E8E0DA] px-4 py-2.5 text-sm font-semibold" onClick={onLogout} type="button">Sign in again</button>}
+      </section>
+    </main>
+  )
+}
+
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 export default App

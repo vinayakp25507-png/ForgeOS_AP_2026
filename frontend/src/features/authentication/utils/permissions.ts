@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export type UserRole = 'Admin' | 'Project Manager'
 
 /** The shape stored in localStorage under `forgeos_demo_user`. */
@@ -43,10 +44,29 @@ export const getCurrentRole = (): UserRole | null => {
 }
 
 export const hasPermission = (allowedRoles: UserRole[]) => {
+=======
+import { getAuthUserSnapshot, type AuthUser } from '../auth/session'
+
+export type UserRole = 'Admin' | 'Project Manager'
+
+export function getCurrentUser(): AuthUser | null {
+  return getAuthUserSnapshot()
+}
+
+export function getCurrentRole(): UserRole | null {
+  const role = getCurrentUser()?.role
+  if (role === 'ADMIN') return 'Admin'
+  if (role === 'PM') return 'Project Manager'
+  return null
+}
+
+export function hasPermission(allowedRoles: UserRole[]): boolean {
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const role = getCurrentRole()
   return role !== null && allowedRoles.includes(role)
 }
 
+<<<<<<< HEAD
 export const isAdmin = () => getCurrentRole() === 'Admin'
 export const isProjectManager = () => getCurrentRole() === 'Project Manager'
 
@@ -60,4 +80,12 @@ export const getAssignedProject = () => {
     code: user.assignedProjectCode || '',
     name: user.assignedProjectName || '',
   }
+=======
+export function isAdmin(): boolean {
+  return getCurrentUser()?.role === 'ADMIN'
+}
+
+export function isProjectManager(): boolean {
+  return getCurrentUser()?.role === 'PM'
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 }
