@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+import { dailyLogs } from '../data/dailyLogs'
+import { DailyLogsShell } from '../components/DailyLogsShell'
+import { AppShell } from '../../app-shell/components/AppShell'
+
+export function DailyLogsPage() {
+  return <AppShell currentPath="/app/daily-logs"><DailyLogsShell initialLogs={dailyLogs} /></AppShell>
+=======
 import { AppShell } from '../../app-shell/components/AppShell'
 import { useProjects } from '../../projects/useProjects'
 import { ProjectLogsListing } from '../components/ProjectLogsListing'
@@ -11,4 +19,5 @@ export function DailyLogsPage() {
         : selectedProject ? <ProjectLogsListing projectId={String(selectedProject.id)} />
           : <div className="mx-auto max-w-5xl p-8"><h1 className="text-xl font-semibold">No accessible project selected</h1><p className="mt-2 text-sm text-[#8E827A]">Select a project from the project selector to view its daily logs.</p></div>}
   </AppShell>
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 }

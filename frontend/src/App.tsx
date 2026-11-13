@@ -1,5 +1,8 @@
 import { hasPermission, isAdmin } from './features/authentication/utils/permissions'
+<<<<<<< HEAD
+=======
 import { useAuth } from './features/authentication/auth/useAuth'
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 import { LandsPage } from './features/lands/pages/LandsPage'
 import { ProjectsPage } from './features/projects/pages/ProjectsPage'
 import { ProjectDetailsPage } from './features/projects/pages/ProjectDetailsPage'
@@ -35,7 +38,10 @@ import { AdminDashboardPage } from './features/app-shell/pages/AdminDashboardPag
 import { ProjectManagerDashboardPage } from './features/app-shell/pages/ProjectManagerDashboardPage'
 
 export function App() {
+<<<<<<< HEAD
+=======
   const { user, status, error, retrySessionRestore, logout } = useAuth()
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const [pathname, setPathname] = useState(
     window.location.hash === '#login' ? '#login' : window.location.pathname
   )
@@ -66,6 +72,12 @@ export function App() {
     pathParts[0] === 'projects' ||
     pathname === '/daily-logs'
 
+<<<<<<< HEAD
+
+  if (isProtectedRoute && !hasPermission(['Admin', 'Project Manager'])) {
+    return <LoginPage />
+  }
+=======
   useEffect(() => {
     if (status === 'unauthenticated' && isProtectedRoute) {
       window.history.replaceState({}, '', '/login')
@@ -89,6 +101,7 @@ export function App() {
   if ((pathname === '#login' || pathname === '/login') && user) {
     return isAdmin() ? <AdminDashboardPage /> : <ProjectManagerDashboardPage />
   }
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   if (pathname === '#login' || pathname === '/login') {
     return <LoginPage />
@@ -142,7 +155,13 @@ export function App() {
     return <ProjectsPage />
   }
   if (pathname === '/app/lands') {
+<<<<<<< HEAD
+    return hasPermission(['Admin'])
+      ? <LandsPage />
+      : <ComingSoonPage title="Access Denied - Admin Only" />
+=======
     return <LandsPage />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   }
   if (pathname === '/app/bills/upload') {
     return <BillsPage openUpload />
@@ -151,7 +170,13 @@ export function App() {
     return <BillsPage />
   }
   if (pathname === '/app/vendors') {
+<<<<<<< HEAD
+    return hasPermission(['Admin'])
+      ? <VendorsPage />
+      : <ComingSoonPage title="Access Denied - Admin Only" />
+=======
     return <VendorsPage />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   }
   if (pathname === '/app/materials') {
     return <MaterialsPage />
@@ -199,6 +224,8 @@ export function App() {
   )
 }
 
+<<<<<<< HEAD
+=======
 function AuthStatusPage({
   title,
   message,
@@ -223,4 +250,5 @@ function AuthStatusPage({
   )
 }
 
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 export default App

@@ -1,11 +1,35 @@
 import { useEffect, useState } from 'react'
+<<<<<<< HEAD
+import { Bell, Check, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
+import { ProjectSelector } from './ProjectSelector'
+import { getCurrentRole, getCurrentUser, getAssignedProject } from '../../authentication/utils/permissions'
+=======
 import { Bell, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
 import { ProjectSelector } from './ProjectSelector'
 import { useAuth } from '../../authentication/auth/useAuth'
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
 interface TopbarProps {
   collapsed: boolean
   onOpenMobileNav: () => void
+<<<<<<< HEAD
+  projectSelector?: {
+    value: string
+    options: Array<{ id: string; name: string }>
+    onChange: (value: string) => void
+  }
+}
+
+export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarProps) {
+ const currentRole = getCurrentRole() || 'Admin'
+ const currentUser = getCurrentUser()
+ const isPm = currentRole === 'Project Manager'
+ const assigned = getAssignedProject()
+
+  const roleTitle = isPm ? 'Project Manager' : 'Administrator'
+  const email = currentUser?.email || (isPm ? 'pm@forgeos.com' : 'admin@forgeos.com')
+  const initials = isPm ? 'PM' : 'AD'
+=======
 }
 
 export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
@@ -15,6 +39,7 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
   const roleTitle = isPm ? 'Project Manager' : 'Administrator'
   const email = user?.email ?? ''
   const initials = user?.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? ''
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   const [profileOpen, setProfileOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
@@ -37,6 +62,30 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [])
 
+<<<<<<< HEAD
+  const handleLogout = () => {
+    localStorage.removeItem('forgeos_demo_user')
+    window.location.href = '/'
+  }
+
+  const switchDemoRole = (nextRole: 'admin' | 'pm') => {
+    const extra = nextRole === 'pm' ? {
+      assignedProjectId: '1',
+      assignedProjectCode: 'PRJ-001',
+      assignedProjectName: 'Green Valley Residency',
+    } : {}
+
+    localStorage.setItem('forgeos_demo_user', JSON.stringify({
+      role: nextRole,
+      email: nextRole === 'admin' ? 'admin@forgeos.com' : 'pm@forgeos.com',
+      name: nextRole === 'admin' ? 'Administrator' : 'Aarav Sharma',
+      ...extra,
+    }))
+    window.location.href = nextRole === 'admin' ? '/app/admin/dashboard' : '/app/pm/dashboard'
+  }
+
+=======
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   const commands = [
     { label: 'Open dashboard', detail: isPm ? 'Project Manager cockpit' : 'Portfolio command center', icon: FolderKanban, path: isPm ? '/app/pm/dashboard' : '/app/admin/dashboard' },
     { label: 'View projects', detail: 'Browse the project workspace', icon: FolderKanban, path: '/app/projects' },
@@ -62,7 +111,11 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
           >
             <Menu className="h-5 w-5" />
           </button>
+<<<<<<< HEAD
+          <ProjectSelector {...projectSelector} />
+=======
           <ProjectSelector />
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
           <span className="dashboard-live-pill hidden rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide sm:inline-flex">
             {isPm ? 'ACTIVE SITE' : 'ORGANIZATION VIEW'}
           </span>
@@ -102,8 +155,13 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
                 {initials}
               </div>
               <div className="hidden md:block">
+<<<<<<< HEAD
+                <p className="text-xs font-semibold text-white">{roleTitle}</p>
+                <p className="max-w-40 truncate text-[10px] text-white/40">{email}</p>
+=======
                 <p className="text-xs font-semibold text-white">{user?.name ?? roleTitle}</p>
                 <p className="max-w-40 truncate text-[10px] text-white/40">{roleTitle} · {email}</p>
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-[#8E827A]" />
             </button>
@@ -113,6 +171,41 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
                 <div className="border-b border-[#E8DCD4] px-3 py-3">
                   <div className="flex items-center gap-2 text-sm font-semibold text-[#323232]">
                     <UserCircle size={17} />
+<<<<<<< HEAD
+                    {roleTitle}
+                  </div>
+                  <p className="mt-1 truncate text-xs text-[#8E827A]">{email}</p>
+                  {isPm && assigned && (
+                    <div className="mt-2 rounded-md bg-[#F7F3EE] p-1.5 text-[11px] text-[#595552]">
+                      <span className="font-semibold text-[#9A5E3A]">Assigned Site:</span> {assigned.code}
+                    </div>
+                  )}
+                </div>
+                <div className="border-b border-[#E8DCD4] px-2 py-2">
+                  <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#A59A93]">
+                    Switch Workspace Role
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => switchDemoRole('admin')}
+                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-[#595552] hover:bg-[#F7F3EE]"
+                  >
+                    Administrator (All Access)
+                    {!isPm && <Check size={15} className="text-[#9A5E3A]" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchDemoRole('pm')}
+                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-[#595552] hover:bg-[#F7F3EE]"
+                  >
+                    Project Manager (Site Scoped)
+                    {isPm && <Check size={15} className="text-[#9A5E3A]" />}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+=======
                     {user?.name ?? roleTitle}
                   </div>
                   <p className="mt-1 truncate text-xs text-[#8E827A]">{email}</p>
@@ -120,6 +213,7 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
                 <button
                   type="button"
                   onClick={() => { logout(); window.history.replaceState({}, '', '/login'); window.dispatchEvent(new PopStateEvent('popstate')) }}
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
                   className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8A5143] hover:bg-[#F7F3EE]"
                 >
                   <LogOut size={16} />

@@ -11,15 +11,23 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
   if (error instanceof AppError) {
     res.status(error.status).json({
       success: false,
+<<<<<<< HEAD
+=======
       message: error.message,
       errors: error.details ?? [],
       data: null,
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
       error: { code: error.code, message: error.message, details: error.details },
     })
     return
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
+<<<<<<< HEAD
+    res.status(500).json({
+      success: false,
+      error: { code: 'INTERNAL_ERROR', message: 'A database error occurred.' },
+=======
     const mapped = error.code === 'P2002'
       ? { code: 'CONFLICT' as const, status: 409, message: 'A record with the same unique value already exists.' }
       : error.code === 'P2025'
@@ -32,6 +40,7 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
       errors: [],
       data: null,
       error: { code: mapped.code, message: mapped.message },
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
     })
     logger.error({ err: error, method: req.method, path: req.originalUrl }, 'Database request failed')
     return
@@ -40,9 +49,12 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
   logger.error({ err: error, method: req.method, path: req.originalUrl }, 'Unhandled request error')
   res.status(500).json({
     success: false,
+<<<<<<< HEAD
+=======
     message: 'An unexpected error occurred.',
     errors: [],
     data: null,
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
     error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred.' },
   })
 }

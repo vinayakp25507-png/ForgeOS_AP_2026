@@ -2,6 +2,8 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
+<<<<<<< HEAD
+=======
 ## Backend authentication
 
 Copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to the backend
@@ -16,6 +18,7 @@ browser restarts. Browser storage is accessible to JavaScript, so an XSS
 vulnerability could expose a token. The frontend clears tokens on logout and
 on authenticated 401 responses; server-side authorization remains authoritative.
 
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)

@@ -33,6 +33,8 @@ enum ProjectStatus {
   COMPLETED
 }
 
+<<<<<<< HEAD
+=======
 enum MilestoneStatus {
   PLANNED
   IN_PROGRESS
@@ -41,6 +43,7 @@ enum MilestoneStatus {
   CANCELLED
 }
 
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 enum MaterialCategory {
   CEMENT
   STEEL
@@ -56,12 +59,15 @@ enum MaterialCategory {
 enum StockTxnType {
   IN
   OUT
+<<<<<<< HEAD
+=======
   ADJUSTMENT
 }
 
 enum AdjustmentDirection {
   INCREASE
   DECREASE
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 }
 
 enum OutReason {
@@ -86,6 +92,8 @@ enum BillStatus {
   PAID
 }
 
+<<<<<<< HEAD
+=======
 enum VendorType {
   MATERIAL_SUPPLIER
   LABOUR_CONTRACTOR
@@ -94,6 +102,7 @@ enum VendorType {
   OTHER
 }
 
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 enum PaymentMode {
   CASH
   BANK_TRANSFER
@@ -136,6 +145,17 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
+<<<<<<< HEAD
+  projectsManaged     Project[]          @relation("ProjectPM")
+  projectsCreated     Project[]          @relation("ProjectCreatedBy")
+  landsCreated        Land[]
+  dailyLogsCreated    DailyLog[]
+  stockTxnsCreated    StockTransaction[] @relation("StockTxnCreatedBy")
+  stockTxnsVoided     StockTransaction[] @relation("StockTxnVoidedBy")
+  billsSubmitted      Bill[]             @relation("BillSubmittedBy")
+  billsApproved       Bill[]             @relation("BillApprovedBy")
+  paymentsRecorded    Payment[]
+=======
   projectsManaged     Project[]                 @relation("ProjectPM")
   projectsCreated     Project[]                 @relation("ProjectCreatedBy")
   landsCreated        Land[]
@@ -146,6 +166,7 @@ model User {
   billsApproved       Bill[]                    @relation("BillApprovedBy")
   paymentsRecorded    Payment[]
   vendorAssignments   ProjectVendorAssignment[]
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   auditLogs           AuditLog[]
   notifications       Notification[]
   attachmentsUploaded Attachment[]
@@ -200,8 +221,11 @@ model Project {
   createdBy  User  @relation("ProjectCreatedBy", fields: [createdById], references: [id])
 
   materialPlans     ProjectMaterialPlan[]
+<<<<<<< HEAD
+=======
   vendorAssignments ProjectVendorAssignment[]
   milestones        ProjectMilestone[]
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   dailyLogs         DailyLog[]
   stockTransactions StockTransaction[]
   bills             Bill[]
@@ -213,6 +237,16 @@ model Project {
   @@map("projects")
 }
 
+<<<<<<< HEAD
+model Material {
+  id        Int              @id @default(autoincrement())
+  name      String           @unique
+  category  MaterialCategory
+  unit      String
+  isActive  Boolean          @default(true) @map("is_active")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+=======
 model ProjectMilestone {
   id               Int             @id @default(autoincrement())
   projectId        Int             @map("project_id")
@@ -245,6 +279,7 @@ model Material {
   isActive    Boolean          @default(true) @map("is_active")
   createdAt   DateTime         @default(now()) @map("created_at")
   updatedAt   DateTime         @updatedAt @map("updated_at")
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   plans             ProjectMaterialPlan[]
   stockTransactions StockTransaction[]
@@ -253,6 +288,21 @@ model Material {
 }
 
 model Vendor {
+<<<<<<< HEAD
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  contactPerson String?  @map("contact_person")
+  phone         String?
+  email         String?
+  gstin         String?  @unique
+  address       String?
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  bills             Bill[]
+  stockTransactions StockTransaction[]
+=======
   id            Int        @id @default(autoincrement())
   name          String     @unique
   vendorType    VendorType @default(OTHER) @map("vendor_type")
@@ -268,10 +318,13 @@ model Vendor {
   bills              Bill[]
   stockTransactions  StockTransaction[]
   projectAssignments ProjectVendorAssignment[]
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   @@map("vendors")
 }
 
+<<<<<<< HEAD
+=======
 model ProjectVendorAssignment {
   id           Int       @id @default(autoincrement())
   projectId    Int       @map("project_id")
@@ -289,11 +342,15 @@ model ProjectVendorAssignment {
   @@map("project_vendor_assignments")
 }
 
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 model ProjectMaterialPlan {
   id                  Int      @id @default(autoincrement())
   projectId           Int      @map("project_id")
   materialId          Int      @map("material_id")
+<<<<<<< HEAD
+=======
   openingQuantity     Decimal  @default(0) @map("opening_quantity") @db.Decimal(14, 3)
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   plannedQuantity     Decimal  @map("planned_quantity") @db.Decimal(14, 3)
   plannedUnitRate     Decimal? @map("planned_unit_rate") @db.Decimal(12, 2)
   lowStockThreshold   Decimal? @map("low_stock_threshold") @db.Decimal(14, 3)
@@ -301,7 +358,11 @@ model ProjectMaterialPlan {
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
+<<<<<<< HEAD
+  project  Project  @relation(fields: [projectId], references: [id])
+=======
   project  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   material Material @relation(fields: [materialId], references: [id])
 
   @@unique([projectId, materialId])
@@ -320,7 +381,11 @@ model DailyLog {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
+<<<<<<< HEAD
+  project           Project            @relation(fields: [projectId], references: [id])
+=======
   project           Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   createdBy         User               @relation(fields: [createdById], references: [id])
   labourEntries     LabourEntry[]
   machineryEntries  MachineryEntry[]
@@ -363,6 +428,27 @@ model MachineryEntry {
 }
 
 model StockTransaction {
+<<<<<<< HEAD
+  id            Int          @id @default(autoincrement())
+  projectId     Int          @map("project_id")
+  materialId    Int          @map("material_id")
+  txnType       StockTxnType @map("txn_type")
+  quantity      Decimal      @db.Decimal(14, 3)
+  unitRate      Decimal?     @map("unit_rate") @db.Decimal(12, 2)
+  vendorId      Int?         @map("vendor_id")
+  billId        Int?         @map("bill_id")
+  challanNumber String?      @map("challan_number")
+  outReason     OutReason?   @map("out_reason")
+  txnDate       DateTime     @map("txn_date") @db.Date
+  dailyLogId    Int?         @map("daily_log_id")
+  remarks       String?
+  createdById   Int          @map("created_by_id")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  isVoided      Boolean      @default(false) @map("is_voided")
+  voidedById    Int?         @map("voided_by_id")
+  voidedAt      DateTime?    @map("voided_at")
+  voidReason    String?      @map("void_reason")
+=======
   id                  Int                  @id @default(autoincrement())
   projectId           Int                  @map("project_id")
   materialId          Int                  @map("material_id")
@@ -383,6 +469,7 @@ model StockTransaction {
   voidedById          Int?                 @map("voided_by_id")
   voidedAt            DateTime?            @map("voided_at")
   voidReason          String?              @map("void_reason")
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
 
   project   Project   @relation(fields: [projectId], references: [id])
   material  Material  @relation(fields: [materialId], references: [id])
@@ -482,7 +569,11 @@ model Notification {
   dedupeKey String?          @unique @map("dedupe_key")
   createdAt DateTime         @default(now()) @map("created_at")
 
+<<<<<<< HEAD
+  user    User     @relation(fields: [userId], references: [id])
+=======
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+>>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
   project Project? @relation(fields: [projectId], references: [id])
 
   @@index([userId, isRead, createdAt])
