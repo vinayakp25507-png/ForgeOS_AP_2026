@@ -115,19 +115,13 @@ export const Navbar: React.FC = () => {
       /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         isScrolled
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           /* Continues the component or data expression so its related values and behavior stay grouped together. */
           ? 'bg-[#DDD0C8]/90 backdrop-blur-md shadow-sm border-b border-[#323232]/10 py-3'
           /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           : 'bg-transparent border-b border-transparent py-5'
       /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       }`}
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
     >
       {/* Starts the <div> element to organize this part of the interface. */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -140,8 +134,6 @@ export const Navbar: React.FC = () => {
             href="#"
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="flex items-center gap-2.5 group focus:outline-none rounded-lg"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <div> element to organize this part of the interface. */}
             <div className="w-8 h-8 rounded-full bg-[#F2A65A] text-[#171717] flex items-center justify-center transition-transform group-hover:scale-105">
@@ -164,21 +156,15 @@ export const Navbar: React.FC = () => {
             {/* Starts the <LiquidNavbar> element to organize this part of the interface. */}
             <LiquidNavbar
               /* Sets the items property so this element receives the data or behavior required by this screen. */
-              /* Sets the items property so this element receives the data or behavior required by this screen. */
               items={liquidNavItems}
-              /* Sets the tone property so this element receives the data or behavior required by this screen. */
               /* Sets the tone property so this element receives the data or behavior required by this screen. */
               tone="dark"
               /* Sets the defaultActive property so this element receives the data or behavior required by this screen. */
-              /* Sets the defaultActive property so this element receives the data or behavior required by this screen. */
               defaultActive={0}
-              /* Sets the sound property so this element receives the data or behavior required by this screen. */
               /* Sets the sound property so this element receives the data or behavior required by this screen. */
               sound={false}
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="scale-95 shadow-sm"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             />
           {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
@@ -192,8 +178,6 @@ export const Navbar: React.FC = () => {
               href="#login"
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="text-xs font-semibold uppercase tracking-wider text-white/65 hover:text-white px-3 py-2 transition-colors"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
               Log In
@@ -205,8 +189,6 @@ export const Navbar: React.FC = () => {
               href="/login"
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="text-xs font-semibold uppercase tracking-wider text-[#171717] bg-[#F2A65A] hover:bg-[#FFC078] px-6 py-2.5 rounded-full shadow-sm transition-all duration-200 transform hover:-translate-y-0.5"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
               Get Started
@@ -228,8 +210,6 @@ export const Navbar: React.FC = () => {
               className="p-2 rounded-lg text-white/70 hover:bg-white/10 transition-colors"
               /* Provides aria-label accessibility information so assistive technology can describe the element. */
               aria-label="Toggle mobile menu"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
               {isMobileMenuOpen ? (
@@ -255,38 +235,52 @@ export const Navbar: React.FC = () => {
       {isMobileMenuOpen && (
         // Continues the component or data expression so its related values and behavior stay grouped together.
         <div className="lg:hidden bg-[#111417]/95 backdrop-blur-xl border-b border-white/10 px-4 pt-4 pb-6 space-y-2 mt-2 shadow-lg">
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Transforms each collection item so the corresponding values or interface elements can be produced.
           {liquidNavItems.map((link) => (
+            // Continues the component or data expression so its related values and behavior stay grouped together.
             <a
+              /* Gives this rendered item a stable identity so React can update lists efficiently. */
               key={link.label}
+              /* Sets the destination so activating this link or route control opens the intended screen. */
               href={link.href}
+              /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setIsMobileMenuOpen(false)}
+              /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/75 hover:bg-white/10 transition-colors"
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               {link.icon}
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               {link.label}
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           ))}
           {/* Starts the <div> element to organize this part of the interface. */}
           <div className="pt-4 border-t border-[#323232]/15 flex flex-col gap-2">
+            {/* Starts the <a> element to provide navigation to another location. */}
             <a
+              /* Sets the destination so activating this link or route control opens the intended screen. */
               href="#login"
+              /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setIsMobileMenuOpen(false)}
+              /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="text-center py-2 text-sm font-medium text-white/70"
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               Log In
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
+            {/* Starts the <a> element to provide navigation to another location. */}
             <a
+              /* Sets the destination so activating this link or route control opens the intended screen. */
               href="/login"
+              /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setIsMobileMenuOpen(false)}
+              /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="text-center py-2.5 text-xs font-semibold uppercase tracking-wider text-[#171717] bg-[#F2A65A] rounded-full shadow-sm"
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               Get Started
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
@@ -294,6 +288,7 @@ export const Navbar: React.FC = () => {
           </div>
         {/* Closes the <div> element so later content is no longer part of this region. */}
         </div>
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       )}
     {/* Closes the <header> element so later content is no longer part of this region. */}
     </header>
@@ -304,4 +299,3 @@ export const Navbar: React.FC = () => {
 
 // Exports Navbar as this file’s default value so other modules can load the main feature.
 export default Navbar;
-// File purpose: Renders the reusable Navbar interface component.
