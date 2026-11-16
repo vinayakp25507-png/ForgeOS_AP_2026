@@ -1,29 +1,52 @@
-import { describe, expect, it } from 'vitest' // Imports test-runner helpers for defining and checking this behavior.
-import { dailyLogBodySchema } from '../src/modules/daily-logs/daily-logs.validator.js' // Imports { dailyLogBodySchema } from '../src/modules/daily-logs/daily-logs.validator.js' so this module can reuse that functionality.
+// Imports describe, expect, it from vitest so this module can reuse that component, helper, or library.
+import { describe, expect, it } from 'vitest'
+// Imports dailyLogBodySchema from ../src/modules/daily-logs/daily-logs.validator.js so this module can reuse that component, helper, or library.
+import { dailyLogBodySchema } from '../src/modules/daily-logs/daily-logs.validator.js'
 
-describe('daily log validation', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  it('accepts a nested daily log payload', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    const result = dailyLogBodySchema.safeParse({ // Stores this intermediate `result` value so later lines can use it.
-      logDate: '2026-10-04', // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: 43, // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Slab casting completed.', // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [{ trade: 'Mason', headCount: 12, hoursWorked: 8 }], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [{ machineName: 'Concrete Mixer', hoursUsed: 6.5 }], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('daily log validation', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('accepts a nested daily log payload', () => {
+    // Stores the value in result so later lines can reuse this data or behavior for the current feature.
+    const result = dailyLogBodySchema.safeParse({
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: '2026-10-04',
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: 43,
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Slab casting completed.',
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [{ trade: 'Mason', headCount: 12, hoursWorked: 8 }],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [{ machineName: 'Concrete Mixer', hoursUsed: 6.5 }],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
 
-    expect(result.success).toBe(true) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(result.success).toBe(true)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects invalid labour and machinery measurements', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    const result = dailyLogBodySchema.safeParse({ // Stores this intermediate `result` value so later lines can use it.
-      logDate: '2026-10-04', // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: 43, // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Invalid measurements.', // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [{ trade: 'Mason', headCount: 0, hoursWorked: 25 }], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [{ machineName: 'Mixer', hoursUsed: -1, fuelLitres: -2 }], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects invalid labour and machinery measurements', () => {
+    // Stores the value in result so later lines can reuse this data or behavior for the current feature.
+    const result = dailyLogBodySchema.safeParse({
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: '2026-10-04',
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: 43,
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Invalid measurements.',
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [{ trade: 'Mason', headCount: 0, hoursWorked: 25 }],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [{ machineName: 'Mixer', hoursUsed: -1, fuelLitres: -2 }],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
 
-    expect(result.success).toBe(false) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Checks expected behavior for daily logs.validator.test using the project test runner.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(result.success).toBe(false)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
