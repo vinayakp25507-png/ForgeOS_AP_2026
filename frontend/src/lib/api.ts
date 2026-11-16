@@ -141,4 +141,3 @@ export function apiPost<T>(path: string, data: unknown): Promise<ApiEnvelope<T>>
   return apiRequest<T>(path, { method: 'POST', body: JSON.stringify(data) })
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Sends typed HTTP requests and normalizes authentication and API errors for the frontend.
