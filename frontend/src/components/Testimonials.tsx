@@ -95,16 +95,16 @@ export const Testimonials = () => {
               key={idx}
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className="bg-[#E8DCD4] border border-[#323232]/10 rounded-3xl p-8 flex flex-col justify-between hover:border-[#323232]/30 transition-all shadow-sm group"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <div> element to organize this part of the interface. */}
               <div>
                 {/* Starts the <div> element to organize this part of the interface. */}
                 <div className="flex items-center gap-1 text-[#323232] mb-6">
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Transforms each collection item so the corresponding values or interface elements can be produced.
                   {[...Array(5)].map((_, i) => (
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     <Star key={i} className="w-3.5 h-3.5 fill-[#323232]" />
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   ))}
                 {/* Closes the <div> element so later content is no longer part of this region. */}
                 </div>
@@ -115,7 +115,7 @@ export const Testimonials = () => {
                   <Quote className="w-8 h-8 text-[#323232]/15 absolute -top-4 -left-2 -z-0" />
                   {/* Starts the <p> element to organize this part of the interface. */}
                   <p className="text-[#323232] text-sm leading-relaxed relative z-10 font-light">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     "{t.quote}"
                   {/* Closes the <p> element so later content is no longer part of this region. */}
                   </p>
@@ -128,7 +128,7 @@ export const Testimonials = () => {
               <div className="pt-6 border-t border-[#323232]/10">
                 {/* Starts the <div> element to organize this part of the interface. */}
                 <div className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#DDD0C8] bg-[#323232] px-2.5 py-1 rounded-full mb-3">
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   {t.highlight}
                 {/* Closes the <div> element so later content is no longer part of this region. */}
                 </div>
@@ -160,4 +160,3 @@ export const Testimonials = () => {
   )
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable Testimonials interface component.
