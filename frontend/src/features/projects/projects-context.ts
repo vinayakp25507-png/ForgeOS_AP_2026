@@ -47,4 +47,3 @@ export interface ProjectsContextValue {
 
 // Stores the value in ProjectsContext so later lines can reuse this data or behavior for the current feature.
 export const ProjectsContext = createContext<ProjectsContextValue | null>(null)
-// File purpose: Supports the projects frontend feature with projects context.
