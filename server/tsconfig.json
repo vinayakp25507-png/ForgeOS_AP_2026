@@ -1,15 +1,30 @@
+// Groups related TypeScript compiler settings.
 {
+  // Sets the compilerOptions TypeScript compiler option for this project.
   "compilerOptions": {
-    "target": "ES2022", // Compile to JavaScript features supported by the server's Node.js runtime.
-    "module": "NodeNext", // Use Node's ESM/CommonJS behavior when interpreting imports and exports.
-    "moduleResolution": "NodeNext", // Resolve packages and file extensions using the same rules as Node.
-    "outDir": "dist", // Write compiled server files to dist for the production start command.
-    "rootDir": "src", // Treat src as the source root so the output directory mirrors its folder structure.
-    "strict": true, // Enable TypeScript's strict checks to catch unsafe or incomplete types.
-    "esModuleInterop": true, // Make default imports from CommonJS packages work with TypeScript's module output.
-    "forceConsistentCasingInFileNames": true, // Catch import paths whose letter casing differs across files or platforms.
-    "skipLibCheck": true, // Skip dependency declaration checks while still checking the server's own code.
-    "types": ["node"] // Load Node.js global and built-in module type definitions.
+    // Sets the target TypeScript compiler option for this project.
+    "target": "ES2022",
+    // Sets the module TypeScript compiler option for this project.
+    "module": "NodeNext",
+    // Sets the moduleResolution TypeScript compiler option for this project.
+    "moduleResolution": "NodeNext",
+    // Sets the outDir TypeScript compiler option for this project.
+    "outDir": "dist",
+    // Sets the rootDir TypeScript compiler option for this project.
+    "rootDir": "src",
+    // Sets the strict TypeScript compiler option for this project.
+    "strict": true,
+    // Sets the esModuleInterop TypeScript compiler option for this project.
+    "esModuleInterop": true,
+    // Sets the forceConsistentCasingInFileNames TypeScript compiler option for this project.
+    "forceConsistentCasingInFileNames": true,
+    // Sets the skipLibCheck TypeScript compiler option for this project.
+    "skipLibCheck": true,
+    // Sets the types TypeScript compiler option for this project.
+    "types": ["node"]
+  // Groups related TypeScript compiler settings.
   },
-  "include": ["src/**/*.ts"] // Compile TypeScript files anywhere under the server's src directory.
+  // Sets the include TypeScript compiler option for this project.
+  "include": ["src/**/*.ts"]
+// Groups related TypeScript compiler settings.
 }
