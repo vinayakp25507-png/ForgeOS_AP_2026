@@ -1,26 +1,48 @@
-import { z } from 'zod' // Imports { z } from 'zod' so this module can reuse that functionality.
+// Imports z from zod so this module can reuse that component, helper, or library.
+import { z } from 'zod'
 
-const landFields = { // Stores this intermediate `land fields` value so later lines can use it.
-  name: z.string().trim().min(1).max(255), // Separates this argument or property from the next item in the surrounding call or object.
-  addressLine: z.string().trim().max(500).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  city: z.string().trim().min(1).max(100), // Separates this argument or property from the next item in the surrounding call or object.
-  state: z.string().trim().min(1).max(100), // Separates this argument or property from the next item in the surrounding call or object.
-  pincode: z.string().trim().max(20).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  areaValue: z.coerce.number().positive(), // Separates this argument or property from the next item in the surrounding call or object.
-  areaUnit: z.enum(['SQFT', 'SQYD', 'SQM', 'ACRE']), // Separates this argument or property from the next item in the surrounding call or object.
-  surveyNumber: z.string().trim().max(100).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  ownerName: z.string().trim().max(255).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  purchaseDate: z.coerce.date().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  purchaseCost: z.coerce.number().nonnegative().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  notes: z.string().trim().max(2000).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-} // Closes the current block and marks where its grouped work ends.
+// Stores the value in landFields so later lines can reuse this data or behavior for the current feature.
+const landFields = {
+  // Sets the name field so the surrounding object or component receives this setting.
+  name: z.string().trim().min(1).max(255),
+  // Sets the addressLine field so the surrounding object or component receives this setting.
+  addressLine: z.string().trim().max(500).nullable().optional(),
+  // Sets the city field so the surrounding object or component receives this setting.
+  city: z.string().trim().min(1).max(100),
+  // Sets the state field so the surrounding object or component receives this setting.
+  state: z.string().trim().min(1).max(100),
+  // Sets the pincode field so the surrounding object or component receives this setting.
+  pincode: z.string().trim().max(20).nullable().optional(),
+  // Sets the areaValue field so the surrounding object or component receives this setting.
+  areaValue: z.coerce.number().positive(),
+  // Sets the areaUnit field so the surrounding object or component receives this setting.
+  areaUnit: z.enum(['SQFT', 'SQYD', 'SQM', 'ACRE']),
+  // Sets the surveyNumber field so the surrounding object or component receives this setting.
+  surveyNumber: z.string().trim().max(100).nullable().optional(),
+  // Sets the ownerName field so the surrounding object or component receives this setting.
+  ownerName: z.string().trim().max(255).nullable().optional(),
+  // Sets the purchaseDate field so the surrounding object or component receives this setting.
+  purchaseDate: z.coerce.date().nullable().optional(),
+  // Sets the purchaseCost field so the surrounding object or component receives this setting.
+  purchaseCost: z.coerce.number().nonnegative().nullable().optional(),
+  // Sets the notes field so the surrounding object or component receives this setting.
+  notes: z.string().trim().max(2000).nullable().optional(),
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export const landIdParamsSchema = z.object({ id: z.coerce.number().int().positive() }) // Provides `export const landIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })` as part of this server module.
-export const landListQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  page: z.coerce.number().int().min(1).default(1), // Separates this argument or property from the next item in the surrounding call or object.
-  pageSize: z.coerce.number().int().min(1).max(100).default(20), // Separates this argument or property from the next item in the surrounding call or object.
-  search: z.string().trim().max(100).optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const createLandSchema = z.object(landFields) // Provides `export const createLandSchema = z.object(landFields)` as part of this server module.
-export const updateLandSchema = z.object(landFields).partial() // Provides `export const updateLandSchema = z.object(landFields).partial()` as part of this server module.
-// File purpose: Defines runtime request validation schemas for the lands API.
+// Stores the value in landIdParamsSchema so later lines can reuse this data or behavior for the current feature.
+export const landIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })
+// Stores the value in landListQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const landListQuerySchema = z.object({
+  // Sets the page field so the surrounding object or component receives this setting.
+  page: z.coerce.number().int().min(1).default(1),
+  // Sets the pageSize field so the surrounding object or component receives this setting.
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Sets the search field so the surrounding object or component receives this setting.
+  search: z.string().trim().max(100).optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
+// Stores the value in createLandSchema so later lines can reuse this data or behavior for the current feature.
+export const createLandSchema = z.object(landFields)
+// Stores the value in updateLandSchema so later lines can reuse this data or behavior for the current feature.
+export const updateLandSchema = z.object(landFields).partial()
