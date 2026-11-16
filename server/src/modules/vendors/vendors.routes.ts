@@ -1,18 +1,33 @@
-import { Router } from 'express' // Imports Express types or tools used to build the HTTP API.
-import { requireAuth, requireRole } from '../../middleware/auth.middleware.js' // Imports { requireAuth, requireRole } from '../../middleware/auth.middleware.js' so this module can reuse that functionality.
-import { validateRequest } from '../../middleware/validate.middleware.js' // Imports { validateRequest } from '../../middleware/validate.middleware.js' so this module can reuse that functionality.
-import * as controller from './vendors.controller.js' // Imports * as controller from './vendors.controller.js' so this module can reuse that functionality.
-import { createVendorSchema, projectVendorParamsSchema, updateVendorSchema, vendorIdParamsSchema, vendorListQuerySchema } from './vendors.validator.js' // Imports { createVendorSchema, projectVendorParamsSchema, updateVendorSchema, vendorIdParamsSchema, vendorListQuerySchema } from './vendors.validator.js' so this module can reuse that functionality.
-import { projectScopedIdParamsSchema } from '../projects/projects.validator.js' // Imports { projectScopedIdParamsSchema } from '../projects/projects.validator.js' so this module can reuse that functionality.
+// Imports Router from express so this module can reuse that component, helper, or library.
+import { Router } from 'express'
+// Imports requireAuth, requireRole from ../../middleware/auth.middleware.js so this module can reuse that component, helper, or library.
+import { requireAuth, requireRole } from '../../middleware/auth.middleware.js'
+// Imports validateRequest from ../../middleware/validate.middleware.js so this module can reuse that component, helper, or library.
+import { validateRequest } from '../../middleware/validate.middleware.js'
+// Imports * as controller from ./vendors.controller.js so this module can reuse that component, helper, or library.
+import * as controller from './vendors.controller.js'
+// Imports createVendorSchema, projectVendorParamsSchema, updateVendorSchema, vendorIdParamsSchema, vendorListQuerySchema from ./vendors.validator.js so this module can reuse that component, helper, or library.
+import { createVendorSchema, projectVendorParamsSchema, updateVendorSchema, vendorIdParamsSchema, vendorListQuerySchema } from './vendors.validator.js'
+// Imports projectScopedIdParamsSchema from ../projects/projects.validator.js so this module can reuse that component, helper, or library.
+import { projectScopedIdParamsSchema } from '../projects/projects.validator.js'
 
-export const vendorsRoutes = Router() // Provides `export const vendorsRoutes = Router()` as part of this server module.
-vendorsRoutes.use(requireAuth) // Provides `vendorsRoutes.use(requireAuth)` as part of this server module.
-vendorsRoutes.get('/vendors', validateRequest('query', vendorListQuerySchema), controller.list) // Provides `vendorsRoutes.get('/vendors', validateRequest('query', vendorListQuerySchema), controller.list)` as part of this server module.
-vendorsRoutes.post('/vendors', validateRequest('body', createVendorSchema), controller.create) // Provides `vendorsRoutes.post('/vendors', validateRequest('body', createVendorSchema), controller.create)` as part of this server module.
-vendorsRoutes.get('/vendors/:id', validateRequest('params', vendorIdParamsSchema), controller.detail) // Provides `vendorsRoutes.get('/vendors/:id', validateRequest('params', vendorIdParamsSchema), controller.detail)` as part of this server module.
-vendorsRoutes.patch('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), validateRequest('body', updateVendorSchema), controller.update) // Provides `vendorsRoutes.patch('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), validateRequest('body', updateVendorSchema), controller.update)` as part of this server module.
-vendorsRoutes.delete('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), controller.deactivate) // Provides `vendorsRoutes.delete('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), controller.deactivate)` as part of this server module.
-vendorsRoutes.get('/projects/:projectId/vendors', validateRequest('params', projectScopedIdParamsSchema), controller.projectList) // Provides `vendorsRoutes.get('/projects/:projectId/vendors', validateRequest('params', projectScopedIdParamsSchema), controller.projectList)` as part of this server module.
-vendorsRoutes.post('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.assign) // Provides `vendorsRoutes.post('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.assign)` as part of this server module.
-vendorsRoutes.delete('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.unassign) // Provides `vendorsRoutes.delete('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.unassign)` as part of this server module.
-// File purpose: Defines the HTTP endpoints and middleware chain for the vendors API.
+// Stores the value in vendorsRoutes so later lines can reuse this data or behavior for the current feature.
+export const vendorsRoutes = Router()
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.use(requireAuth)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.get('/vendors', validateRequest('query', vendorListQuerySchema), controller.list)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.post('/vendors', validateRequest('body', createVendorSchema), controller.create)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.get('/vendors/:id', validateRequest('params', vendorIdParamsSchema), controller.detail)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.patch('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), validateRequest('body', updateVendorSchema), controller.update)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.delete('/vendors/:id', requireRole('ADMIN'), validateRequest('params', vendorIdParamsSchema), controller.deactivate)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.get('/projects/:projectId/vendors', validateRequest('params', projectScopedIdParamsSchema), controller.projectList)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.post('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.assign)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vendorsRoutes.delete('/projects/:projectId/vendors/:vendorId', validateRequest('params', projectVendorParamsSchema), controller.unassign)
