@@ -69,19 +69,13 @@ export const ProductGallery = () => {
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
                 /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
-                /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
                 activeTab === 'admin'
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   ? 'bg-[#323232] text-[#DDD0C8] shadow-md'
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   : 'text-[#595552] hover:text-[#323232]'
               /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               }`}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <TrendingUp> element to organize this part of the interface. */}
               <TrendingUp className="w-3.5 h-3.5" />
@@ -96,19 +90,13 @@ export const ProductGallery = () => {
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
                 /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
-                /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
                 activeTab === 'pm'
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   ? 'bg-[#323232] text-[#DDD0C8] shadow-md'
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   : 'text-[#595552] hover:text-[#323232]'
               /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               }`}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <ClipboardList> element to organize this part of the interface. */}
               <ClipboardList className="w-3.5 h-3.5" />
@@ -123,19 +111,13 @@ export const ProductGallery = () => {
               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
               className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
                 /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
-                /* Sets the activeTab property so this element receives the data or behavior required by this screen. */
                 activeTab === 'wastage'
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   ? 'bg-[#323232] text-[#DDD0C8] shadow-md'
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   : 'text-[#595552] hover:text-[#323232]'
               /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               }`}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <AlertTriangle> element to organize this part of the interface. */}
               <AlertTriangle className="w-3.5 h-3.5" />
@@ -169,7 +151,7 @@ export const ProductGallery = () => {
                   </div>
                   {/* Starts the <span> element to organize this part of the interface. */}
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#323232] text-[#DDD0C8]">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     Live Data
                   {/* Closes the <span> element so later content is no longer part of this region. */}
                   </span>
@@ -262,7 +244,7 @@ export const ProductGallery = () => {
                 <h4 className="font-bold text-[#323232] text-sm uppercase tracking-wider flex items-center gap-2">
                   {/* Starts the <Layers> element to organize this part of the interface. */}
                   <Layers className="w-4 h-4" />
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   What Builders Gain:
                 {/* Closes the <h4> element so later content is no longer part of this region. */}
                 </h4>
@@ -324,7 +306,7 @@ export const ProductGallery = () => {
                   </div>
                   {/* Starts the <span> element to organize this part of the interface. */}
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#323232] text-[#DDD0C8]">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     Draft Saved
                   {/* Closes the <span> element so later content is no longer part of this region. */}
                   </span>
@@ -339,7 +321,7 @@ export const ProductGallery = () => {
                     <div className="flex items-center gap-2 text-sm font-bold text-[#323232]">
                       {/* Starts the <Users> element to organize this part of the interface. */}
                       <Users className="w-4 h-4" />
-                      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                      // Continues the component or data expression so its related values and behavior stay grouped together.
                       Labour Headcount
                     {/* Closes the <div> element so later content is no longer part of this region. */}
                     </div>
@@ -372,7 +354,7 @@ export const ProductGallery = () => {
                     <div className="flex items-center gap-2 text-sm font-bold text-[#323232]">
                       {/* Starts the <Clock> element to organize this part of the interface. */}
                       <Clock className="w-4 h-4" />
-                      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                      // Continues the component or data expression so its related values and behavior stay grouped together.
                       Machinery & Fuel
                     {/* Closes the <div> element so later content is no longer part of this region. */}
                     </div>
@@ -419,7 +401,7 @@ export const ProductGallery = () => {
                   </div>
                   {/* Starts the <span> element to organize this part of the interface. */}
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#323232] text-[#DDD0C8]">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Sets the Balance field so the surrounding object or component receives this setting.
                     Balance: 1,250 Bags
                   {/* Closes the <span> element so later content is no longer part of this region. */}
                   </span>
@@ -434,7 +416,7 @@ export const ProductGallery = () => {
                 <h4 className="font-bold text-[#323232] text-sm uppercase tracking-wider flex items-center gap-2">
                   {/* Starts the <ClipboardList> element to organize this part of the interface. */}
                   <ClipboardList className="w-4 h-4" />
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   What Site PMs Love:
                 {/* Closes the <h4> element so later content is no longer part of this region. */}
                 </h4>
@@ -496,7 +478,7 @@ export const ProductGallery = () => {
                   </div>
                   {/* Starts the <span> element to organize this part of the interface. */}
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#323232] text-[#DDD0C8]">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     1 Alert Active
                   {/* Closes the <span> element so later content is no longer part of this region. */}
                   </span>
@@ -517,7 +499,7 @@ export const ProductGallery = () => {
                     </div>
                     {/* Starts the <span> element to organize this part of the interface. */}
                     <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-[#323232] text-[#DDD0C8]">
-                      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                      // Continues the component or data expression so its related values and behavior stay grouped together.
                       +25.5% Overrun
                     {/* Closes the <span> element so later content is no longer part of this region. */}
                     </span>
@@ -573,7 +555,7 @@ export const ProductGallery = () => {
                   </div>
                   {/* Starts the <span> element to organize this part of the interface. */}
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#323232] text-[#DDD0C8]">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     Awaiting Approval
                   {/* Closes the <span> element so later content is no longer part of this region. */}
                   </span>
@@ -588,7 +570,7 @@ export const ProductGallery = () => {
                 <h4 className="font-bold text-[#323232] text-sm uppercase tracking-wider flex items-center gap-2">
                   {/* Starts the <AlertTriangle> element to organize this part of the interface. */}
                   <AlertTriangle className="w-4 h-4" />
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   Why This Saves Money:
                 {/* Closes the <h4> element so later content is no longer part of this region. */}
                 </h4>
@@ -636,4 +618,3 @@ export const ProductGallery = () => {
   )
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable ProductGallery interface component.
