@@ -1,7 +1,11 @@
-import { z } from 'zod' // Imports { z } from 'zod' so this module can reuse that functionality.
+// Imports z from zod so this module can reuse that component, helper, or library.
+import { z } from 'zod'
 
-export const loginSchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  email: z.string().email().transform((value) => value.toLowerCase()), // Separates this argument or property from the next item in the surrounding call or object.
-  password: z.string().min(1), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Defines runtime request validation schemas for the auth API.
+// Stores the value in loginSchema so later lines can reuse this data or behavior for the current feature.
+export const loginSchema = z.object({
+  // Sets the email field so the surrounding object or component receives this setting.
+  email: z.string().email().transform((value) => value.toLowerCase()),
+  // Sets the password field so the surrounding object or component receives this setting.
+  password: z.string().min(1),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
