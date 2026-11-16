@@ -1,32 +1,61 @@
-import type { RequestHandler } from 'express' // Imports Express types or tools used to build the HTTP API.
-import type { ZodType } from 'zod' // Imports type { ZodType } from 'zod' so this module can reuse that functionality.
-import { AppError } from '../utils/errors.js' // Uses the shared API error type so failures have a consistent message and HTTP status.
+// Imports type  RequestHandler from express so this module can reuse that component, helper, or library.
+import type { RequestHandler } from 'express'
+// Imports type  ZodType from zod so this module can reuse that component, helper, or library.
+import type { ZodType } from 'zod'
+// Imports AppError from ../utils/errors.js so this module can reuse that component, helper, or library.
+import { AppError } from '../utils/errors.js'
 
-export function validateRequest( // Defines `validateRequest` to check request, keeping this behavior reusable.
-  target: 'body' | 'params' | 'query', // Separates this argument or property from the next item in the surrounding call or object.
-  schema: ZodType, // Separates this argument or property from the next item in the surrounding call or object.
-): RequestHandler { // Opens the object or callback body that groups the settings for this operation.
-  return (req, _res, next) => { // Opens the function, callback, or control-flow block that groups the related statements.
-    const result = schema.safeParse(req[target]) // Stores this intermediate `result` value so later lines can use it.
-    if (!result.success) { // Checks whether the value is missing; the block handles that case before continuing.
-      next(new AppError( // Passes control to the next Express middleware, or forwards the supplied error to the error handler.
-        'VALIDATION_ERROR', // Separates this argument or property from the next item in the surrounding call or object.
-        'Validation failed.', // Separates this argument or property from the next item in the surrounding call or object.
-        400, // Separates this argument or property from the next item in the surrounding call or object.
-        result.error.issues.map((issue) => ({ // Opens the object or callback body that groups the settings for this operation.
-          path: issue.path.join('.'), // Separates this argument or property from the next item in the surrounding call or object.
-          message: issue.message, // Separates this argument or property from the next item in the surrounding call or object.
-        })), // Separates this argument or property from the next item in the surrounding call or object.
-      )) // Provides `))` as part of validate request.
-      return // Returns `` to the caller so the next layer can use the result.
-    } // Closes the current block and marks where its grouped work ends.
-    Object.defineProperty(req, target, { // Opens the object or callback body that groups the settings for this operation.
-      value: result.data, // Separates this argument or property from the next item in the surrounding call or object.
-      configurable: true, // Separates this argument or property from the next item in the surrounding call or object.
-      enumerable: true, // Separates this argument or property from the next item in the surrounding call or object.
-      writable: true, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    next() // Passes control to the next Express middleware, or forwards the supplied error to the error handler.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Validates request bodies, query strings, and parameters before controllers run.
+// Defines validateRequest so this module can perform its named task when needed.
+export function validateRequest(
+  // Sets the target field so the surrounding object or component receives this setting.
+  target: 'body' | 'params' | 'query',
+  // Sets the schema field so the surrounding object or component receives this setting.
+  schema: ZodType,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+): RequestHandler {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return (req, _res, next) => {
+    // Stores the value in result so later lines can reuse this data or behavior for the current feature.
+    const result = schema.safeParse(req[target])
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (!result.success) {
+      // Calls this helper or component so the feature can perform the operation or render the control represented here.
+      next(new AppError(
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        'VALIDATION_ERROR',
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        'Validation failed.',
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        400,
+        // Transforms each collection item so the corresponding values or interface elements can be produced.
+        result.error.issues.map((issue) => ({
+          // Sets the path field so the surrounding object or component receives this setting.
+          path: issue.path.join('.'),
+          // Sets the message field so the surrounding object or component receives this setting.
+          message: issue.message,
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        })),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ))
+      // Returns the result so the caller or React receives the value or interface this function provides.
+      return
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    Object.defineProperty(req, target, {
+      // Sets the value field so the surrounding object or component receives this setting.
+      value: result.data,
+      // Sets the configurable field so the surrounding object or component receives this setting.
+      configurable: true,
+      // Sets the enumerable field so the surrounding object or component receives this setting.
+      enumerable: true,
+      // Sets the writable field so the surrounding object or component receives this setting.
+      writable: true,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    next()
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
