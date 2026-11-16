@@ -25,4 +25,3 @@ export interface AuthContextValue {
 
 // Stores the value in AuthContext so later lines can reuse this data or behavior for the current feature.
 export const AuthContext = createContext<AuthContextValue | null>(null)
-// File purpose: Supports frontend authentication through auth context.
