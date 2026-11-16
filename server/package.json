@@ -11,8 +11,7 @@
     "test": "vitest run",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db": "prisma migrate status",
-    "db:seed": "prisma db seed",
+    "db:seed": "node prisma/seed.js",
     "db:studio": "prisma studio",
     "db:validate": "prisma validate"
   },
@@ -36,8 +35,5 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }
