@@ -1,2 +1,1 @@
 # Services: backend, postgres, object storage (e.g. minio), worker, frontend.
-# File purpose: Documents the planned backend, PostgreSQL, storage, worker, and frontend services.
