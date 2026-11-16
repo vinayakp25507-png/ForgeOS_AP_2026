@@ -1,29 +1,56 @@
+// Groups related TypeScript compiler settings.
 {
+  // Sets the compilerOptions TypeScript compiler option for this project.
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo", // Keep TypeScript's incremental-build cache in node_modules so it is disposable.
-    "target": "es2023", // Compile using the JavaScript features supported by the project's modern runtime and browsers.
-    "lib": ["ES2023", "DOM"], // Provide type definitions for modern JavaScript and browser APIs used by the UI.
-    "module": "esnext", // Preserve modern import/export syntax for Vite to bundle.
-    "types": ["vite/client", "node"], // Load Vite's browser types and Node types for frontend tooling.
-    "allowArbitraryExtensions": true, // Allow imports with nonstandard extensions when a matching type declaration exists.
-    "skipLibCheck": true, // Skip checking dependency declaration files to reduce build time; application code is still checked.
+    // Sets the tsBuildInfoFile TypeScript compiler option for this project.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    // Sets the target TypeScript compiler option for this project.
+    "target": "es2023",
+    // Sets the lib TypeScript compiler option for this project.
+    "lib": ["ES2023", "DOM"],
+    // Sets the module TypeScript compiler option for this project.
+    "module": "esnext",
+    // Sets the types TypeScript compiler option for this project.
+    "types": ["vite/client", "node"],
+    // Sets the allowArbitraryExtensions TypeScript compiler option for this project.
+    "allowArbitraryExtensions": true,
+    // Sets the skipLibCheck TypeScript compiler option for this project.
+    "skipLibCheck": true,
+    // Sets the paths TypeScript compiler option for this project.
     "paths": {
-      "@/*": ["./src/*"] // Let imports starting with @/ resolve from src instead of using long relative paths.
+      // Sets the @/* TypeScript compiler option for this project.
+      "@/*": ["./src/*"]
+    // Groups related TypeScript compiler settings.
     },
 
+    // Groups related TypeScript compiler settings.
     /* Bundler mode */
-    "moduleResolution": "bundler", // Resolve modules using Vite's bundler rules rather than Node's runtime rules.
-    "allowImportingTsExtensions": true, // Permit explicit .ts/.tsx import suffixes when the bundler handles output.
-    "verbatimModuleSyntax": true, // Preserve import/export intent so type-only imports must be marked explicitly.
-    "moduleDetection": "force", // Treat each source file as a module, even when it has no import or export.
-    "noEmit": true, // Let Vite produce the JavaScript instead of asking tsc to emit duplicate files.
-    "jsx": "react-jsx", // Transform JSX using React's automatic runtime without requiring a React import in every file.
+    // Sets the moduleResolution TypeScript compiler option for this project.
+    "moduleResolution": "bundler",
+    // Sets the allowImportingTsExtensions TypeScript compiler option for this project.
+    "allowImportingTsExtensions": true,
+    // Sets the verbatimModuleSyntax TypeScript compiler option for this project.
+    "verbatimModuleSyntax": true,
+    // Sets the moduleDetection TypeScript compiler option for this project.
+    "moduleDetection": "force",
+    // Sets the noEmit TypeScript compiler option for this project.
+    "noEmit": true,
+    // Sets the jsx TypeScript compiler option for this project.
+    "jsx": "react-jsx",
 
+    // Groups related TypeScript compiler settings.
     /* Linting */
-    "noUnusedLocals": true, // Catch declared variables that are never used.
-    "noUnusedParameters": true, // Catch function parameters that are never used.
-    "erasableSyntaxOnly": true, // Restrict TypeScript syntax to features that can be removed without runtime transformation.
-    "noFallthroughCasesInSwitch": true // Catch switch cases that accidentally continue into the next case.
+    // Sets the noUnusedLocals TypeScript compiler option for this project.
+    "noUnusedLocals": true,
+    // Sets the noUnusedParameters TypeScript compiler option for this project.
+    "noUnusedParameters": true,
+    // Sets the erasableSyntaxOnly TypeScript compiler option for this project.
+    "erasableSyntaxOnly": true,
+    // Sets the noFallthroughCasesInSwitch TypeScript compiler option for this project.
+    "noFallthroughCasesInSwitch": true
+  // Groups related TypeScript compiler settings.
   },
-  "include": ["src"] // Apply these frontend compiler settings to source files under src.
+  // Sets the include TypeScript compiler option for this project.
+  "include": ["src"]
+// Groups related TypeScript compiler settings.
 }
