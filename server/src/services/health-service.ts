@@ -1,21 +1,39 @@
-import { prisma } from '../utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
-import { logger } from '../config/logger.js' // Uses the shared structured logger so server events have a consistent format.
+// Imports prisma from ../utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from '../utils/prisma.js'
+// Imports logger from ../config/logger.js so this module can reuse that component, helper, or library.
+import { logger } from '../config/logger.js'
 
-export async function getHealthStatus() { // Defines `getHealthStatus` to retrieve health status, keeping this behavior reusable.
-  try { // Starts a protected block so errors from the following operation can be handled.
-    await prisma.$queryRaw`SELECT 1` // Waits for this asynchronous operation to finish before using its result.
-    return { // Returns the assembled result object so the caller receives the fields it needs.
-      api: 'ok' as const, // Separates this argument or property from the next item in the surrounding call or object.
-      server: 'ok' as const, // Separates this argument or property from the next item in the surrounding call or object.
-      database: 'connected' as const, // Separates this argument or property from the next item in the surrounding call or object.
-    } // Closes the current block and marks where its grouped work ends.
-  } catch (error) { // Opens the object or callback body that groups the settings for this operation.
-    logger.warn({ err: error }, 'Database health check failed') // Writes an operational log entry so server activity can be monitored.
-    return { // Returns the assembled result object so the caller receives the fields it needs.
-      api: 'ok' as const, // Separates this argument or property from the next item in the surrounding call or object.
-      server: 'ok' as const, // Separates this argument or property from the next item in the surrounding call or object.
-      database: 'disconnected' as const, // Separates this argument or property from the next item in the surrounding call or object.
-    } // Closes the current block and marks where its grouped work ends.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Checks database connectivity for the API health endpoint.
+// Defines getHealthStatus so this module can perform its named task when needed.
+export async function getHealthStatus() {
+  // Starts an error-handling region so failures can be caught and handled safely.
+  try {
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await prisma.$queryRaw`SELECT 1`
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return {
+      // Sets the api field so the surrounding object or component receives this setting.
+      api: 'ok' as const,
+      // Sets the server field so the surrounding object or component receives this setting.
+      server: 'ok' as const,
+      // Sets the database field so the surrounding object or component receives this setting.
+      database: 'connected' as const,
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  } catch (error) {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    logger.warn({ err: error }, 'Database health check failed')
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return {
+      // Sets the api field so the surrounding object or component receives this setting.
+      api: 'ok' as const,
+      // Sets the server field so the surrounding object or component receives this setting.
+      server: 'ok' as const,
+      // Sets the database field so the surrounding object or component receives this setting.
+      database: 'disconnected' as const,
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
