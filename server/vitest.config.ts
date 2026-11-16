@@ -1,8 +1,13 @@
-import { defineConfig } from 'vitest/config' // Imports test-runner helpers for defining and checking this behavior.
+// Imports defineConfig from vitest/config so this module can reuse that component, helper, or library.
+import { defineConfig } from 'vitest/config'
 
-export default defineConfig({ // Creates and exports the Vitest settings so the test runner knows how to prepare tests.
-  test: { // Sets `test` to the test value.
-    setupFiles: ['./tests/setup.ts'], // Runs shared setup before each test file so common mocks and environment settings are ready.
-  }, // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Configures Vitest to run the server's test files and setup code.
+// Exports defineConfig as this file’s default value so other modules can load the main feature.
+export default defineConfig({
+  // Sets the test field so the surrounding object or component receives this setting.
+  test: {
+    // Sets the setupFiles field so the surrounding object or component receives this setting.
+    setupFiles: ['./tests/setup.ts'],
+  // Closes the current block or object so the grouped statements or settings end here.
+  },
+// Continues the configuration expression so its related values and behavior stay grouped together.
+})
