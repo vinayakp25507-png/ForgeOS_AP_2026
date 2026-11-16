@@ -1,23 +1,42 @@
-import { z } from 'zod' // Imports { z } from 'zod' so this module can reuse that functionality.
+// Imports z from zod so this module can reuse that component, helper, or library.
+import { z } from 'zod'
 
-const role = z.enum(['ADMIN', 'PM']) // Stores this intermediate `role` value so later lines can use it.
-const base = z.object({ // Stores this intermediate `base` value so later lines can use it.
-  name: z.string().trim().min(1).max(255), // Separates this argument or property from the next item in the surrounding call or object.
-  email: z.string().email().transform((value) => value.toLowerCase()), // Separates this argument or property from the next item in the surrounding call or object.
-  password: z.string().min(8).max(200), // Separates this argument or property from the next item in the surrounding call or object.
-  role, // Separates this argument or property from the next item in the surrounding call or object.
-  phone: z.string().trim().max(50).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Stores the value in role so later lines can reuse this data or behavior for the current feature.
+const role = z.enum(['ADMIN', 'PM'])
+// Stores the value in base so later lines can reuse this data or behavior for the current feature.
+const base = z.object({
+  // Sets the name field so the surrounding object or component receives this setting.
+  name: z.string().trim().min(1).max(255),
+  // Sets the email field so the surrounding object or component receives this setting.
+  email: z.string().email().transform((value) => value.toLowerCase()),
+  // Sets the password field so the surrounding object or component receives this setting.
+  password: z.string().min(8).max(200),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  role,
+  // Sets the phone field so the surrounding object or component receives this setting.
+  phone: z.string().trim().max(50).nullable().optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
 
-export const userIdParamsSchema = z.object({ id: z.coerce.number().int().positive() }) // Provides `export const userIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })` as part of this server module.
-export const userListQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  page: z.coerce.number().int().min(1).default(1), // Separates this argument or property from the next item in the surrounding call or object.
-  pageSize: z.coerce.number().int().min(1).max(100).default(20), // Separates this argument or property from the next item in the surrounding call or object.
-  search: z.string().trim().max(100).optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const createUserSchema = base // Provides `export const createUserSchema = base` as part of this server module.
-export const updateUserSchema = base.partial().omit({ password: true }).extend({ // Opens the object or callback body that groups the settings for this operation.
-  password: z.string().min(8).max(200).optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const userStatusSchema = z.object({ isActive: z.boolean() }) // Provides `export const userStatusSchema = z.object({ isActive: z.boolean() })` as part of this server module.
-// File purpose: Defines runtime request validation schemas for the users API.
+// Stores the value in userIdParamsSchema so later lines can reuse this data or behavior for the current feature.
+export const userIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })
+// Stores the value in userListQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const userListQuerySchema = z.object({
+  // Sets the page field so the surrounding object or component receives this setting.
+  page: z.coerce.number().int().min(1).default(1),
+  // Sets the pageSize field so the surrounding object or component receives this setting.
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Sets the search field so the surrounding object or component receives this setting.
+  search: z.string().trim().max(100).optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
+// Stores the value in createUserSchema so later lines can reuse this data or behavior for the current feature.
+export const createUserSchema = base
+// Stores the value in updateUserSchema so later lines can reuse this data or behavior for the current feature.
+export const updateUserSchema = base.partial().omit({ password: true }).extend({
+  // Sets the password field so the surrounding object or component receives this setting.
+  password: z.string().min(8).max(200).optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
+// Stores the value in userStatusSchema so later lines can reuse this data or behavior for the current feature.
+export const userStatusSchema = z.object({ isActive: z.boolean() })
