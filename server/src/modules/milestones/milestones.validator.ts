@@ -1,43 +1,79 @@
-import { z } from 'zod' // Imports { z } from 'zod' so this module can reuse that functionality.
+// Imports z from zod so this module can reuse that component, helper, or library.
+import { z } from 'zod'
 
-const milestoneDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must use YYYY-MM-DD format') // Stores this intermediate `milestone date` value so later lines can use it.
-const milestoneFields = { // Stores this intermediate `milestone fields` value so later lines can use it.
-  name: z.string().trim().min(1).max(255), // Separates this argument or property from the next item in the surrounding call or object.
-  description: z.string().trim().max(5000).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  sequence: z.coerce.number().int().positive(), // Separates this argument or property from the next item in the surrounding call or object.
-  plannedStartDate: milestoneDate.nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  plannedEndDate: milestoneDate.nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  actualStartDate: milestoneDate.nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  actualEndDate: milestoneDate.nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  status: z.enum(['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED']), // Separates this argument or property from the next item in the surrounding call or object.
-  progressPercent: z.coerce.number().min(0).max(100), // Separates this argument or property from the next item in the surrounding call or object.
-} // Closes the current block and marks where its grouped work ends.
-const milestoneDateRules = (value: { // Stores this intermediate `milestone date rules` value so later lines can use it.
-  plannedStartDate?: string | null // Provides `plannedStartDate?: string | null` as part of this server module.
-  plannedEndDate?: string | null // Provides `plannedEndDate?: string | null` as part of this server module.
-  actualStartDate?: string | null // Provides `actualStartDate?: string | null` as part of this server module.
-  actualEndDate?: string | null // Provides `actualEndDate?: string | null` as part of this server module.
-}) => ( // Provides `}) => (` as part of this server module.
-  (!value.plannedStartDate || !value.plannedEndDate || value.plannedStartDate <= value.plannedEndDate) // Provides `(!value.plannedStartDate || !value.plannedEndDate || value.plannedStartDate <= value.plannedEndDate)` as part of this server module.
-  && (!value.actualStartDate || !value.actualEndDate || value.actualStartDate <= value.actualEndDate) // Provides `&& (!value.actualStartDate || !value.actualEndDate || value.actualStartDate <= value.actualEndDate)` as part of this server module.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-const milestoneDateMessage = { // Stores this intermediate `milestone date message` value so later lines can use it.
-  message: 'Milestone end dates must be on or after their start dates.', // Separates this argument or property from the next item in the surrounding call or object.
-  path: ['plannedEndDate'], // Separates this argument or property from the next item in the surrounding call or object.
-} // Closes the current block and marks where its grouped work ends.
+// Stores the value in milestoneDate so later lines can reuse this data or behavior for the current feature.
+const milestoneDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must use YYYY-MM-DD format')
+// Stores the value in milestoneFields so later lines can reuse this data or behavior for the current feature.
+const milestoneFields = {
+  // Sets the name field so the surrounding object or component receives this setting.
+  name: z.string().trim().min(1).max(255),
+  // Sets the description field so the surrounding object or component receives this setting.
+  description: z.string().trim().max(5000).nullable().optional(),
+  // Sets the sequence field so the surrounding object or component receives this setting.
+  sequence: z.coerce.number().int().positive(),
+  // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+  plannedStartDate: milestoneDate.nullable().optional(),
+  // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+  plannedEndDate: milestoneDate.nullable().optional(),
+  // Sets the actualStartDate field so the surrounding object or component receives this setting.
+  actualStartDate: milestoneDate.nullable().optional(),
+  // Sets the actualEndDate field so the surrounding object or component receives this setting.
+  actualEndDate: milestoneDate.nullable().optional(),
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: z.enum(['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED']),
+  // Sets the progressPercent field so the surrounding object or component receives this setting.
+  progressPercent: z.coerce.number().min(0).max(100),
+// Closes the current block or object so the grouped statements or settings end here.
+}
+// Stores the value in milestoneDateRules so later lines can reuse this data or behavior for the current feature.
+const milestoneDateRules = (value: {
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  plannedStartDate?: string | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  plannedEndDate?: string | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  actualStartDate?: string | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  actualEndDate?: string | null
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}) => (
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  (!value.plannedStartDate || !value.plannedEndDate || value.plannedStartDate <= value.plannedEndDate)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  && (!value.actualStartDate || !value.actualEndDate || value.actualStartDate <= value.actualEndDate)
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Stores the value in milestoneDateMessage so later lines can reuse this data or behavior for the current feature.
+const milestoneDateMessage = {
+  // Sets the message field so the surrounding object or component receives this setting.
+  message: 'Milestone end dates must be on or after their start dates.',
+  // Sets the path field so the surrounding object or component receives this setting.
+  path: ['plannedEndDate'],
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export const createMilestoneSchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  ...milestoneFields, // Separates this argument or property from the next item in the surrounding call or object.
-  status: milestoneFields.status.default('PLANNED'), // Separates this argument or property from the next item in the surrounding call or object.
-  progressPercent: milestoneFields.progressPercent.default(0), // Separates this argument or property from the next item in the surrounding call or object.
-}).refine(milestoneDateRules, milestoneDateMessage) // Provides `}).refine(milestoneDateRules, milestoneDateMessage)` as part of this server module.
+// Stores the value in createMilestoneSchema so later lines can reuse this data or behavior for the current feature.
+export const createMilestoneSchema = z.object({
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ...milestoneFields,
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: milestoneFields.status.default('PLANNED'),
+  // Sets the progressPercent field so the surrounding object or component receives this setting.
+  progressPercent: milestoneFields.progressPercent.default(0),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}).refine(milestoneDateRules, milestoneDateMessage)
 
-export const updateMilestoneSchema = z.object(milestoneFields).partial() // Provides `export const updateMilestoneSchema = z.object(milestoneFields).partial()` as part of this server module.
-  .refine((value) => Object.keys(value).length > 0, { message: 'At least one milestone field is required.' }) // Provides `.refine((value) => Object.keys(value).length > 0, { message: 'At least one milestone field is required.' })` as part of this server module.
-  .refine(milestoneDateRules, milestoneDateMessage) // Provides `.refine(milestoneDateRules, milestoneDateMessage)` as part of this server module.
+// Stores the value in updateMilestoneSchema so later lines can reuse this data or behavior for the current feature.
+export const updateMilestoneSchema = z.object(milestoneFields).partial()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  .refine((value) => Object.keys(value).length > 0, { message: 'At least one milestone field is required.' })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  .refine(milestoneDateRules, milestoneDateMessage)
 
-export const milestoneIdParamsSchema = z.object({ id: z.coerce.number().int().positive() }) // Provides `export const milestoneIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })` as part of this server module.
+// Stores the value in milestoneIdParamsSchema so later lines can reuse this data or behavior for the current feature.
+export const milestoneIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })
 
-export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema> // Defines the `CreateMilestoneInput` type so TypeScript can describe the data or behavior used here.
-export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema> // Defines the `UpdateMilestoneInput` type so TypeScript can describe the data or behavior used here.
-// File purpose: Defines runtime request validation schemas for the milestones API.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>
