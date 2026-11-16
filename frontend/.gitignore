@@ -42,4 +42,3 @@ dist-ssr
 *.sln
 # Ignores local editor or operating-system metadata rather than application source.
 *.sw?
-# File purpose: Lists local, generated, and sensitive files Git should not track.
