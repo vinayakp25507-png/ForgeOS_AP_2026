@@ -13,4 +13,3 @@ export function useProjects() {
   return context
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Supports the projects frontend feature with useProjects.
