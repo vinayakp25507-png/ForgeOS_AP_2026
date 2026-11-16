@@ -13,4 +13,3 @@ export function useAuth() {
   return context
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Supports frontend authentication through useAuth.
