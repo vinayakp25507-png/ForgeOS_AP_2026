@@ -1,16 +1,28 @@
-import type { RequestHandler } from 'express' // Imports Express types or tools used to build the HTTP API.
-import { getHealthStatus } from '../services/health-service.js' // Imports { getHealthStatus } from '../services/health-service.js' so this module can reuse that functionality.
+// Imports type  RequestHandler from express so this module can reuse that component, helper, or library.
+import type { RequestHandler } from 'express'
+// Imports getHealthStatus from ../services/health-service.js so this module can reuse that component, helper, or library.
+import { getHealthStatus } from '../services/health-service.js'
 
-export const getHealth: RequestHandler = async (_req, res) => { // Opens the function, callback, or control-flow block that groups the related statements.
-  const status = await getHealthStatus() // Stores this intermediate `status` value so later lines can use it.
-  const healthy = status.database === 'connected' // Stores this intermediate `healthy` value so later lines can use it.
+// Stores the value in getHealth so later lines can reuse this data or behavior for the current feature.
+export const getHealth: RequestHandler = async (_req, res) => {
+  // Stores the value in status so later lines can reuse this data or behavior for the current feature.
+  const status = await getHealthStatus()
+  // Stores the value in healthy so later lines can reuse this data or behavior for the current feature.
+  const healthy = status.database === 'connected'
 
-  res.status(healthy ? 200 : 503).json({ // Opens the object or callback body that groups the settings for this operation.
-    success: healthy, // Separates this argument or property from the next item in the surrounding call or object.
-    data: { // Sets `data` to the values to write to the database.
-      status: healthy ? 'ok' : 'degraded', // Separates this argument or property from the next item in the surrounding call or object.
-      ...status, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Converts the health-check result into the API's HTTP response.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  res.status(healthy ? 200 : 503).json({
+    // Sets the success field so the surrounding object or component receives this setting.
+    success: healthy,
+    // Sets the data field so the surrounding object or component receives this setting.
+    data: {
+      // Sets the status field so the surrounding object or component receives this setting.
+      status: healthy ? 'ok' : 'degraded',
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ...status,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
