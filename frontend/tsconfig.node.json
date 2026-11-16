@@ -1,23 +1,44 @@
+// Groups related TypeScript compiler settings.
 {
+  // Sets the compilerOptions TypeScript compiler option for this project.
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", // Store the tooling build cache in node_modules so it can be regenerated.
-    "target": "es2023", // Allow the modern JavaScript features used by the Vite configuration.
-    "lib": ["ES2023"], // Provide JavaScript runtime types without browser-only DOM APIs.
-    "types": ["node"], // Make Node.js globals and APIs available to the build configuration.
-    "skipLibCheck": true, // Avoid spending build time type-checking declarations shipped by dependencies.
+    // Sets the tsBuildInfoFile TypeScript compiler option for this project.
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    // Sets the target TypeScript compiler option for this project.
+    "target": "es2023",
+    // Sets the lib TypeScript compiler option for this project.
+    "lib": ["ES2023"],
+    // Sets the types TypeScript compiler option for this project.
+    "types": ["node"],
+    // Sets the skipLibCheck TypeScript compiler option for this project.
+    "skipLibCheck": true,
 
+    // Groups related TypeScript compiler settings.
     /* Bundler mode */
-    "module": "nodenext", // Match Node's ESM/CommonJS rules for the configuration code executed by tooling.
-    "allowImportingTsExtensions": true, // Allow TypeScript file extensions in imports because the tooling resolves them.
-    "verbatimModuleSyntax": true, // Keep import/export usage explicit, including the distinction for type-only imports.
-    "moduleDetection": "force", // Treat the configuration as a module even if it has no import/export statement.
-    "noEmit": true, // Type-check the configuration but leave JavaScript generation to the build tool.
+    // Sets the module TypeScript compiler option for this project.
+    "module": "nodenext",
+    // Sets the allowImportingTsExtensions TypeScript compiler option for this project.
+    "allowImportingTsExtensions": true,
+    // Sets the verbatimModuleSyntax TypeScript compiler option for this project.
+    "verbatimModuleSyntax": true,
+    // Sets the moduleDetection TypeScript compiler option for this project.
+    "moduleDetection": "force",
+    // Sets the noEmit TypeScript compiler option for this project.
+    "noEmit": true,
 
+    // Groups related TypeScript compiler settings.
     /* Linting */
-    "noUnusedLocals": true, // Report local declarations that do not contribute to the configuration.
-    "noUnusedParameters": true, // Report unused function parameters in the configuration.
-    "erasableSyntaxOnly": true, // Use TypeScript syntax that can be erased without additional runtime transforms.
-    "noFallthroughCasesInSwitch": true // Prevent an unintended switch case from running the next case's statements.
+    // Sets the noUnusedLocals TypeScript compiler option for this project.
+    "noUnusedLocals": true,
+    // Sets the noUnusedParameters TypeScript compiler option for this project.
+    "noUnusedParameters": true,
+    // Sets the erasableSyntaxOnly TypeScript compiler option for this project.
+    "erasableSyntaxOnly": true,
+    // Sets the noFallthroughCasesInSwitch TypeScript compiler option for this project.
+    "noFallthroughCasesInSwitch": true
+  // Groups related TypeScript compiler settings.
   },
-  "include": ["vite.config.ts"] // Apply these settings specifically to Vite's TypeScript configuration file.
+  // Sets the include TypeScript compiler option for this project.
+  "include": ["vite.config.ts"]
+// Groups related TypeScript compiler settings.
 }
