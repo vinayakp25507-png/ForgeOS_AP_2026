@@ -1,41 +1,79 @@
-import { Router } from 'express' // Imports Express types or tools used to build the HTTP API.
-import { requireAuth } from '../../middleware/auth.middleware.js' // Imports { requireAuth } from '../../middleware/auth.middleware.js' so this module can reuse that functionality.
-import { validateRequest } from '../../middleware/validate.middleware.js' // Imports { validateRequest } from '../../middleware/validate.middleware.js' so this module can reuse that functionality.
-import * as controller from './milestones.controller.js' // Imports * as controller from './milestones.controller.js' so this module can reuse that functionality.
-import { // Imports { from  so this module can reuse that functionality.
-  createMilestoneSchema, // Separates this argument or property from the next item in the surrounding call or object.
-  milestoneIdParamsSchema, // Separates this argument or property from the next item in the surrounding call or object.
-  updateMilestoneSchema, // Separates this argument or property from the next item in the surrounding call or object.
-} from './milestones.validator.js' // Provides `} from './milestones.validator.js'` as part of this server module.
-import { projectScopedIdParamsSchema } from '../projects/projects.validator.js' // Imports { projectScopedIdParamsSchema } from '../projects/projects.validator.js' so this module can reuse that functionality.
+// Imports Router from express so this module can reuse that component, helper, or library.
+import { Router } from 'express'
+// Imports requireAuth from ../../middleware/auth.middleware.js so this module can reuse that component, helper, or library.
+import { requireAuth } from '../../middleware/auth.middleware.js'
+// Imports validateRequest from ../../middleware/validate.middleware.js so this module can reuse that component, helper, or library.
+import { validateRequest } from '../../middleware/validate.middleware.js'
+// Imports * as controller from ./milestones.controller.js so this module can reuse that component, helper, or library.
+import * as controller from './milestones.controller.js'
+// Continues the component or data expression so its related values and behavior stay grouped together.
+import {
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  createMilestoneSchema,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  milestoneIdParamsSchema,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  updateMilestoneSchema,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+} from './milestones.validator.js'
+// Imports projectScopedIdParamsSchema from ../projects/projects.validator.js so this module can reuse that component, helper, or library.
+import { projectScopedIdParamsSchema } from '../projects/projects.validator.js'
 
-export const milestonesRoutes = Router() // Provides `export const milestonesRoutes = Router()` as part of this server module.
-milestonesRoutes.use(requireAuth) // Provides `milestonesRoutes.use(requireAuth)` as part of this server module.
-milestonesRoutes.post( // Provides `milestonesRoutes.post(` as part of this server module.
-  '/projects/:projectId/milestones', // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('params', projectScopedIdParamsSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('body', createMilestoneSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  controller.create, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-milestonesRoutes.get( // Provides `milestonesRoutes.get(` as part of this server module.
-  '/projects/:projectId/milestones', // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('params', projectScopedIdParamsSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  controller.list, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-milestonesRoutes.get( // Provides `milestonesRoutes.get(` as part of this server module.
-  '/milestones/:id', // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('params', milestoneIdParamsSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  controller.detail, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-milestonesRoutes.patch( // Provides `milestonesRoutes.patch(` as part of this server module.
-  '/milestones/:id', // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('params', milestoneIdParamsSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('body', updateMilestoneSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  controller.update, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-milestonesRoutes.delete( // Provides `milestonesRoutes.delete(` as part of this server module.
-  '/milestones/:id', // Separates this argument or property from the next item in the surrounding call or object.
-  validateRequest('params', milestoneIdParamsSchema), // Separates this argument or property from the next item in the surrounding call or object.
-  controller.remove, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Defines the HTTP endpoints and middleware chain for the milestones API.
+// Stores the value in milestonesRoutes so later lines can reuse this data or behavior for the current feature.
+export const milestonesRoutes = Router()
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.use(requireAuth)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.post(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  '/projects/:projectId/milestones',
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('params', projectScopedIdParamsSchema),
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('body', createMilestoneSchema),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  controller.create,
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.get(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  '/projects/:projectId/milestones',
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('params', projectScopedIdParamsSchema),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  controller.list,
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.get(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  '/milestones/:id',
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('params', milestoneIdParamsSchema),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  controller.detail,
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.patch(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  '/milestones/:id',
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('params', milestoneIdParamsSchema),
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('body', updateMilestoneSchema),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  controller.update,
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+milestonesRoutes.delete(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  '/milestones/:id',
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateRequest('params', milestoneIdParamsSchema),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  controller.remove,
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
