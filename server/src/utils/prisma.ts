@@ -1,7 +1,11 @@
-import { PrismaClient } from '@prisma/client' // Uses Prisma's generated types and client to work safely with database records.
-import { env } from '../config/env.js' // Uses validated environment settings so invalid configuration is caught at startup.
+// Imports PrismaClient from @prisma/client so this module can reuse that component, helper, or library.
+import { PrismaClient } from '@prisma/client'
+// Imports env from ../config/env.js so this module can reuse that component, helper, or library.
+import { env } from '../config/env.js'
 
-export const prisma = new PrismaClient({ // Opens the object or callback body that groups the settings for this operation.
-  log: env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'], // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Creates the shared Prisma client used to access PostgreSQL.
+// Stores the value in prisma so later lines can reuse this data or behavior for the current feature.
+export const prisma = new PrismaClient({
+  // Sets the log field so the surrounding object or component receives this setting.
+  log: env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
