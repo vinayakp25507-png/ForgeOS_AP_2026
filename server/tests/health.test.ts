@@ -1,60 +1,79 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest' // Imports test-runner helpers for defining and checking this behavior.
+// Imports beforeEach, describe, expect, it, vi from vitest so this module can reuse that component, helper, or library.
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('../src/utils/prisma.js', () => ({ // Configures the test double or mock so this test can control the external behavior it depends on.
-  prisma: { // Sets `prisma` to the prisma value.
-    $queryRaw: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  }, // Closes the current call, object, or collection so the surrounding expression can continue.
-})) // Provides `}))` as part of this server module.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vi.mock('../src/utils/prisma.js', () => ({
+  // Sets the prisma field so the surrounding object or component receives this setting.
+  prisma: {
+    // Sets the $queryRaw field so the surrounding object or component receives this setting.
+    $queryRaw: vi.fn(),
+  // Closes the current block or object so the grouped statements or settings end here.
+  },
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}))
 
-import request from 'supertest' // Imports an HTTP test client so API routes can be exercised without a browser.
-import { createApp } from '../src/app.js' // Imports { createApp } from '../src/app.js' so this module can reuse that functionality.
-import { prisma } from '../src/utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
+// Imports request from supertest so this module can reuse that component, helper, or library.
+import request from 'supertest'
+// Imports createApp from ../src/app.js so this module can reuse that component, helper, or library.
+import { createApp } from '../src/app.js'
+// Imports prisma from ../src/utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from '../src/utils/prisma.js'
 
-describe('GET /api/v1/health', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  beforeEach(() => { // Opens the function, callback, or control-flow block that groups the related statements.
-    vi.clearAllMocks() // Configures the test double or mock so this test can control the external behavior it depends on.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('GET /api/v1/health', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  beforeEach(() => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    vi.clearAllMocks()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  describe('Daily log authentication boundary', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    it('rejects daily log requests until shared authentication provides a user', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-      const response = await request(createApp()) // Stores this intermediate `response` value so later lines can use it.
-        .get('/api/v1/projects/1/daily-logs') // Provides `.get('/api/v1/projects/1/daily-logs')` as part of this server module.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('reports the API and database as healthy when Prisma can query', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    vi.mocked(prisma.$queryRaw).mockResolvedValue([{ '?column?': 1 }])
 
-      expect(response.status).toBe(401) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      expect(response.body).toMatchObject({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-        success: false, // Separates this argument or property from the next item in the surrounding call or object.
-        message: 'Authentication is required.', // Separates this argument or property from the next item in the surrounding call or object.
-        data: null, // Separates this argument or property from the next item in the surrounding call or object.
-        error: { code: 'UNAUTHENTICATED' }, // Separates this argument or property from the next item in the surrounding call or object.
-      }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Stores the value in response so later lines can reuse this data or behavior for the current feature.
+    const response = await request(createApp()).get('/api/v1/health')
 
-  it('reports the API and database as healthy when Prisma can query', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    vi.mocked(prisma.$queryRaw).mockResolvedValue([{ '?column?': 1 }]) // Configures the test double or mock so this test can control the external behavior it depends on.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(response.status).toBe(200)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(response.body).toEqual({
+      // Sets the success field so the surrounding object or component receives this setting.
+      success: true,
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the status field so the surrounding object or component receives this setting.
+        status: 'ok',
+        // Sets the api field so the surrounding object or component receives this setting.
+        api: 'ok',
+        // Sets the server field so the surrounding object or component receives this setting.
+        server: 'ok',
+        // Sets the database field so the surrounding object or component receives this setting.
+        database: 'connected',
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-    const response = await request(createApp()).get('/api/v1/health') // Stores this intermediate `response` value so later lines can use it.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('reports a degraded API when Prisma cannot connect', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error('database unavailable'))
 
-    expect(response.status).toBe(200) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(response.body).toEqual({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      success: true, // Separates this argument or property from the next item in the surrounding call or object.
-      data: { // Sets `data` to the values to write to the database.
-        status: 'ok', // Separates this argument or property from the next item in the surrounding call or object.
-        api: 'ok', // Separates this argument or property from the next item in the surrounding call or object.
-        server: 'ok', // Separates this argument or property from the next item in the surrounding call or object.
-        database: 'connected', // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Stores the value in response so later lines can reuse this data or behavior for the current feature.
+    const response = await request(createApp()).get('/api/v1/health')
 
-  it('reports a degraded API when Prisma cannot connect', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error('database unavailable')) // Configures the test double or mock so this test can control the external behavior it depends on.
-
-    const response = await request(createApp()).get('/api/v1/health') // Stores this intermediate `response` value so later lines can use it.
-
-    expect(response.status).toBe(503) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(response.body.data.database).toBe('disconnected') // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(response.body.success).toBe(false) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Checks expected behavior for health.test using the project test runner.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(response.status).toBe(503)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(response.body.data.database).toBe('disconnected')
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(response.body.success).toBe(false)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
