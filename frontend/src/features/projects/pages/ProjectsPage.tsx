@@ -1,528 +1,306 @@
-<<<<<<< HEAD
-import {useMemo, useState, useEffect} from 'react'
-import {
-  FolderKanban, Plus, Search, Pencil, Trash2, X,
-  MapPin, CalendarDays, Users, Wallet
-} from 'lucide-react'
-import { AppShell } from '../../app-shell/components/AppShell'
-import { getCurrentRole, getCurrentUser } from '../../authentication/utils/permissions'
-
-type Project = {
-  id: number
-  code: string
-  name: string
-  location: string
-  manager: string
-  managerEmail?: string
-  createdByEmail?: string
-  budget: string
-  startDate: string
-  endDate: string
-  status: 'Planning' | 'In Progress' | 'Completed' | 'On Hold'
-}
-
-const initialProjects: Project[] = [
-  { id: 1, code: 'PRJ-001', name: 'Green Valley Residency', location: 'Gurugram, Haryana', manager: 'Aarav Sharma', budget: '₹2.5 Cr', startDate: '2026-01-10', endDate: '2026-12-20', status: 'In Progress' },
-  { id: 2, code: 'PRJ-002', name: 'Skyline Commercial Hub', location: 'Delhi, India', manager: 'Priya Mehta', budget: '₹4.2 Cr', startDate: '2026-02-01', endDate: '2027-03-15', status: 'In Progress' },
-  { id: 3, code: 'PRJ-003', name: 'Riverside Heights', location: 'Noida, UP', manager: 'Rohan Verma', budget: '₹1.8 Cr', startDate: '2025-06-01', endDate: '2026-08-30', status: 'Completed' },
-  { id: 4, code: 'PRJ-004', name: 'Urban Square', location: 'Jaipur, Rajasthan', manager: 'Neha Kapoor', budget: '₹3.1 Cr', startDate: '2026-09-01', endDate: '2027-10-30', status: 'Planning' },
-]
-
-const emptyForm = {
-  name: '', location: '', manager: '', managerEmail: '', budget: '',
-  startDate: '', endDate: '', status: 'Planning' as Project['status'],
-}
-
-const statusStyles: Record<Project['status'], string> = {
-  'Planning': 'bg-[#F1EAF6] text-[#806B96]',
-  'In Progress': 'bg-[#F5EDE1] text-[#9A7950]',
-  'Completed': 'bg-[#E8EFE5] text-[#617858]',
-  'On Hold': 'bg-[#F8ECEA] text-[#9B625A]',
-}
-
-export function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>(() => {
-    try {
-      const saved = localStorage.getItem('forgeos_projects')
-      return saved ? JSON.parse(saved) as Project[] : initialProjects
-    } catch {
-      return initialProjects
-    }
-  })
-
-  useEffect(() => {
-    localStorage.setItem('forgeos_projects', JSON.stringify(projects))
-  }, [projects])
-
-  const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState('All')
-  const [showForm, setShowForm] = useState(false)
-  const [editing, setEditing] = useState<Project | null>(null)
-  const [form, setForm] = useState(emptyForm)
-
-  const currentUser = getCurrentUser()
-  const currentRole = getCurrentRole()
-
-  const registeredUsers = (() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('forgeos_users') || '[]')
-      return Array.isArray(saved) ? saved : []
-    } catch {
-      return []
-    }
-  })()
-
-  const currentProfile = registeredUsers.find((user: any) =>
-    String(user.email || '').trim().toLowerCase() ===
-    String(currentUser?.email || '').trim().toLowerCase()
-  )
-  const currentUserName = String(
-    currentUser?.name || currentProfile?.name || ''
-  ).trim()
-  const currentUserEmail = String(currentUser?.email || '').trim().toLowerCase()
-
-  const managerOptions = Array.from(new Set([
-    'Aarav Sharma', 'Priya Mehta', 'Rohan Verma', 'Neha Kapoor',
-    ...registeredUsers
-      .filter((user: any) =>
-        ['project manager', 'pm'].includes(String(user.role || '').toLowerCase()) &&
-        String(user.status || 'Active').toLowerCase() === 'active'
-      )
-      .map((user: any) => String(user.name || '').trim())
-      .filter(Boolean),
-  ]))
-
-  const visibleProjects = currentRole === 'Admin'
-    ? projects
-    : projects.filter((project: any) => {
-        const assignedName = String(project.manager || '').trim().toLowerCase()
-        const assignedEmail = String(project.managerEmail || '').trim().toLowerCase()
-        return (
-          (currentUserName !== '' && assignedName === currentUserName.toLowerCase()) ||
-          (currentUserEmail !== '' && (assignedEmail === currentUserEmail || String(project.createdByEmail || '').trim().toLowerCase() === currentUserEmail))
-        )
-      })
-
-  const filtered = useMemo(() => visibleProjects.filter((project) => {
-    const query = search.toLowerCase()
-    const matchesSearch = `${project.name} ${project.code} ${project.location} ${project.manager}`.toLowerCase().includes(query)
-    return matchesSearch && (filter === 'All' || project.status === filter)
-  }), [visibleProjects, search, filter])
-
-  const openAdd = () => {
-    setEditing(null)
-    setForm({
-      ...emptyForm,
-      manager: currentRole === 'Project Manager' ? currentUserName : '',
-      managerEmail: currentRole === 'Project Manager' ? currentUserEmail : '',
-    })
-    setShowForm(true)
-  }
-
-  const openEdit = (project: Project) => {
-    setEditing(project)
-    setForm({
-      name: project.name,
-      location: project.location,
-      manager: project.manager,
-      managerEmail: project.managerEmail || '',
-      budget: project.budget,
-      startDate: project.startDate,
-      endDate: project.endDate,
-      status: project.status,
-    })
-    setShowForm(true)
-  }
-
-  const saveProject = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    if (form.startDate && form.endDate && form.endDate < form.startDate) {
-      window.alert('Project end date cannot be earlier than its start date.')
-      return
-    }
-
-    const duplicateName = projects.some((project) =>
-      project.name.trim().toLowerCase() === form.name.trim().toLowerCase() &&
-      project.id !== editing?.id
-    )
-    if (duplicateName) {
-      window.alert('A project with this name already exists.')
-      return
-    }
-
-    if (!form.name.trim() || !form.location.trim() || !form.manager.trim()) {
-      window.alert('Please complete all required project details.')
-      return
-    }
-    if (editing) {
-      setProjects((current) => current.map((p) =>
-        p.id === editing.id ? { ...p, ...form } : p
-      ))
-    } else {
-      const enteredEmail = String(form.managerEmail || '').trim().toLowerCase()
-      const assignedProfile = registeredUsers.find((user: any) =>
-        enteredEmail && String(user.email || '').trim().toLowerCase() === enteredEmail
-      )
-      const assignedManager = String(form.manager || assignedProfile?.name || '').trim()
-
-      if (!assignedManager) {
-        window.alert(currentRole === 'Project Manager'
-          ? 'Your account name is missing. Please ask the Administrator to update your user profile.'
-          : 'Please enter a Project Manager name or registered email.')
-        return
-      }
-
-      setProjects((current) => [...current, {
-        id: Date.now(),
-        code: `PRJ-${String(current.length + 1).padStart(3, '0')}`,
-        ...form,
-        manager: assignedManager,
-        managerEmail: String(assignedProfile?.email || enteredEmail || '').trim().toLowerCase(),
-        createdByEmail: currentUserEmail,
-      }])
-    }
-    setShowForm(false)
-  }
-
-  const deleteProject = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      setProjects((current) => current.filter((p) => p.id !== id))
-    }
-  }
-
-  const stats = [
-    { label: 'Total Projects', value: visibleProjects.length, icon: FolderKanban },
-    { label: 'In Progress', value: visibleProjects.filter((p) => p.status === 'In Progress').length, icon: CalendarDays },
-    { label: 'Completed', value: visibleProjects.filter((p) => p.status === 'Completed').length, icon: Users },
-    { label: 'On Hold', value: visibleProjects.filter((p) => p.status === 'On Hold').length, icon: Wallet },
-=======
+// Imports useMemo, useState from react so this module can reuse that component, helper, or library.
 import { useMemo, useState } from 'react'
+// Imports CalendarDays, FolderKanban, MapPin, Search, Users, Wallet from lucide-react so this module can reuse that component, helper, or library.
 import { CalendarDays, FolderKanban, MapPin, Search, Users, Wallet } from 'lucide-react'
+// Imports AppShell from ../../app-shell/components/AppShell so this module can reuse that component, helper, or library.
 import { AppShell } from '../../app-shell/components/AppShell'
+// Imports useAuth from ../../authentication/auth/useAuth so this module can reuse that component, helper, or library.
 import { useAuth } from '../../authentication/auth/useAuth'
+// Imports useProjects from ../useProjects so this module can reuse that component, helper, or library.
 import { useProjects } from '../useProjects'
+// Imports type  Project from ../projects-context so this module can reuse that component, helper, or library.
 import type { Project } from '../projects-context'
 
+// Stores the value in statusLabels so later lines can reuse this data or behavior for the current feature.
 const statusLabels: Record<Project['status'], string> = {
+  // Sets the PLANNING field so the surrounding object or component receives this setting.
   PLANNING: 'Planning',
+  // Sets the ACTIVE field so the surrounding object or component receives this setting.
   ACTIVE: 'Active',
+  // Sets the ON_HOLD field so the surrounding object or component receives this setting.
   ON_HOLD: 'On Hold',
+  // Sets the COMPLETED field so the surrounding object or component receives this setting.
   COMPLETED: 'Completed',
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Stores the value in statusStyles so later lines can reuse this data or behavior for the current feature.
 const statusStyles: Record<Project['status'], string> = {
+  // Sets the PLANNING field so the surrounding object or component receives this setting.
   PLANNING: 'bg-[#F1EAF6] text-[#806B96]',
+  // Sets the ACTIVE field so the surrounding object or component receives this setting.
   ACTIVE: 'bg-[#F5EDE1] text-[#9A7950]',
+  // Sets the COMPLETED field so the surrounding object or component receives this setting.
   COMPLETED: 'bg-[#E8EFE5] text-[#617858]',
+  // Sets the ON_HOLD field so the surrounding object or component receives this setting.
   ON_HOLD: 'bg-[#F8ECEA] text-[#9B625A]',
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines formatDate so this module can perform its named task when needed.
 function formatDate(value: string | null) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return value ? new Date(value).toLocaleDateString() : 'Not specified'
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines formatBudget so this module can perform its named task when needed.
 function formatBudget(value: string | number) {
+  // Stores the value in amount so later lines can reuse this data or behavior for the current feature.
   const amount = Number(value)
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return Number.isFinite(amount)
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(amount)
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     : 'Not specified'
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines ProjectsPage so this module can perform its named task when needed.
 export function ProjectsPage() {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const { user } = useAuth()
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const { projects, isLoading, error, retry } = useProjects()
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const [search, setSearch] = useState('')
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const [filter, setFilter] = useState<'ALL' | Project['status']>('ALL')
 
+  // Caches filtered so its calculation is repeated only when its inputs change.
+  // Caches filtered so its calculation is repeated only when its inputs change.
   const filtered = useMemo(() => projects.filter((project) => {
+    // Stores the value in query so later lines can reuse this data or behavior for the current feature.
     const query = search.trim().toLowerCase()
+    // Stores the value in matchesSearch so later lines can reuse this data or behavior for the current feature.
     const matchesSearch = `${project.name} ${project.code} ${project.location} ${project.assignedPm?.name ?? ''}`
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       .toLowerCase()
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       .includes(query)
+    // Returns the result so the caller or React receives the value or interface this function provides.
     return matchesSearch && (filter === 'ALL' || project.status === filter)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
   }), [projects, search, filter])
 
+  // Stores the value in stats so later lines can reuse this data or behavior for the current feature.
   const stats = [
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Accessible Projects', value: projects.length, icon: FolderKanban },
+    // Keeps only items matching this condition so the result contains relevant data.
     { label: 'Active', value: projects.filter((project) => project.status === 'ACTIVE').length, icon: CalendarDays },
+    // Keeps only items matching this condition so the result contains relevant data.
     { label: 'Completed', value: projects.filter((project) => project.status === 'COMPLETED').length, icon: Users },
+    // Keeps only items matching this condition so the result contains relevant data.
     { label: 'On Hold', value: projects.filter((project) => project.status === 'ON_HOLD').length, icon: Wallet },
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+  // Continues the component or data expression so its related values and behavior stay grouped together.
   ]
 
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return (
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     <AppShell currentPath="/app/projects">
+      {/* Starts the <div> element to organize this part of the interface. */}
       <div className="mx-auto max-w-[1600px] space-y-7 p-5 sm:p-7 lg:p-8">
-<<<<<<< HEAD
-        <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-sm text-[#8E827A]">Workspace / Projects</p>
-            <h1 className="mt-1 text-2xl font-semibold text-[#323232] sm:text-3xl">Project Management</h1>
-            <p className="mt-2 text-sm text-[#8E827A]">Create, organize and monitor your construction projects.</p>
-          </div>
-          {(currentRole === 'Admin' || currentRole === 'Project Manager') && <button onClick={openAdd} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#323232] px-5 py-3 text-sm font-medium text-white hover:bg-[#1E1E1E]">
-            <Plus size={17} /> Create Project
-          </button>}
-        </section>
-
-=======
+        {/* Starts the <section> element to group related content into a meaningful region. */}
         <section>
+          {/* Starts the <p> element to organize this part of the interface. */}
           <p className="text-sm text-[#8E827A]">Workspace / Projects</p>
+          {/* Starts the <h1> element to organize this part of the interface. */}
           <h1 className="mt-1 text-2xl font-semibold text-[#323232] sm:text-3xl">Project Management</h1>
+          {/* Starts the <p> element to organize this part of the interface. */}
           <p className="mt-2 text-sm text-[#8E827A]">
+            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
             {user?.role === 'ADMIN' ? 'Projects available to your administrator account.' : 'Projects assigned to your account.'}
+          {/* Closes the <p> element so later content is no longer part of this region. */}
           </p>
+        {/* Closes the <section> element so later content is no longer part of this region. */}
         </section>
 
+        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
         {error && (
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           <section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E8C7BD] bg-white p-5">
+            {/* Starts the <div> element to organize this part of the interface. */}
             <div>
+              {/* Starts the <h2> element to organize this part of the interface. */}
               <h2 className="font-semibold text-[#8A5143]">Projects could not be loaded</h2>
+              {/* Starts the <p> element to organize this part of the interface. */}
               <p className="mt-1 text-sm text-[#8E827A]">{error}</p>
+            {/* Closes the <div> element so later content is no longer part of this region. */}
             </div>
+            {/* Starts the <button> element to provide an action the user can activate. */}
             <button type="button" onClick={retry} className="rounded-xl bg-[#323232] px-4 py-2 text-sm font-medium text-white">Retry</button>
+          {/* Closes the <section> element so later content is no longer part of this region. */}
           </section>
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         )}
 
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+        {/* Starts the <section> element to group related content into a meaningful region. */}
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
           {stats.map((stat) => {
+            // Stores the value in Icon so later lines can reuse this data or behavior for the current feature.
             const Icon = stat.icon
+            // Returns the result so the caller or React receives the value or interface this function provides.
             return (
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               <div key={stat.label} className="rounded-2xl border border-[#C8BCB4]/70 bg-white p-5 shadow-sm">
+                {/* Starts the <div> element to organize this part of the interface. */}
                 <div className="flex items-center justify-between">
+                  {/* Starts the <div> element to organize this part of the interface. */}
                   <div>
+                    {/* Starts the <p> element to organize this part of the interface. */}
                     <p className="text-sm text-[#8E827A]">{stat.label}</p>
-<<<<<<< HEAD
-                    <h2 className="mt-3 text-3xl font-semibold text-[#323232]">{stat.value}</h2>
-=======
+                    {/* Starts the <h2> element to organize this part of the interface. */}
                     <h2 className="mt-3 text-3xl font-semibold text-[#323232]">{isLoading ? '—' : stat.value}</h2>
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+                  {/* Closes the <div> element so later content is no longer part of this region. */}
                   </div>
+                  {/* Starts the <div> element to organize this part of the interface. */}
                   <div className="rounded-xl bg-[#F7F3EE] p-3 text-[#595552]"><Icon size={21} /></div>
+                {/* Closes the <div> element so later content is no longer part of this region. */}
                 </div>
+              {/* Closes the <div> element so later content is no longer part of this region. */}
               </div>
+            // Closes this function call or grouped expression so the surrounding code can continue.
             )
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           })}
+        {/* Closes the <section> element so later content is no longer part of this region. */}
         </section>
 
+        {/* Starts the <section> element to group related content into a meaningful region. */}
         <section className="overflow-hidden rounded-2xl border border-[#C8BCB4]/70 bg-white">
+          {/* Starts the <div> element to organize this part of the interface. */}
           <div className="flex flex-col justify-between gap-4 border-b border-[#E8DCD4] p-5 sm:flex-row sm:items-center">
+            {/* Starts the <div> element to organize this part of the interface. */}
             <div>
-<<<<<<< HEAD
-              <h2 className="font-semibold text-[#323232]">{currentRole === 'Admin' ? 'All Projects' : 'My Projects'}</h2>
-              <p className="mt-1 text-xs text-[#8E827A]">{filtered.length} projects found</p>
-=======
+              {/* Starts the <h2> element to organize this part of the interface. */}
               <h2 className="font-semibold text-[#323232]">{user?.role === 'ADMIN' ? 'All Accessible Projects' : 'My Projects'}</h2>
+              {/* Starts the <p> element to organize this part of the interface. */}
               <p className="mt-1 text-xs text-[#8E827A]">{isLoading ? 'Loading projects…' : `${filtered.length} projects found`}</p>
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+            {/* Closes the <div> element so later content is no longer part of this region. */}
             </div>
+            {/* Starts the <div> element to organize this part of the interface. */}
             <div className="flex flex-col gap-3 sm:flex-row">
+              {/* Starts the <div> element to organize this part of the interface. */}
               <div className="flex items-center gap-2 rounded-xl border border-[#C8BCB4] px-3 py-2">
+                {/* Starts the <Search> element to organize this part of the interface. */}
                 <Search size={17} className="text-[#8E827A]" />
-<<<<<<< HEAD
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search projects..." className="w-full bg-transparent text-sm outline-none sm:w-48" />
-              </div>
-              <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-xl border border-[#C8BCB4] bg-white px-3 py-2 text-sm text-[#595552] outline-none">
-                <option>All</option>
-                <option>Planning</option>
-                <option>In Progress</option>
-                <option>Completed</option>
-                <option>On Hold</option>
-=======
+                {/* Starts the <input> element to collect or display a value. */}
                 <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search projects..." className="w-full bg-transparent text-sm outline-none sm:w-48" />
+              {/* Closes the <div> element so later content is no longer part of this region. */}
               </div>
+              {/* Starts the <select> element to collect or display a value. */}
               <select
+                /* Supplies the value shown by this form control so the user sees the current data. */
                 value={filter}
+                /* Connects the Change event to its handler so the interface can respond to interaction. */
                 onChange={(event) => setFilter(event.target.value as typeof filter)}
+                /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className="rounded-xl border border-[#C8BCB4] bg-white px-3 py-2 text-sm text-[#595552] outline-none"
+                /* Provides aria-label accessibility information so assistive technology can describe the element. */
                 aria-label="Filter projects by status"
+              /* Continues the component or data expression so its related values and behavior stay grouped together. */
+              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               >
+                {/* Starts the <option> element to organize this part of the interface. */}
                 <option value="ALL">All statuses</option>
+                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                 {Object.entries(statusLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+              {/* Closes the <select> element so later content is no longer part of this region. */}
               </select>
+            {/* Closes the <div> element so later content is no longer part of this region. */}
             </div>
+          {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
 
+          {/* Starts the <div> element to organize this part of the interface. */}
           <div className="overflow-x-auto">
+            {/* Starts the <table> element to organize this part of the interface. */}
             <table className="w-full min-w-[950px] text-left">
+              {/* Starts the <thead> element to organize this part of the interface. */}
               <thead className="bg-[#F7F3EE] text-xs text-[#8E827A]">
+                {/* Starts the <tr> element to organize this part of the interface. */}
                 <tr>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Project</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Location</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Project Manager</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Timeline</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Budget</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 font-medium">Status</th>
+                  {/* Starts the <th> element to organize this part of the interface. */}
                   <th className="px-5 py-4 text-right font-medium">Actions</th>
+                {/* Closes the <tr> element so later content is no longer part of this region. */}
                 </tr>
+              {/* Closes the <thead> element so later content is no longer part of this region. */}
               </thead>
+              {/* Starts the <tbody> element to organize this part of the interface. */}
               <tbody className="divide-y divide-[#E8DCD4]">
-<<<<<<< HEAD
-                {filtered.map((project) => (
-=======
+                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                 {isLoading ? (
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   <tr><td colSpan={7} className="px-5 py-12 text-center text-sm text-[#8E827A]">Loading accessible projects…</td></tr>
+                // Transforms each collection item so the corresponding values or interface elements can be produced.
                 ) : filtered.map((project) => (
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   <tr key={project.id} className="hover:bg-[#F7F3EE]/60">
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4">
+                      {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="text-sm font-medium text-[#323232]">{project.name}</p>
+                      {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="mt-1 text-xs text-[#8E827A]">{project.code}</p>
+                    {/* Closes the <td> element so later content is no longer part of this region. */}
                     </td>
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4 text-sm text-[#595552]"><span className="flex items-center gap-1"><MapPin size={14} />{project.location}</span></td>
-<<<<<<< HEAD
-                    <td className="px-5 py-4">
-                      {currentRole === 'Admin' ? (
-<select
-                        value={project.manager}
-                        onChange={(e) => setProjects(current => current.map(p =>
-                          p.id === project.id ? { ...p, manager: e.target.value } : p
-                        ))}
-                        className="max-w-[170px] rounded-lg border border-[#C8BCB4] bg-white px-2 py-2 text-sm text-[#595552] outline-none"
-                        aria-label={`Reassign manager for ${project.name}`}
-                      >
-                  {managerOptions.map((manager) => (
-                    <option key={manager} value={manager}>{manager}</option>
-                  ))}
-                      </select>
-
-                      ) : (
-
-                        <span className="text-sm text-[#595552]">{project.manager}</span>
-
-                      )}
-                    </td>
-                    <td className="px-5 py-4 text-xs text-[#595552]">{project.startDate} – {project.endDate}</td>
-                    <td className="px-5 py-4 text-sm text-[#595552]">{project.budget}</td>
-                    <td className="px-5 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[project.status]}`}>{project.status}</span></td>
-                    <td className="px-5 py-4">
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => { window.location.href = `/app/projects/${project.id}` }} title="View project details" className="rounded-lg p-2 text-[#595552] hover:bg-[#F7F3EE]"><span className="text-xs font-semibold">View</span></button>
-                        {currentRole === 'Admin' && <button onClick={() => openEdit(project)} title="Edit project" className="rounded-lg p-2 text-[#595552] hover:bg-[#F7F3EE]"><Pencil size={16} /></button>}
-                        {(currentRole === 'Admin' ||
-                          (currentRole === 'Project Manager' &&
-                           (String(project.managerEmail || '').trim().toLowerCase() === currentUserEmail ||
-                            String(project.createdByEmail || '').trim().toLowerCase() === currentUserEmail))) &&
-                          <button onClick={() => deleteProject(project.id)} title="Delete project" className="rounded-lg p-2 text-[#9B625A] hover:bg-[#F8ECEA]"><Trash2 size={16} /></button>}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-12 text-center text-sm text-[#8E827A]">{currentRole === 'Admin' ? 'No projects yet. Use Create Project to add your first project.' : 'No projects are assigned to your account yet. Please ask an Administrator to assign you to a project.'}</td></tr>}
-=======
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4 text-sm text-[#595552]">{project.assignedPm?.name ?? 'Unassigned'}</td>
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4 text-xs text-[#595552]">{formatDate(project.startDate)} – {formatDate(project.expectedEndDate)}</td>
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4 text-sm text-[#595552]">{formatBudget(project.totalBudget)}</td>
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles[project.status]}`}>{statusLabels[project.status]}</span></td>
+                    {/* Starts the <td> element to organize this part of the interface. */}
                     <td className="px-5 py-4 text-right">
+                      {/* Starts the <button> element to provide an action the user can activate. */}
                       <button type="button" onClick={() => { window.location.href = `/app/projects/${project.id}` }} title={`View ${project.name}`} className="rounded-lg p-2 text-xs font-semibold text-[#595552] hover:bg-[#F7F3EE]">View</button>
+                    {/* Closes the <td> element so later content is no longer part of this region. */}
                     </td>
+                  {/* Closes the <tr> element so later content is no longer part of this region. */}
                   </tr>
                 ))}
+                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                 {!isLoading && !error && filtered.length === 0 && (
                   <tr><td colSpan={7} className="px-5 py-12 text-center text-sm text-[#8E827A]">
+                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                     {projects.length === 0 ? 'No projects are available to your account.' : 'No projects match your search and status filter.'}
+                  {/* Closes the <td> element so later content is no longer part of this region. */}
                   </td></tr>
                 )}
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+              {/* Closes the <tbody> element so later content is no longer part of this region. */}
               </tbody>
+            {/* Closes the <table> element so later content is no longer part of this region. */}
             </table>
+          {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
+        {/* Closes the <section> element so later content is no longer part of this region. */}
         </section>
+      {/* Closes the <div> element so later content is no longer part of this region. */}
       </div>
-<<<<<<< HEAD
-
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4">
-          <form onSubmit={saveProject} className="my-6 w-full max-w-2xl space-y-5 rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-[#323232]">{editing ? 'Edit Project' : 'Create New Project'}</h2>
-                <p className="mt-1 text-sm text-[#8E827A]">Enter the project details below.</p>
-              </div>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg p-2 text-[#8E827A] hover:bg-[#F7F3EE]"><X size={19} /></button>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="text-sm font-medium text-[#595552]">Project Name
-                <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Enter project name" className="mt-2 w-full rounded-xl border border-[#C8BCB4] px-4 py-3 font-normal outline-none" />
-              </label>
-              <label className="text-sm font-medium text-[#595552]">Location
-                <input required value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="City, State" className="mt-2 w-full rounded-xl border border-[#C8BCB4] px-4 py-3 font-normal outline-none" />
-              </label>
-              <div className="text-sm font-medium text-[#595552]">
-                <label htmlFor="project-manager-name">Project Manager Name</label>
-                <input
-                  id="project-manager-name"
-                  required
-                  value={form.manager}
-                  onChange={(e) => setForm({ ...form, manager: e.target.value })}
-                  placeholder="Enter manager name"
-                  className="mt-2 w-full rounded-xl border border-[#C8BCB4] bg-white px-4 py-3 font-normal outline-none read-only:bg-[#F7F3EE]"
-                />
-                {currentRole === 'Admin' && (
-                  <p className="mt-1 text-xs font-normal text-[#8E827A]">Enter a custom name or select a registered manager below.</p>
-                )}
-                {currentRole === 'Admin' && (
-                  <select
-                    value=""
-                    onChange={(e) => {
-                      const selected = registeredUsers.find((user: any) => String(user.email || '') === e.target.value)
-                      if (selected) setForm({ ...form, manager: String(selected.name || ''), managerEmail: String(selected.email || '').toLowerCase() })
-                    }}
-                    className="mt-2 w-full rounded-xl border border-[#C8BCB4] bg-white px-4 py-3 font-normal outline-none"
-                  >
-                    <option value="">Choose a registered Project Manager (optional)</option>
-                    {registeredUsers.filter((user: any) =>
-                      ['project manager', 'pm'].includes(String(user.role || '').toLowerCase()) &&
-                      String(user.status || 'Active').toLowerCase() === 'active'
-                    ).map((user: any) => (
-                      <option key={user.id} value={user.email}>{user.name} — {user.email}</option>
-                    ))}
-                  </select>
-                )}
-                <label htmlFor="project-manager-email" className="mt-3 block">Project Manager Email (optional)</label>
-                <input
-                  id="project-manager-email"
-                  type="email"
-                  value={form.managerEmail || ''}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    const matched = registeredUsers.find((user: any) =>
-                      String(user.email || '').trim().toLowerCase() === value.trim().toLowerCase()
-                    )
-                    setForm({ ...form, managerEmail: value, ...(matched ? { manager: String(matched.name || '') } : {}) })
-                  }}
-                  placeholder="manager@example.com"
-                  className="mt-2 w-full rounded-xl border border-[#C8BCB4] bg-white px-4 py-3 font-normal outline-none read-only:bg-[#F7F3EE]"
-                />
-              </div>
-              <label className="text-sm font-medium text-[#595552]">Estimated Budget
-                <input required value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} placeholder="e.g. ₹2.5 Cr" className="mt-2 w-full rounded-xl border border-[#C8BCB4] px-4 py-3 font-normal outline-none" />
-              </label>
-              <label className="text-sm font-medium text-[#595552]">Start Date
-                <input required type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className="mt-2 w-full rounded-xl border border-[#C8BCB4] px-4 py-3 font-normal outline-none" />
-              </label>
-              <label className="text-sm font-medium text-[#595552]">End Date
-                <input required type="date" min={form.startDate || undefined} value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} className="mt-2 w-full rounded-xl border border-[#C8BCB4] px-4 py-3 font-normal outline-none" />
-              </label>
-              <label className="text-sm font-medium text-[#595552] sm:col-span-2">Project Status
-                <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as Project['status'] })} className="mt-2 w-full rounded-xl border border-[#C8BCB4] bg-white px-4 py-3 font-normal outline-none">
-                  <option>Planning</option><option>In Progress</option><option>Completed</option><option>On Hold</option>
-                </select>
-              </label>
-            </div>
-            <div className="flex justify-end gap-3 pt-2">
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-[#C8BCB4] px-4 py-2.5 text-sm text-[#595552]">Cancel</button>
-              <button type="submit" className="rounded-xl bg-[#323232] px-5 py-2.5 text-sm font-medium text-white">{editing ? 'Save Changes' : 'Create Project'}</button>
-            </div>
-          </form>
-        </div>
-      )}
-=======
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+    {/* Closes the <AppShell> element so later content is no longer part of this region. */}
     </AppShell>
+  // Closes this function call or grouped expression so the surrounding code can continue.
   )
+// Closes the current block or object so the grouped statements or settings end here.
 }
+// File purpose: Renders the projects screen and coordinates its page-level interactions.
