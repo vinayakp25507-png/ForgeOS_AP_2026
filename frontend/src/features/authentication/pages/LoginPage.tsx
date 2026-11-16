@@ -42,8 +42,6 @@ export function LoginPage() {
             href="/"
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="flex items-center gap-2 rounded-full border border-[#C8BCB4] px-4 py-2.5 text-sm font-medium text-[#595552] transition hover:bg-[#F7F3EE]"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <ArrowLeft> element to organize this part of the interface. */}
             <ArrowLeft size={16} />
@@ -190,4 +188,3 @@ export function LoginPage() {
   )
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the authentication screen and coordinates its page-level interactions.
