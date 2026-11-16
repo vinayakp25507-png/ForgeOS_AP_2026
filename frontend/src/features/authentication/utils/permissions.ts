@@ -1,91 +1,49 @@
-<<<<<<< HEAD
-export type UserRole = 'Admin' | 'Project Manager'
-
-/** The shape stored in localStorage under `forgeos_demo_user`. */
-export interface StoredUser {
-  id?: string | number
-  name?: string
-  email?: string
-  role: 'admin' | 'pm'
-  rememberMe?: boolean
-  /** PM-only: the project assigned at login. */
-  assignedProjectId?: string
-  assignedProjectCode?: string
-  assignedProjectName?: string
-}
-
-/** All projects available for PM selection at login. */
-export const AVAILABLE_PROJECTS = [
-  { id: '1', code: 'PRJ-001', name: 'Green Valley Residency' },
-  { id: '2', code: 'PRJ-002', name: 'Skyline Commercial Hub' },
-  { id: '3', code: 'PRJ-003', name: 'Riverside Heights' },
-  { id: '4', code: 'PRJ-004', name: 'Urban Square' },
-]
-
-/** PM access codes that admin gives to project managers. */
-export const PM_ACCESS_CODES = ['FORGE-PM-2026', 'FORGEOS-SITE', 'PM-ACCESS-01']
-
-export const getCurrentUser = (): StoredUser | null => {
-  try {
-    const storedUser = localStorage.getItem('forgeos_demo_user')
-    return storedUser ? JSON.parse(storedUser) : null
-  } catch {
-    return null
-  }
-}
-
-export const getCurrentRole = (): UserRole | null => {
-  const role = String(getCurrentUser()?.role ?? '').toLowerCase().trim()
-
-  if (role === 'admin') return 'Admin'
-  if (role === 'pm' || role === 'project manager') return 'Project Manager'
-
-  return null
-}
-
-export const hasPermission = (allowedRoles: UserRole[]) => {
-=======
+// Imports getAuthUserSnapshot, type AuthUser from ../auth/session so this module can reuse that component, helper, or library.
 import { getAuthUserSnapshot, type AuthUser } from '../auth/session'
 
+// Continues the component or data expression so its related values and behavior stay grouped together.
 export type UserRole = 'Admin' | 'Project Manager'
 
+// Defines getCurrentUser so this module can perform its named task when needed.
 export function getCurrentUser(): AuthUser | null {
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return getAuthUserSnapshot()
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines getCurrentRole so this module can perform its named task when needed.
 export function getCurrentRole(): UserRole | null {
+  // Stores the value in role so later lines can reuse this data or behavior for the current feature.
   const role = getCurrentUser()?.role
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
   if (role === 'ADMIN') return 'Admin'
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
   if (role === 'PM') return 'Project Manager'
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return null
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines hasPermission so this module can perform its named task when needed.
 export function hasPermission(allowedRoles: UserRole[]): boolean {
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+  // Stores the value in role so later lines can reuse this data or behavior for the current feature.
   const role = getCurrentRole()
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return role !== null && allowedRoles.includes(role)
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
-<<<<<<< HEAD
-export const isAdmin = () => getCurrentRole() === 'Admin'
-export const isProjectManager = () => getCurrentRole() === 'Project Manager'
-
-/** Get the project assigned to the current PM at login. Returns null for admins. */
-export const getAssignedProject = () => {
-  const user = getCurrentUser()
-  if (!user || user.role !== 'pm') return null
-  if (!user.assignedProjectId) return null
-  return {
-    id: user.assignedProjectId,
-    code: user.assignedProjectCode || '',
-    name: user.assignedProjectName || '',
-  }
-=======
+// Defines isAdmin so this module can perform its named task when needed.
 export function isAdmin(): boolean {
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return getCurrentUser()?.role === 'ADMIN'
+// Closes the current block or object so the grouped statements or settings end here.
 }
 
+// Defines isProjectManager so this module can perform its named task when needed.
 export function isProjectManager(): boolean {
+  // Returns the result so the caller or React receives the value or interface this function provides.
   return getCurrentUser()?.role === 'PM'
->>>>>>> 3566074f2a2f684549d478b7530bb924717b2cf7
+// Closes the current block or object so the grouped statements or settings end here.
 }
+// File purpose: Maps the signed-in user's role to frontend permission checks.
