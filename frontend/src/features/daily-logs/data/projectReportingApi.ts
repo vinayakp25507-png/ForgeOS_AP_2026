@@ -297,4 +297,3 @@ export async function deleteProjectMilestone(id: number): Promise<void> {
   await apiRequest<null>(`/milestones/${id}`, { method: 'DELETE' })
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Provides API and data-access helpers for the daily logs feature.
