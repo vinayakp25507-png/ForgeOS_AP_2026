@@ -1,15 +1,12 @@
-# Ignore installed JavaScript dependencies.
+# Keeps node_modules/ out of Git because it is generated or local to a developer's machine.
 node_modules/
-# Ignore local environment files that may contain private settings.
+# Keeps .env* out of Git because it is generated or local to a developer's machine.
 .env*
-# Keep the safe environment-variable template tracked.
-!.env.example
-# Ignore compiled distribution output.
+# Keeps dist/ out of Git because it is generated or local to a developer's machine.
 dist/
-# Ignore generated build output.
+# Keeps build/ out of Git because it is generated or local to a developer's machine.
 build/
-# Ignore generated Next.js files.
+# Keeps .next/ out of Git because it is generated or local to a developer's machine.
 .next/
-# Ignore local application log files.
+# Keeps *.log out of Git because it is generated or local to a developer's machine.
 *.log
-# File purpose: Lists local, generated, and sensitive files Git should not track.
