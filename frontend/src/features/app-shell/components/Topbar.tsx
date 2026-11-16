@@ -1,11 +1,11 @@
 // Imports useEffect, useState from react so this module can reuse that component, helper, or library.
 import { useEffect, useState } from 'react'
-// Imports Bell, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X from lucide-react so this module can reuse that component, helper, or library.
-import { Bell, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
+// Imports Bell, Check, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X from lucide-react so this module can reuse that component, helper, or library.
+import { Bell, Check, ChevronDown, Command, FolderKanban, LogOut, Menu, Search, UserCircle, X } from 'lucide-react'
 // Imports ProjectSelector from ./ProjectSelector so this module can reuse that component, helper, or library.
 import { ProjectSelector } from './ProjectSelector'
-// Imports useAuth from ../../authentication/auth/useAuth so this module can reuse that component, helper, or library.
-import { useAuth } from '../../authentication/auth/useAuth'
+// Imports getCurrentRole, getCurrentUser, getAssignedProject from ../../authentication/utils/permissions so this module can reuse that component, helper, or library.
+import { getCurrentRole, getCurrentUser, getAssignedProject } from '../../authentication/utils/permissions'
 
 // Continues the component or data expression so its related values and behavior stay grouped together.
 interface TopbarProps {
@@ -13,22 +13,36 @@ interface TopbarProps {
   collapsed: boolean
   // Sets the onOpenMobileNav field so the surrounding object or component receives this setting.
   onOpenMobileNav: () => void
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  projectSelector?: {
+    // Sets the value field so the surrounding object or component receives this setting.
+    value: string
+    // Sets the options field so the surrounding object or component receives this setting.
+    options: Array<{ id: string; name: string }>
+    // Sets the onChange field so the surrounding object or component receives this setting.
+    onChange: (value: string) => void
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
 // Closes the current block or object so the grouped statements or settings end here.
 }
 
 // Defines Topbar so this module can perform its named task when needed.
-export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
-  // Calls this helper or component so the feature can perform the operation or render the control represented here.
-  const { user, logout } = useAuth()
-  // Stores the value in isPm so later lines can reuse this data or behavior for the current feature.
-  const isPm = user?.role === 'PM'
+export function Topbar({ collapsed, onOpenMobileNav, projectSelector }: TopbarProps) {
+ // Stores the value in currentRole so later lines can reuse this data or behavior for the current feature.
+ const currentRole = getCurrentRole() || 'Admin'
+ // Stores the value in currentUser so later lines can reuse this data or behavior for the current feature.
+ const currentUser = getCurrentUser()
+ // Stores the value in isPm so later lines can reuse this data or behavior for the current feature.
+ const isPm = currentRole === 'Project Manager'
+ // Stores the value in assigned so later lines can reuse this data or behavior for the current feature.
+ const assigned = getAssignedProject()
 
   // Stores the value in roleTitle so later lines can reuse this data or behavior for the current feature.
   const roleTitle = isPm ? 'Project Manager' : 'Administrator'
   // Stores the value in email so later lines can reuse this data or behavior for the current feature.
-  const email = user?.email ?? ''
+  const email = currentUser?.email || (isPm ? 'pm@forgeos.com' : 'admin@forgeos.com')
   // Stores the value in initials so later lines can reuse this data or behavior for the current feature.
-  const initials = user?.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? ''
+  const initials = isPm ? 'PM' : 'AD'
 
   // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const [profileOpen, setProfileOpen] = useState(false)
@@ -69,6 +83,45 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
     return () => window.removeEventListener('keydown', handleShortcut)
   // Continues the component or data expression so its related values and behavior stay grouped together.
   }, [])
+
+  // Stores the value in handleLogout so later lines can reuse this data or behavior for the current feature.
+  const handleLogout = () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    localStorage.removeItem('forgeos_demo_user')
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    window.location.href = '/'
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+
+  // Stores the value in switchDemoRole so later lines can reuse this data or behavior for the current feature.
+  const switchDemoRole = (nextRole: 'admin' | 'pm') => {
+    // Stores the value in extra so later lines can reuse this data or behavior for the current feature.
+    const extra = nextRole === 'pm' ? {
+      // Sets the assignedProjectId field so the surrounding object or component receives this setting.
+      assignedProjectId: '1',
+      // Sets the assignedProjectCode field so the surrounding object or component receives this setting.
+      assignedProjectCode: 'PRJ-001',
+      // Sets the assignedProjectName field so the surrounding object or component receives this setting.
+      assignedProjectName: 'Green Valley Residency',
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    } : {}
+
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    localStorage.setItem('forgeos_demo_user', JSON.stringify({
+      // Sets the role field so the surrounding object or component receives this setting.
+      role: nextRole,
+      // Sets the email field so the surrounding object or component receives this setting.
+      email: nextRole === 'admin' ? 'admin@forgeos.com' : 'pm@forgeos.com',
+      // Sets the name field so the surrounding object or component receives this setting.
+      name: nextRole === 'admin' ? 'Administrator' : 'Aarav Sharma',
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ...extra,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    window.location.href = nextRole === 'admin' ? '/app/admin/dashboard' : '/app/pm/dashboard'
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
 
   // Stores the value in commands so later lines can reuse this data or behavior for the current feature.
   const commands = [
@@ -112,15 +165,13 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
             type="button"
             /* Provides aria-label accessibility information so assistive technology can describe the element. */
             aria-label="Open navigation"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <Menu> element to organize this part of the interface. */}
             <Menu className="h-5 w-5" />
           {/* Closes the <button> element so later content is no longer part of this region. */}
           </button>
           {/* Starts the <ProjectSelector> element to organize this part of the interface. */}
-          <ProjectSelector />
+          <ProjectSelector {...projectSelector} />
           {/* Starts the <span> element to organize this part of the interface. */}
           <span className="dashboard-live-pill hidden rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide sm:inline-flex">
             {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
@@ -142,8 +193,6 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
             aria-label="Search"
             /* Connects the Click event to its handler so the interface can respond to interaction. */
             onClick={openCommand}
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <Search> element to organize this part of the interface. */}
             <Search className="h-4 w-4" />
@@ -166,8 +215,6 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
             aria-label="Notifications"
             /* Connects the Click event to its handler so the interface can respond to interaction. */
             onClick={() => { setNotificationsOpen((value) => !value); setCommandOpen(false); setProfileOpen(false) }}
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <Bell> element to organize this part of the interface. */}
             <Bell className="h-4 w-4" />
@@ -188,8 +235,6 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
               className="flex items-center gap-2 rounded-xl p-1.5 text-left hover:bg-white/10"
               /* Provides aria-expanded accessibility information so assistive technology can describe the element. */
               aria-expanded={profileOpen}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <div> element to organize this part of the interface. */}
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F2A65A] text-xs font-bold text-[#171717]">
@@ -200,9 +245,9 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
               {/* Starts the <div> element to organize this part of the interface. */}
               <div className="hidden md:block">
                 {/* Starts the <p> element to organize this part of the interface. */}
-                <p className="text-xs font-semibold text-white">{user?.name ?? roleTitle}</p>
+                <p className="text-xs font-semibold text-white">{roleTitle}</p>
                 {/* Starts the <p> element to organize this part of the interface. */}
-                <p className="max-w-40 truncate text-[10px] text-white/40">{roleTitle} · {email}</p>
+                <p className="max-w-40 truncate text-[10px] text-white/40">{email}</p>
               {/* Closes the <div> element so later content is no longer part of this region. */}
               </div>
               {/* Starts the <ChevronDown> element to organize this part of the interface. */}
@@ -220,12 +265,62 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
                   <div className="flex items-center gap-2 text-sm font-semibold text-[#323232]">
                     {/* Starts the <UserCircle> element to organize this part of the interface. */}
                     <UserCircle size={17} />
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
-                    {user?.name ?? roleTitle}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    {roleTitle}
                   {/* Closes the <div> element so later content is no longer part of this region. */}
                   </div>
                   {/* Starts the <p> element to organize this part of the interface. */}
                   <p className="mt-1 truncate text-xs text-[#8E827A]">{email}</p>
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
+                  {isPm && assigned && (
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    <div className="mt-2 rounded-md bg-[#F7F3EE] p-1.5 text-[11px] text-[#595552]">
+                      {/* Starts the <span> element to organize this part of the interface. */}
+                      <span className="font-semibold text-[#9A5E3A]">Assigned Site:</span> {assigned.code}
+                    {/* Closes the <div> element so later content is no longer part of this region. */}
+                    </div>
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
+                  )}
+                {/* Closes the <div> element so later content is no longer part of this region. */}
+                </div>
+                {/* Starts the <div> element to organize this part of the interface. */}
+                <div className="border-b border-[#E8DCD4] px-2 py-2">
+                  {/* Starts the <p> element to organize this part of the interface. */}
+                  <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#A59A93]">
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    Switch Workspace Role
+                  {/* Closes the <p> element so later content is no longer part of this region. */}
+                  </p>
+                  {/* Starts the <button> element to provide an action the user can activate. */}
+                  <button
+                    /* Chooses the element’s browser behavior, such as a button action or input format. */
+                    type="button"
+                    /* Connects the Click event to its handler so the interface can respond to interaction. */
+                    onClick={() => switchDemoRole('admin')}
+                    /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
+                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-[#595552] hover:bg-[#F7F3EE]"
+                  >
+                    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+                    Administrator (All Access)
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    {!isPm && <Check size={15} className="text-[#9A5E3A]" />}
+                  {/* Closes the <button> element so later content is no longer part of this region. */}
+                  </button>
+                  {/* Starts the <button> element to provide an action the user can activate. */}
+                  <button
+                    /* Chooses the element’s browser behavior, such as a button action or input format. */
+                    type="button"
+                    /* Connects the Click event to its handler so the interface can respond to interaction. */
+                    onClick={() => switchDemoRole('pm')}
+                    /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
+                    className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-[#595552] hover:bg-[#F7F3EE]"
+                  >
+                    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+                    Project Manager (Site Scoped)
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    {isPm && <Check size={15} className="text-[#9A5E3A]" />}
+                  {/* Closes the <button> element so later content is no longer part of this region. */}
+                  </button>
                 {/* Closes the <div> element so later content is no longer part of this region. */}
                 </div>
                 {/* Starts the <button> element to provide an action the user can activate. */}
@@ -233,15 +328,13 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
                   /* Chooses the element’s browser behavior, such as a button action or input format. */
                   type="button"
                   /* Connects the Click event to its handler so the interface can respond to interaction. */
-                  onClick={() => { logout(); window.history.replaceState({}, '', '/login'); window.dispatchEvent(new PopStateEvent('popstate')) }}
+                  onClick={handleLogout}
                   /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                   className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8A5143] hover:bg-[#F7F3EE]"
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 >
                   {/* Starts the <LogOut> element to organize this part of the interface. */}
                   <LogOut size={16} />
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   Logout
                 {/* Closes the <button> element so later content is no longer part of this region. */}
                 </button>
@@ -263,7 +356,7 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3"><div><p className="text-sm font-semibold text-white">Notifications</p><p className="mt-0.5 text-[10px] text-white/40">Latest workspace signals</p></div><button type="button" onClick={() => setNotificationsOpen(false)} aria-label="Close notifications" className="text-white/35 hover:text-white"><X size={15} /></button></div>
           {/* Starts the <div> element to organize this part of the interface. */}
           <div className="divide-y divide-white/[0.08]">
-            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+            // Transforms each collection item so the corresponding values or interface elements can be produced.
             {[['Material delivery update', 'Steel delivery checked at Green Valley Residency', '8 min ago'], ['Progress review due', 'Skyline Commercial Hub milestone review is due Friday', '1 hr ago'], ['Daily log submitted', 'Aarav Sharma submitted today’s site log', '2 hr ago']].map(([title, detail, time]) => <button type="button" key={title} onClick={() => setNotificationsOpen(false)} className="flex w-full gap-3 px-4 py-3 text-left hover:bg-white/[0.04]"><span className="dashboard-icon dashboard-icon-amber h-8 w-8 shrink-0 p-2"><Bell size={14} /></span><span className="min-w-0 flex-1"><span className="block text-xs font-semibold text-white">{title}</span><span className="mt-1 block text-[11px] leading-4 text-white/45">{detail}</span><span className="mt-1 block text-[10px] text-white/25">{time}</span></span></button>)}
           {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
@@ -279,7 +372,7 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
           <div className="dashboard-popover w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-[#151a1d] shadow-2xl" onClick={(event) => event.stopPropagation()}>
             {/* Starts the <div> element to organize this part of the interface. */}
             <div className="flex items-center gap-3 border-b border-white/10 px-4"><Search size={17} className="text-white/35" /><input autoFocus value={commandQuery} onChange={(event) => setCommandQuery(event.target.value)} placeholder="Search pages, projects, and tools..." className="h-14 min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/30" /><kbd className="rounded border border-white/10 px-1.5 py-1 text-[10px] text-white/35">ESC</kbd></div>
-            {/* Starts the <div> element to organize this part of the interface. */}
+            // Transforms each collection item so the corresponding values or interface elements can be produced.
             <div className="p-2">{commands.length ? commands.map(({ label, detail, icon: Icon, path }) => <button type="button" key={label} onClick={() => { setCommandOpen(false); window.location.href = path }} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-white/[0.05]"><span className="dashboard-icon dashboard-icon-amber p-2"><Icon size={15} /></span><span><span className="block text-sm font-medium text-white">{label}</span><span className="mt-0.5 block text-xs text-white/40">{detail}</span></span></button>) : <div className="px-3 py-8 text-center text-sm text-white/40">No matching workspace actions.</div>}</div>
           {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
@@ -295,4 +388,3 @@ export function Topbar({ collapsed, onOpenMobileNav }: TopbarProps) {
 }
 // Exports Topbar as this file’s default value so other modules can load the main feature.
 export default Topbar
-// File purpose: Renders the reusable Topbar interface component.
