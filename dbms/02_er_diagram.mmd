@@ -1,535 +1,535 @@
 ---
-title: ForgeOS PostgreSQL Entity Relationship Diagram # Names the diagram shown in rendered documentation.
+# Names the diagram so readers know what system it describes.
+title: ForgeOS PostgreSQL Entity Relationship Diagram
 ---
-%% Begins the entity-relationship diagram.
+%% Declares that the diagram describes database entities and their relationships.
 erDiagram
-    %% Declares the users entity and opens its field list.
+    %% Starts the USERS group in the diagram.
     USERS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the name field.
+        %% Describes a database field or relationship shown in this diagram.
         string name
-        %% Describes the email field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string email UK
-        %% Describes the password hash field.
+        %% Describes a database field or relationship shown in this diagram.
         string password_hash
-        %% Describes the role field.
+        %% Describes a database field or relationship shown in this diagram.
         enum role
-        %% Describes the phone field.
+        %% Describes a database field or relationship shown in this diagram.
         string phone
-        %% Describes the is active field.
+        %% Describes a database field or relationship shown in this diagram.
         boolean is_active
-        %% Describes the last login at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime last_login_at
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the lands entity and opens its field list.
+    %% Starts the LANDS group in the diagram.
     LANDS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the name field.
+        %% Describes a database field or relationship shown in this diagram.
         string name
-        %% Describes the address line field.
+        %% Describes a database field or relationship shown in this diagram.
         string address_line
-        %% Describes the city field.
+        %% Describes a database field or relationship shown in this diagram.
         string city
-        %% Describes the state field.
+        %% Describes a database field or relationship shown in this diagram.
         string state
-        %% Describes the pincode field.
+        %% Describes a database field or relationship shown in this diagram.
         string pincode
-        %% Describes the area value field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal area_value
-        %% Describes the area unit field.
+        %% Describes a database field or relationship shown in this diagram.
         enum area_unit
-        %% Describes the survey number field.
+        %% Describes a database field or relationship shown in this diagram.
         string survey_number
-        %% Describes the owner name field.
+        %% Describes a database field or relationship shown in this diagram.
         string owner_name
-        %% Describes the purchase date field.
+        %% Describes a database field or relationship shown in this diagram.
         date purchase_date
-        %% Describes the purchase cost field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal purchase_cost
-        %% Describes the notes field.
+        %% Describes a database field or relationship shown in this diagram.
         string notes
-        %% Describes the created by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int created_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the projects entity and opens its field list.
+    %% Starts the PROJECTS group in the diagram.
     PROJECTS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the land id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int land_id FK
-        %% Describes the code field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string code UK
-        %% Describes the name field.
+        %% Describes a database field or relationship shown in this diagram.
         string name
-        %% Describes the description field.
+        %% Describes a database field or relationship shown in this diagram.
         string description
-        %% Describes the status field.
+        %% Describes a database field or relationship shown in this diagram.
         enum status
-        %% Describes the start date field.
+        %% Describes a database field or relationship shown in this diagram.
         date start_date
-        %% Describes the expected end date field.
+        %% Describes a database field or relationship shown in this diagram.
         date expected_end_date
-        %% Describes the actual end date field.
+        %% Describes a database field or relationship shown in this diagram.
         date actual_end_date
-        %% Describes the total budget field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal total_budget
-        %% Describes the wastage threshold pct field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal wastage_threshold_pct
-        %% Describes the assigned pm id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int assigned_pm_id FK
-        %% Describes the created by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int created_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the project milestones entity and opens its field list.
+    %% Starts the PROJECT_MILESTONES group in the diagram.
     PROJECT_MILESTONES {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the name field.
+        %% Describes a database field or relationship shown in this diagram.
         string name
-        %% Describes the description field.
+        %% Describes a database field or relationship shown in this diagram.
         string description
-        %% Describes the sequence field.
+        %% Describes a database field or relationship shown in this diagram.
         int sequence
-        %% Describes the planned start date field.
+        %% Describes a database field or relationship shown in this diagram.
         date planned_start_date
-        %% Describes the planned end date field.
+        %% Describes a database field or relationship shown in this diagram.
         date planned_end_date
-        %% Describes the actual start date field.
+        %% Describes a database field or relationship shown in this diagram.
         date actual_start_date
-        %% Describes the actual end date field.
+        %% Describes a database field or relationship shown in this diagram.
         date actual_end_date
-        %% Describes the status field.
+        %% Describes a database field or relationship shown in this diagram.
         enum status
-        %% Describes the progress percent field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal progress_percent
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the materials entity and opens its field list.
+    %% Starts the MATERIALS group in the diagram.
     MATERIALS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the name field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string name UK
-        %% Describes the category field.
+        %% Describes a database field or relationship shown in this diagram.
         enum category
-        %% Describes the unit field.
+        %% Describes a database field or relationship shown in this diagram.
         string unit
-        %% Describes the description field.
+        %% Describes a database field or relationship shown in this diagram.
         string description
-        %% Describes the is active field.
+        %% Describes a database field or relationship shown in this diagram.
         boolean is_active
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the project material plans entity and opens its field list.
+    %% Starts the PROJECT_MATERIAL_PLANS group in the diagram.
     PROJECT_MATERIAL_PLANS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the material id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int material_id FK
-        %% Describes the opening quantity field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal opening_quantity
-        %% Describes the planned quantity field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal planned_quantity
-        %% Describes the planned unit rate field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal planned_unit_rate
-        %% Describes the low stock threshold field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal low_stock_threshold
-        %% Describes the wastage threshold pct field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal wastage_threshold_pct
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the vendors entity and opens its field list.
+    %% Starts the VENDORS group in the diagram.
     VENDORS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the name field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string name UK
-        %% Describes the vendor type field.
+        %% Describes a database field or relationship shown in this diagram.
         enum vendor_type
-        %% Describes the contact person field.
+        %% Describes a database field or relationship shown in this diagram.
         string contact_person
-        %% Describes the phone field.
+        %% Describes a database field or relationship shown in this diagram.
         string phone
-        %% Describes the email field.
+        %% Describes a database field or relationship shown in this diagram.
         string email
-        %% Describes the gstin field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string gstin UK
-        %% Describes the address field.
+        %% Describes a database field or relationship shown in this diagram.
         string address
-        %% Describes the is active field.
+        %% Describes a database field or relationship shown in this diagram.
         boolean is_active
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the project vendor assignments entity and opens its field list.
+    %% Starts the PROJECT_VENDOR_ASSIGNMENTS group in the diagram.
     PROJECT_VENDOR_ASSIGNMENTS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the vendor id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int vendor_id FK
-        %% Describes the assigned by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int assigned_by_id FK
-        %% Describes the assigned at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime assigned_at
-        %% Describes the unassigned at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime unassigned_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the daily logs entity and opens its field list.
+    %% Starts the DAILY_LOGS group in the diagram.
     DAILY_LOGS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the log date field.
+        %% Describes a database field or relationship shown in this diagram.
         date log_date
-        %% Describes the progress percent field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal progress_percent
-        %% Describes the work summary field.
+        %% Describes a database field or relationship shown in this diagram.
         string work_summary
-        %% Describes the weather field.
+        %% Describes a database field or relationship shown in this diagram.
         string weather
-        %% Describes the issues field.
+        %% Describes a database field or relationship shown in this diagram.
         string issues
-        %% Describes the created by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int created_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the labour entries entity and opens its field list.
+    %% Starts the LABOUR_ENTRIES group in the diagram.
     LABOUR_ENTRIES {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the daily log id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int daily_log_id FK
-        %% Describes the trade field.
+        %% Describes a database field or relationship shown in this diagram.
         string trade
-        %% Describes the contractor name field.
+        %% Describes a database field or relationship shown in this diagram.
         string contractor_name
-        %% Describes the head count field.
+        %% Describes a database field or relationship shown in this diagram.
         int head_count
-        %% Describes the hours worked field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal hours_worked
-        %% Describes the remarks field.
+        %% Describes a database field or relationship shown in this diagram.
         string remarks
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the machinery entries entity and opens its field list.
+    %% Starts the MACHINERY_ENTRIES group in the diagram.
     MACHINERY_ENTRIES {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the daily log id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int daily_log_id FK
-        %% Describes the machine name field.
+        %% Describes a database field or relationship shown in this diagram.
         string machine_name
-        %% Describes the operator name field.
+        %% Describes a database field or relationship shown in this diagram.
         string operator_name
-        %% Describes the hours used field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal hours_used
-        %% Describes the fuel litres field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal fuel_litres
-        %% Describes the remarks field.
+        %% Describes a database field or relationship shown in this diagram.
         string remarks
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the stock transactions entity and opens its field list.
+    %% Starts the STOCK_TRANSACTIONS group in the diagram.
     STOCK_TRANSACTIONS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the material id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int material_id FK
-        %% Describes the txn type field.
+        %% Describes a database field or relationship shown in this diagram.
         enum txn_type
-        %% Describes the quantity field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal quantity
-        %% Describes the unit rate field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal unit_rate
-        %% Describes the vendor id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int vendor_id FK
-        %% Describes the bill id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int bill_id FK
-        %% Describes the challan number field.
+        %% Describes a database field or relationship shown in this diagram.
         string challan_number
-        %% Describes the out reason field.
+        %% Describes a database field or relationship shown in this diagram.
         enum out_reason
-        %% Describes the adjustment direction field.
+        %% Describes a database field or relationship shown in this diagram.
         enum adjustment_direction
-        %% Describes the txn date field.
+        %% Describes a database field or relationship shown in this diagram.
         date txn_date
-        %% Describes the daily log id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int daily_log_id FK
-        %% Describes the remarks field.
+        %% Describes a database field or relationship shown in this diagram.
         string remarks
-        %% Describes the created by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int created_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the is voided field.
+        %% Describes a database field or relationship shown in this diagram.
         boolean is_voided
-        %% Describes the voided by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int voided_by_id FK
-        %% Describes the voided at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime voided_at
-        %% Describes the void reason field.
+        %% Describes a database field or relationship shown in this diagram.
         string void_reason
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the bills entity and opens its field list.
+    %% Starts the BILLS group in the diagram.
     BILLS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the vendor id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int vendor_id FK
-        %% Describes the bill number field.
+        %% Describes a database field or relationship shown in this diagram.
         string bill_number
-        %% Describes the bill date field.
+        %% Describes a database field or relationship shown in this diagram.
         date bill_date
-        %% Describes the due date field.
+        %% Describes a database field or relationship shown in this diagram.
         date due_date
-        %% Describes the category field.
+        %% Describes a database field or relationship shown in this diagram.
         enum category
-        %% Describes the description field.
+        %% Describes a database field or relationship shown in this diagram.
         string description
-        %% Describes the base amount field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal base_amount
-        %% Describes the gst percent field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal gst_percent
-        %% Describes the gst amount field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal gst_amount
-        %% Describes the total amount field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal total_amount
-        %% Describes the status field.
+        %% Describes a database field or relationship shown in this diagram.
         enum status
-        %% Describes the submitted by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int submitted_by_id FK
-        %% Describes the approved by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int approved_by_id FK
-        %% Describes the approved at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime approved_at
-        %% Describes the rejection reason field.
+        %% Describes a database field or relationship shown in this diagram.
         string rejection_reason
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-        %% Describes the updated at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime updated_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the payments entity and opens its field list.
+    %% Starts the PAYMENTS group in the diagram.
     PAYMENTS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the bill id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int bill_id FK
-        %% Describes the amount field.
+        %% Describes a database field or relationship shown in this diagram.
         decimal amount
-        %% Describes the payment date field.
+        %% Describes a database field or relationship shown in this diagram.
         date payment_date
-        %% Describes the mode field.
+        %% Describes a database field or relationship shown in this diagram.
         enum mode
-        %% Describes the reference number field.
+        %% Describes a database field or relationship shown in this diagram.
         string reference_number
-        %% Describes the remarks field.
+        %% Describes a database field or relationship shown in this diagram.
         string remarks
-        %% Describes the recorded by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int recorded_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the audit logs entity and opens its field list.
+    %% Starts the AUDIT_LOGS group in the diagram.
     AUDIT_LOGS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the user id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int user_id FK
-        %% Describes the action field.
+        %% Describes a database field or relationship shown in this diagram.
         enum action
-        %% Describes the entity type field.
+        %% Describes a database field or relationship shown in this diagram.
         string entity_type
-        %% Describes the entity id field.
+        %% Describes a database field or relationship shown in this diagram.
         int entity_id
-        %% Describes the old values field.
+        %% Describes a database field or relationship shown in this diagram.
         json old_values
-        %% Describes the new values field.
+        %% Describes a database field or relationship shown in this diagram.
         json new_values
-        %% Describes the ip address field.
+        %% Describes a database field or relationship shown in this diagram.
         string ip_address
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the notifications entity and opens its field list.
+    %% Starts the NOTIFICATIONS group in the diagram.
     NOTIFICATIONS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the user id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int user_id FK
-        %% Describes the type field.
+        %% Describes a database field or relationship shown in this diagram.
         enum type
-        %% Describes the title field.
+        %% Describes a database field or relationship shown in this diagram.
         string title
-        %% Describes the message field.
+        %% Describes a database field or relationship shown in this diagram.
         string message
-        %% Describes the project id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int project_id FK
-        %% Describes the link field.
+        %% Describes a database field or relationship shown in this diagram.
         string link
-        %% Describes the is read field.
+        %% Describes a database field or relationship shown in this diagram.
         boolean is_read
-        %% Describes the dedupe key field (unique value).
+        %% Describes a database field or relationship shown in this diagram.
         string dedupe_key UK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Declares the attachments entity and opens its field list.
+    %% Starts the ATTACHMENTS group in the diagram.
     ATTACHMENTS {
-        %% Describes the id field (primary key).
+        %% Describes a database field or relationship shown in this diagram.
         int id PK
-        %% Describes the daily log id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int daily_log_id FK
-        %% Describes the bill id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int bill_id FK
-        %% Describes the file name field.
+        %% Describes a database field or relationship shown in this diagram.
         string file_name
-        %% Describes the stored path field.
+        %% Describes a database field or relationship shown in this diagram.
         string stored_path
-        %% Describes the mime type field.
+        %% Describes a database field or relationship shown in this diagram.
         string mime_type
-        %% Describes the size bytes field.
+        %% Describes a database field or relationship shown in this diagram.
         int size_bytes
-        %% Describes the uploaded by id field (foreign key).
+        %% Describes a database field or relationship shown in this diagram.
         int uploaded_by_id FK
-        %% Describes the created at field.
+        %% Describes a database field or relationship shown in this diagram.
         datetime created_at
-    %% Closes the current entity field list.
+    %% Closes the current entity or relationship group.
     }
 
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ LANDS : creates
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ PROJECTS : creates
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS o|--o{ PROJECTS : manages
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     LANDS ||--o{ PROJECTS : contains
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ PROJECT_MILESTONES : has
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ PROJECT_MATERIAL_PLANS : plans
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     MATERIALS ||--o{ PROJECT_MATERIAL_PLANS : planned_for
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ PROJECT_VENDOR_ASSIGNMENTS : assigns
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     VENDORS ||--o{ PROJECT_VENDOR_ASSIGNMENTS : assigned_to
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ PROJECT_VENDOR_ASSIGNMENTS : assigns
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ DAILY_LOGS : records
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ DAILY_LOGS : creates
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     DAILY_LOGS ||--o{ LABOUR_ENTRIES : includes
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     DAILY_LOGS ||--o{ MACHINERY_ENTRIES : includes
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ STOCK_TRANSACTIONS : records
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     MATERIALS ||--o{ STOCK_TRANSACTIONS : tracks
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     VENDORS o|--o{ STOCK_TRANSACTIONS : supplies
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     BILLS o|--o{ STOCK_TRANSACTIONS : supports
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     DAILY_LOGS o|--o{ STOCK_TRANSACTIONS : references
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ STOCK_TRANSACTIONS : creates
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS o|--o{ STOCK_TRANSACTIONS : voids
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS ||--o{ BILLS : incurs
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     VENDORS ||--o{ BILLS : issues
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ BILLS : submits
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS o|--o{ BILLS : approves
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     BILLS ||--o{ PAYMENTS : receives
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ PAYMENTS : records
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS o|--o{ AUDIT_LOGS : performs
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ NOTIFICATIONS : receives
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     PROJECTS o|--o{ NOTIFICATIONS : concerns
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     DAILY_LOGS o|--o{ ATTACHMENTS : contains
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     BILLS o|--o{ ATTACHMENTS : contains
-    %% Defines a relationship between two entities.
+    %% Describes a database field or relationship shown in this diagram.
     USERS ||--o{ ATTACHMENTS : uploads
-%% File purpose: Defines the Mermaid entity-relationship diagram in editable text form.
