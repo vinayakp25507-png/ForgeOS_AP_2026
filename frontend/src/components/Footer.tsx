@@ -179,4 +179,3 @@ export const Footer = () => {
   )
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable Footer interface component.
