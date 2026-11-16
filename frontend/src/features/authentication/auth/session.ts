@@ -64,4 +64,3 @@ export function getAuthUserSnapshot(): AuthUser | null {
   return currentUser
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Supports frontend authentication through session.
