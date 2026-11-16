@@ -1,60 +1,111 @@
-import { createHmac, timingSafeEqual } from 'node:crypto' // Imports { createHmac, timingSafeEqual } from 'node:crypto' so this module can reuse that functionality.
-import type { Role } from '@prisma/client' // Uses Prisma's generated types and client to work safely with database records.
-import { env } from '../config/env.js' // Uses validated environment settings so invalid configuration is caught at startup.
+// Imports createHmac, timingSafeEqual from node:crypto so this module can reuse that component, helper, or library.
+import { createHmac, timingSafeEqual } from 'node:crypto'
+// Imports type  Role from @prisma/client so this module can reuse that component, helper, or library.
+import type { Role } from '@prisma/client'
+// Imports env from ../config/env.js so this module can reuse that component, helper, or library.
+import { env } from '../config/env.js'
 
-type JwtPayload = { // Defines the `JwtPayload` type so TypeScript can describe the data or behavior used here.
-  sub: string // Sets `sub` to the sub value.
-  role: Role // Sets `role` to the account's permission level.
-  iat: number // Sets `iat` to the iat value.
-  exp: number // Sets `exp` to the exp value.
-} // Closes the current block and marks where its grouped work ends.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type JwtPayload = {
+  // Sets the sub field so the surrounding object or component receives this setting.
+  sub: string
+  // Sets the role field so the surrounding object or component receives this setting.
+  role: Role
+  // Sets the iat field so the surrounding object or component receives this setting.
+  iat: number
+  // Sets the exp field so the surrounding object or component receives this setting.
+  exp: number
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function encode(value: unknown): string { // Defines `encode` to encode, keeping this behavior reusable.
-  return Buffer.from(JSON.stringify(value)).toString('base64url') // Returns `Buffer.from(JSON.stringify(value)).toString('base64url')` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines encode so this module can perform its named task when needed.
+function encode(value: unknown): string {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return Buffer.from(JSON.stringify(value)).toString('base64url')
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function sign(input: string): string { // Defines `sign` to sign, keeping this behavior reusable.
-  return createHmac('sha256', env.JWT_SECRET).update(input).digest('base64url') // Returns `createHmac('sha256', env.JWT_SECRET).update(input).digest('base64url')` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines sign so this module can perform its named task when needed.
+function sign(input: string): string {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return createHmac('sha256', env.JWT_SECRET).update(input).digest('base64url')
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function expirySeconds(value: string): number { // Defines `expirySeconds` to expiry seconds, keeping this behavior reusable.
-  const match = /^(\d+)([smhd])$/.exec(value) // Stores this intermediate `match` value so later lines can use it.
-  if (!match) throw new Error('JWT_EXPIRES_IN must use a duration such as 15m or 1h') // Checks whether the value is missing; the block handles that case before continuing.
-  const units = { s: 1, m: 60, h: 3600, d: 86400 } as const // Stores this intermediate `units` value so later lines can use it.
-  return Number(match[1]) * units[match[2] as keyof typeof units] // Returns `Number(match[1]) * units[match[2] as keyof typeof units]` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines expirySeconds so this module can perform its named task when needed.
+function expirySeconds(value: string): number {
+  // Stores the value in match so later lines can reuse this data or behavior for the current feature.
+  const match = /^(\d+)([smhd])$/.exec(value)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!match) throw new Error('JWT_EXPIRES_IN must use a duration such as 15m or 1h')
+  // Stores the value in units so later lines can reuse this data or behavior for the current feature.
+  const units = { s: 1, m: 60, h: 3600, d: 86400 } as const
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return Number(match[1]) * units[match[2] as keyof typeof units]
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export function createAccessToken(user: { id: number; role: Role }): string { // Defines `createAccessToken` to create access token, keeping this behavior reusable.
-  const now = Math.floor(Date.now() / 1000) // Stores this intermediate `now` value so later lines can use it.
-  const payload: JwtPayload = { // Stores this intermediate `jwt payload` value so later lines can use it.
-    sub: String(user.id), // Separates this argument or property from the next item in the surrounding call or object.
-    role: user.role, // Separates this argument or property from the next item in the surrounding call or object.
-    iat: now, // Separates this argument or property from the next item in the surrounding call or object.
-    exp: now + expirySeconds(env.JWT_EXPIRES_IN), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-  const header = encode({ alg: 'HS256', typ: 'JWT' }) // Stores this intermediate `header` value so later lines can use it.
-  const body = encode(payload) // Stores this intermediate `body` value so later lines can use it.
-  return `${header}.${body}.${sign(`${header}.${body}`)}` // Returns ``${header}.${body}.${sign(`${header}.${body}`)}`` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines createAccessToken so this module can perform its named task when needed.
+export function createAccessToken(user: { id: number; role: Role }): string {
+  // Stores the value in now so later lines can reuse this data or behavior for the current feature.
+  const now = Math.floor(Date.now() / 1000)
+  // Stores the value in payload so later lines can reuse this data or behavior for the current feature.
+  const payload: JwtPayload = {
+    // Sets the sub field so the surrounding object or component receives this setting.
+    sub: String(user.id),
+    // Sets the role field so the surrounding object or component receives this setting.
+    role: user.role,
+    // Sets the iat field so the surrounding object or component receives this setting.
+    iat: now,
+    // Sets the exp field so the surrounding object or component receives this setting.
+    exp: now + expirySeconds(env.JWT_EXPIRES_IN),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Stores the value in header so later lines can reuse this data or behavior for the current feature.
+  const header = encode({ alg: 'HS256', typ: 'JWT' })
+  // Stores the value in body so later lines can reuse this data or behavior for the current feature.
+  const body = encode(payload)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return `${header}.${body}.${sign(`${header}.${body}`)}`
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export function verifyAccessToken(token: string): JwtPayload { // Defines `verifyAccessToken` to verify access token, keeping this behavior reusable.
-  const parts = token.split('.') // Stores this intermediate `parts` value so later lines can use it.
-  if (parts.length !== 3) throw new Error('Invalid token') // Checks whether the collection contains any items that need special handling.
-  const [header, body, signature] = parts // Stores this intermediate `signature` value so later lines can use it.
-  const expected = Buffer.from(sign(`${header}.${body}`)) // Stores this intermediate `expected` value so later lines can use it.
-  const actual = Buffer.from(signature) // Stores this intermediate `actual` value so later lines can use it.
-  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) throw new Error('Invalid token') // Checks whether the collection contains any items that need special handling.
+// Defines verifyAccessToken so this module can perform its named task when needed.
+export function verifyAccessToken(token: string): JwtPayload {
+  // Stores the value in parts so later lines can reuse this data or behavior for the current feature.
+  const parts = token.split('.')
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (parts.length !== 3) throw new Error('Invalid token')
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  const [header, body, signature] = parts
+  // Stores the value in expected so later lines can reuse this data or behavior for the current feature.
+  const expected = Buffer.from(sign(`${header}.${body}`))
+  // Stores the value in actual so later lines can reuse this data or behavior for the current feature.
+  const actual = Buffer.from(signature)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) throw new Error('Invalid token')
 
-  let payload: JwtPayload // Stores this intermediate `jwt payload` value so later lines can use it.
-  try { // Starts a protected block so errors from the following operation can be handled.
-    payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as JwtPayload // Provides `payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as JwtPayload` as part of verify access token.
-  } catch { // Opens the object or callback body that groups the settings for this operation.
-    throw new Error('Invalid token') // Stops this operation with the error `Invalid token`, so the API reports the failure clearly.
-  } // Closes the current block and marks where its grouped work ends.
-  if (payload.sub === undefined || !Number.isInteger(Number(payload.sub)) || !payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) { // Checks whether the value is missing; the block handles that case before continuing.
-    throw new Error('Expired or invalid token') // Stops this operation with the error `Expired or invalid token`, so the API reports the failure clearly.
-  } // Closes the current block and marks where its grouped work ends.
-  if (payload.role !== 'ADMIN' && payload.role !== 'PM') throw new Error('Invalid token') // Checks the caller's role before allowing this role-restricted operation.
-  return payload // Returns `payload` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Signs and verifies the access tokens used by API authentication.
+  // Stores the value in payload so later lines can reuse this data or behavior for the current feature.
+  let payload: JwtPayload
+  // Starts an error-handling region so failures can be caught and handled safely.
+  try {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as JwtPayload
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  } catch {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new Error('Invalid token')
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (payload.sub === undefined || !Number.isInteger(Number(payload.sub)) || !payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new Error('Expired or invalid token')
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (payload.role !== 'ADMIN' && payload.role !== 'PM') throw new Error('Invalid token')
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return payload
+// Closes the current block or object so the grouped statements or settings end here.
+}
