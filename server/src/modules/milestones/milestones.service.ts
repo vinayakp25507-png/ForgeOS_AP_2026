@@ -1,198 +1,380 @@
-import { AuditAction, MilestoneStatus, type Prisma } from '@prisma/client' // Uses Prisma's generated types and client to work safely with database records.
-import { prisma } from '../../utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
-import { AppError } from '../../utils/errors.js' // Uses the shared API error type so failures have a consistent message and HTTP status.
-import { projectAccess, type ProjectActor } from '../projects/projects.service.js' // Imports { projectAccess, type ProjectActor } from '../projects/projects.service.js' so this module can reuse that functionality.
-import type { CreateMilestoneInput, UpdateMilestoneInput } from './milestones.validator.js' // Imports type { CreateMilestoneInput, UpdateMilestoneInput } from './milestones.validator.js' so this module can reuse that functionality.
+// Imports AuditAction, MilestoneStatus, type Prisma from @prisma/client so this module can reuse that component, helper, or library.
+import { AuditAction, MilestoneStatus, type Prisma } from '@prisma/client'
+// Imports prisma from ../../utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from '../../utils/prisma.js'
+// Imports AppError from ../../utils/errors.js so this module can reuse that component, helper, or library.
+import { AppError } from '../../utils/errors.js'
+// Imports projectAccess, type ProjectActor from ../projects/projects.service.js so this module can reuse that component, helper, or library.
+import { projectAccess, type ProjectActor } from '../projects/projects.service.js'
+// Imports type  CreateMilestoneInput, UpdateMilestoneInput from ./milestones.validator.js so this module can reuse that component, helper, or library.
+import type { CreateMilestoneInput, UpdateMilestoneInput } from './milestones.validator.js'
 
-type MilestoneInput = CreateMilestoneInput | UpdateMilestoneInput // Defines the `MilestoneInput` type so TypeScript can describe the data or behavior used here.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type MilestoneInput = CreateMilestoneInput | UpdateMilestoneInput
 
-function dateAtUtcMidnight(value: string) { // Defines `dateAtUtcMidnight` to convert at utc midnight, keeping this behavior reusable.
-  return new Date(`${value}T00:00:00.000Z`) // Returns `new Date(`${value}T00:00:00.000Z`)` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines dateAtUtcMidnight so this module can perform its named task when needed.
+function dateAtUtcMidnight(value: string) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return new Date(`${value}T00:00:00.000Z`)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function assertProjectAccess(actor: ProjectActor, projectId: number) { // Defines `assertProjectAccess` to assert project access, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId, ...projectAccess(actor) }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
-} // Closes the current block and marks where its grouped work ends.
+// Defines assertProjectAccess so this module can perform its named task when needed.
+async function assertProjectAccess(actor: ProjectActor, projectId: number) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId, ...projectAccess(actor) },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function getMilestoneForActor(actor: ProjectActor, id: number) { // Defines `getMilestoneForActor` to retrieve milestone for actor, keeping this behavior reusable.
-  const milestone = await prisma.projectMilestone.findUnique({ // Looks up one matching database record and stores it in `milestone` so its existence or values can be checked.
-    where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-    include: { project: { select: { id: true, code: true, name: true } } }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!milestone) throw new AppError('NOT_FOUND', 'Milestone not found.', 404) // Checks whether the value is missing; the block handles that case before continuing.
-  await assertProjectAccess(actor, milestone.projectId) // Waits for this asynchronous operation to finish before using its result.
-  return milestone // Returns `milestone` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getMilestoneForActor so this module can perform its named task when needed.
+async function getMilestoneForActor(actor: ProjectActor, id: number) {
+  // Stores the value in milestone so later lines can reuse this data or behavior for the current feature.
+  const milestone = await prisma.projectMilestone.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id },
+    // Sets the include field so the surrounding object or component receives this setting.
+    include: { project: { select: { id: true, code: true, name: true } } },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!milestone) throw new AppError('NOT_FOUND', 'Milestone not found.', 404)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(actor, milestone.projectId)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return milestone
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function validateDateRanges(input: { // Defines `validateDateRanges` to check date ranges, keeping this behavior reusable.
-  plannedStartDate?: Date | null // Provides `plannedStartDate?: Date | null` as part of validate date ranges.
-  plannedEndDate?: Date | null // Provides `plannedEndDate?: Date | null` as part of validate date ranges.
-  actualStartDate?: Date | null // Provides `actualStartDate?: Date | null` as part of validate date ranges.
-  actualEndDate?: Date | null // Provides `actualEndDate?: Date | null` as part of validate date ranges.
-}) { // Opens the object or callback body that groups the settings for this operation.
-  if (input.plannedStartDate && input.plannedEndDate && input.plannedEndDate < input.plannedStartDate) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('VALIDATION_ERROR', 'Planned end date must be on or after planned start date.', 400) // Stops this request with `VALIDATION_ERROR` and HTTP 400 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  if (input.actualStartDate && input.actualEndDate && input.actualEndDate < input.actualStartDate) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('VALIDATION_ERROR', 'Actual end date must be on or after actual start date.', 400) // Stops this request with `VALIDATION_ERROR` and HTTP 400 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines validateDateRanges so this module can perform its named task when needed.
+function validateDateRanges(input: {
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  plannedStartDate?: Date | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  plannedEndDate?: Date | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  actualStartDate?: Date | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  actualEndDate?: Date | null
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}) {
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.plannedStartDate && input.plannedEndDate && input.plannedEndDate < input.plannedStartDate) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('VALIDATION_ERROR', 'Planned end date must be on or after planned start date.', 400)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.actualStartDate && input.actualEndDate && input.actualEndDate < input.actualStartDate) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('VALIDATION_ERROR', 'Actual end date must be on or after actual start date.', 400)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function dateValue(value: string | null | undefined) { // Defines `dateValue` to convert value, keeping this behavior reusable.
-  return value === undefined || value === null ? value : dateAtUtcMidnight(value) // Returns `value === undefined || value === null ? value : dateAtUtcMidnight(value)` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines dateValue so this module can perform its named task when needed.
+function dateValue(value: string | null | undefined) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return value === undefined || value === null ? value : dateAtUtcMidnight(value)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function createData(input: CreateMilestoneInput) { // Defines `createData` to create data, keeping this behavior reusable.
-  const data = { // Stores this intermediate `data` value so later lines can use it.
-    name: input.name, // Separates this argument or property from the next item in the surrounding call or object.
-    description: input.description, // Separates this argument or property from the next item in the surrounding call or object.
-    sequence: input.sequence, // Separates this argument or property from the next item in the surrounding call or object.
-    plannedStartDate: dateValue(input.plannedStartDate), // Separates this argument or property from the next item in the surrounding call or object.
-    plannedEndDate: dateValue(input.plannedEndDate), // Separates this argument or property from the next item in the surrounding call or object.
-    actualStartDate: dateValue(input.actualStartDate), // Separates this argument or property from the next item in the surrounding call or object.
-    actualEndDate: dateValue(input.actualEndDate), // Separates this argument or property from the next item in the surrounding call or object.
-    status: input.status as MilestoneStatus, // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: input.progressPercent, // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-  validateDateRanges(data) // Provides `validateDateRanges(data)` as part of create data.
-  return data // Returns `data` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines createData so this module can perform its named task when needed.
+function createData(input: CreateMilestoneInput) {
+  // Stores the value in data so later lines can reuse this data or behavior for the current feature.
+  const data = {
+    // Sets the name field so the surrounding object or component receives this setting.
+    name: input.name,
+    // Sets the description field so the surrounding object or component receives this setting.
+    description: input.description,
+    // Sets the sequence field so the surrounding object or component receives this setting.
+    sequence: input.sequence,
+    // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+    plannedStartDate: dateValue(input.plannedStartDate),
+    // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+    plannedEndDate: dateValue(input.plannedEndDate),
+    // Sets the actualStartDate field so the surrounding object or component receives this setting.
+    actualStartDate: dateValue(input.actualStartDate),
+    // Sets the actualEndDate field so the surrounding object or component receives this setting.
+    actualEndDate: dateValue(input.actualEndDate),
+    // Sets the status field so the surrounding object or component receives this setting.
+    status: input.status as MilestoneStatus,
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: input.progressPercent,
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateDateRanges(data)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return data
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function snapshot(milestone: { // Defines `snapshot` to snapshot, keeping this behavior reusable.
-  id: number // Sets `id` to the unique database identifier.
-  projectId: number // Sets `projectId` to the project this record belongs to.
-  name: string // Sets `name` to the human-readable name.
-  description: string | null // Sets `description` to optional details for readers.
-  sequence: number // Sets `sequence` to the sequence value.
-  plannedStartDate: Date | null // Sets `plannedStartDate` to the planned start date value.
-  plannedEndDate: Date | null // Sets `plannedEndDate` to the planned end date value.
-  actualStartDate: Date | null // Sets `actualStartDate` to the actual start date value.
-  actualEndDate: Date | null // Sets `actualEndDate` to the date work was actually completed.
-  status: MilestoneStatus // Sets `status` to the record's current workflow state.
-  progressPercent: Prisma.Decimal // Sets `progressPercent` to the project's reported completion percentage.
-  createdAt: Date // Sets `createdAt` to when the record was first created.
-  updatedAt: Date // Sets `updatedAt` to when the record was last changed.
-}): Prisma.InputJsonValue { // Opens the object or callback body that groups the settings for this operation.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    id: milestone.id, // Separates this argument or property from the next item in the surrounding call or object.
-    projectId: milestone.projectId, // Separates this argument or property from the next item in the surrounding call or object.
-    name: milestone.name, // Separates this argument or property from the next item in the surrounding call or object.
-    description: milestone.description, // Separates this argument or property from the next item in the surrounding call or object.
-    sequence: milestone.sequence, // Separates this argument or property from the next item in the surrounding call or object.
-    plannedStartDate: milestone.plannedStartDate?.toISOString() ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-    plannedEndDate: milestone.plannedEndDate?.toISOString() ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-    actualStartDate: milestone.actualStartDate?.toISOString() ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-    actualEndDate: milestone.actualEndDate?.toISOString() ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-    status: milestone.status, // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: milestone.progressPercent.toString(), // Separates this argument or property from the next item in the surrounding call or object.
-    createdAt: milestone.createdAt.toISOString(), // Separates this argument or property from the next item in the surrounding call or object.
-    updatedAt: milestone.updatedAt.toISOString(), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines snapshot so this module can perform its named task when needed.
+function snapshot(milestone: {
+  // Sets the id field so the surrounding object or component receives this setting.
+  id: number
+  // Sets the projectId field so the surrounding object or component receives this setting.
+  projectId: number
+  // Sets the name field so the surrounding object or component receives this setting.
+  name: string
+  // Sets the description field so the surrounding object or component receives this setting.
+  description: string | null
+  // Sets the sequence field so the surrounding object or component receives this setting.
+  sequence: number
+  // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+  plannedStartDate: Date | null
+  // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+  plannedEndDate: Date | null
+  // Sets the actualStartDate field so the surrounding object or component receives this setting.
+  actualStartDate: Date | null
+  // Sets the actualEndDate field so the surrounding object or component receives this setting.
+  actualEndDate: Date | null
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: MilestoneStatus
+  // Sets the progressPercent field so the surrounding object or component receives this setting.
+  progressPercent: Prisma.Decimal
+  // Sets the createdAt field so the surrounding object or component receives this setting.
+  createdAt: Date
+  // Sets the updatedAt field so the surrounding object or component receives this setting.
+  updatedAt: Date
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}): Prisma.InputJsonValue {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Sets the id field so the surrounding object or component receives this setting.
+    id: milestone.id,
+    // Sets the projectId field so the surrounding object or component receives this setting.
+    projectId: milestone.projectId,
+    // Sets the name field so the surrounding object or component receives this setting.
+    name: milestone.name,
+    // Sets the description field so the surrounding object or component receives this setting.
+    description: milestone.description,
+    // Sets the sequence field so the surrounding object or component receives this setting.
+    sequence: milestone.sequence,
+    // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+    plannedStartDate: milestone.plannedStartDate?.toISOString() ?? null,
+    // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+    plannedEndDate: milestone.plannedEndDate?.toISOString() ?? null,
+    // Sets the actualStartDate field so the surrounding object or component receives this setting.
+    actualStartDate: milestone.actualStartDate?.toISOString() ?? null,
+    // Sets the actualEndDate field so the surrounding object or component receives this setting.
+    actualEndDate: milestone.actualEndDate?.toISOString() ?? null,
+    // Sets the status field so the surrounding object or component receives this setting.
+    status: milestone.status,
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: milestone.progressPercent.toString(),
+    // Sets the createdAt field so the surrounding object or component receives this setting.
+    createdAt: milestone.createdAt.toISOString(),
+    // Sets the updatedAt field so the surrounding object or component receives this setting.
+    updatedAt: milestone.updatedAt.toISOString(),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function changedSnapshot( // Defines `changedSnapshot` to changed snapshot, keeping this behavior reusable.
-  existing: Awaited<ReturnType<typeof getMilestoneForActor>>, // Separates this argument or property from the next item in the surrounding call or object.
-  input: UpdateMilestoneInput, // Separates this argument or property from the next item in the surrounding call or object.
-  updated: Awaited<ReturnType<typeof getMilestoneForActor>>, // Separates this argument or property from the next item in the surrounding call or object.
-) { // Opens the object or callback body that groups the settings for this operation.
-  const oldData: Record<string, unknown> = { projectId: existing.projectId } // Stores this intermediate `unknown>` value so later lines can use it.
-  const newData: Record<string, unknown> = { projectId: updated.projectId } // Stores this intermediate `unknown>` value so later lines can use it.
-  for (const key of Object.keys(input) as (keyof UpdateMilestoneInput)[]) { // Repeats the block for each `key` in `Object.keys(input` so every item is processed.
-    oldData[key] = (snapshot(existing) as Record<string, unknown>)[key] // Provides `oldData[key] = (snapshot(existing) as Record<string, unknown>)[key]` as part of changed snapshot.
-    newData[key] = (snapshot(updated) as Record<string, unknown>)[key] // Provides `newData[key] = (snapshot(updated) as Record<string, unknown>)[key]` as part of changed snapshot.
-  } // Closes the current block and marks where its grouped work ends.
-  return { oldData: oldData as Prisma.InputJsonValue, newData: newData as Prisma.InputJsonValue } // Returns the assembled result object so the caller receives the fields it needs.
-} // Closes the current block and marks where its grouped work ends.
+// Defines changedSnapshot so this module can perform its named task when needed.
+function changedSnapshot(
+  // Sets the existing field so the surrounding object or component receives this setting.
+  existing: Awaited<ReturnType<typeof getMilestoneForActor>>,
+  // Sets the input field so the surrounding object or component receives this setting.
+  input: UpdateMilestoneInput,
+  // Sets the updated field so the surrounding object or component receives this setting.
+  updated: Awaited<ReturnType<typeof getMilestoneForActor>>,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+) {
+  // Stores the value in oldData so later lines can reuse this data or behavior for the current feature.
+  const oldData: Record<string, unknown> = { projectId: existing.projectId }
+  // Stores the value in newData so later lines can reuse this data or behavior for the current feature.
+  const newData: Record<string, unknown> = { projectId: updated.projectId }
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  for (const key of Object.keys(input) as (keyof UpdateMilestoneInput)[]) {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    oldData[key] = (snapshot(existing) as Record<string, unknown>)[key]
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    newData[key] = (snapshot(updated) as Record<string, unknown>)[key]
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return { oldData: oldData as Prisma.InputJsonValue, newData: newData as Prisma.InputJsonValue }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function createMilestone(actor: ProjectActor, projectId: number, input: CreateMilestoneInput) { // Defines `createMilestone` to create milestone, keeping this behavior reusable.
-  await assertProjectAccess(actor, projectId) // Waits for this asynchronous operation to finish before using its result.
-  const data = createData(input) // Stores this intermediate `data` value so later lines can use it.
-  return prisma.$transaction(async (tx) => { // Returns the database result to the route handler so it can form the API response.
-    const milestone = await tx.projectMilestone.create({ // Stores this intermediate `milestone` value so later lines can use it.
-      data: { ...data, projectId }, // Separates this argument or property from the next item in the surrounding call or object.
-      include: { project: { select: { id: true, code: true, name: true } } }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: actor.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.CREATE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'ProjectMilestone', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: milestone.id, // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: snapshot(milestone), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    return milestone // Returns `milestone` to the caller so the next layer can use the result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines createMilestone so this module can perform its named task when needed.
+export async function createMilestone(actor: ProjectActor, projectId: number, input: CreateMilestoneInput) {
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(actor, projectId)
+  // Stores the value in data so later lines can reuse this data or behavior for the current feature.
+  const data = createData(input)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.$transaction(async (tx) => {
+    // Stores the value in milestone so later lines can reuse this data or behavior for the current feature.
+    const milestone = await tx.projectMilestone.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: { ...data, projectId },
+      // Sets the include field so the surrounding object or component receives this setting.
+      include: { project: { select: { id: true, code: true, name: true } } },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: actor.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.CREATE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'ProjectMilestone',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: milestone.id,
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: snapshot(milestone),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return milestone
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function listMilestones(actor: ProjectActor, projectId: number) { // Defines `listMilestones` to retrieve a list of milestones, keeping this behavior reusable.
-  await assertProjectAccess(actor, projectId) // Waits for this asynchronous operation to finish before using its result.
-  return prisma.projectMilestone.findMany({ // Returns the database result to the route handler so it can form the API response.
-    where: { projectId }, // Separates this argument or property from the next item in the surrounding call or object.
-    orderBy: [{ sequence: 'asc' }, { plannedStartDate: 'asc' }, { id: 'asc' }], // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines listMilestones so this module can perform its named task when needed.
+export async function listMilestones(actor: ProjectActor, projectId: number) {
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(actor, projectId)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.projectMilestone.findMany({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { projectId },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: [{ sequence: 'asc' }, { plannedStartDate: 'asc' }, { id: 'asc' }],
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getMilestone(actor: ProjectActor, id: number) { // Defines `getMilestone` to retrieve milestone, keeping this behavior reusable.
-  return getMilestoneForActor(actor, id) // Returns `getMilestoneForActor(actor, id)` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getMilestone so this module can perform its named task when needed.
+export async function getMilestone(actor: ProjectActor, id: number) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return getMilestoneForActor(actor, id)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function updateMilestone(actor: ProjectActor, id: number, input: UpdateMilestoneInput) { // Defines `updateMilestone` to update milestone, keeping this behavior reusable.
-  const existing = await getMilestoneForActor(actor, id) // Stores this intermediate `existing` value so later lines can use it.
-  const data = Object.fromEntries(Object.entries(input).map(([key, value]) => [ // Transforms the object's entries into the `data` result shape expected by the caller.
-    key, // Separates this argument or property from the next item in the surrounding call or object.
-    key.endsWith('Date') ? dateValue(value as string | null | undefined) : value, // Separates this argument or property from the next item in the surrounding call or object.
-  ])) // Provides `]))` as part of update milestone.
-  const merged: { // Stores this intermediate `this value` value so later lines can use it.
-    plannedStartDate: Date | null // Sets `plannedStartDate` to the planned start date value.
-    plannedEndDate: Date | null // Sets `plannedEndDate` to the planned end date value.
-    actualStartDate: Date | null // Sets `actualStartDate` to the actual start date value.
-    actualEndDate: Date | null // Sets `actualEndDate` to the date work was actually completed.
-  } = { // Opens the object or callback body that groups the settings for this operation.
-    plannedStartDate: data.plannedStartDate === undefined ? existing.plannedStartDate : data.plannedStartDate as Date | null, // Separates this argument or property from the next item in the surrounding call or object.
-    plannedEndDate: data.plannedEndDate === undefined ? existing.plannedEndDate : data.plannedEndDate as Date | null, // Separates this argument or property from the next item in the surrounding call or object.
-    actualStartDate: data.actualStartDate === undefined ? existing.actualStartDate : data.actualStartDate as Date | null, // Separates this argument or property from the next item in the surrounding call or object.
-    actualEndDate: data.actualEndDate === undefined ? existing.actualEndDate : data.actualEndDate as Date | null, // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-  validateDateRanges(merged) // Provides `validateDateRanges(merged)` as part of update milestone.
-  return prisma.$transaction(async (tx) => { // Returns the database result to the route handler so it can form the API response.
-    const updated = await tx.projectMilestone.update({ // Stores this intermediate `updated` value so later lines can use it.
-      where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-      data: data as Prisma.ProjectMilestoneUpdateInput, // Separates this argument or property from the next item in the surrounding call or object.
-      include: { project: { select: { id: true, code: true, name: true } } }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    const changes = changedSnapshot(existing, input, updated) // Stores this intermediate `changes` value so later lines can use it.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: actor.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.UPDATE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'ProjectMilestone', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: id, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: changes.oldData, // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: changes.newData, // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    return updated // Returns `updated` to the caller so the next layer can use the result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines updateMilestone so this module can perform its named task when needed.
+export async function updateMilestone(actor: ProjectActor, id: number, input: UpdateMilestoneInput) {
+  // Stores the value in existing so later lines can reuse this data or behavior for the current feature.
+  const existing = await getMilestoneForActor(actor, id)
+  // Stores the value in data so later lines can reuse this data or behavior for the current feature.
+  const data = Object.fromEntries(Object.entries(input).map(([key, value]) => [
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    key,
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    key.endsWith('Date') ? dateValue(value as string | null | undefined) : value,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ]))
+  // Stores the value in merged so later lines can reuse this data or behavior for the current feature.
+  const merged: {
+    // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+    plannedStartDate: Date | null
+    // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+    plannedEndDate: Date | null
+    // Sets the actualStartDate field so the surrounding object or component receives this setting.
+    actualStartDate: Date | null
+    // Sets the actualEndDate field so the surrounding object or component receives this setting.
+    actualEndDate: Date | null
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  } = {
+    // Sets the plannedStartDate field so the surrounding object or component receives this setting.
+    plannedStartDate: data.plannedStartDate === undefined ? existing.plannedStartDate : data.plannedStartDate as Date | null,
+    // Sets the plannedEndDate field so the surrounding object or component receives this setting.
+    plannedEndDate: data.plannedEndDate === undefined ? existing.plannedEndDate : data.plannedEndDate as Date | null,
+    // Sets the actualStartDate field so the surrounding object or component receives this setting.
+    actualStartDate: data.actualStartDate === undefined ? existing.actualStartDate : data.actualStartDate as Date | null,
+    // Sets the actualEndDate field so the surrounding object or component receives this setting.
+    actualEndDate: data.actualEndDate === undefined ? existing.actualEndDate : data.actualEndDate as Date | null,
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  validateDateRanges(merged)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.$transaction(async (tx) => {
+    // Stores the value in updated so later lines can reuse this data or behavior for the current feature.
+    const updated = await tx.projectMilestone.update({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: { id },
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: data as Prisma.ProjectMilestoneUpdateInput,
+      // Sets the include field so the surrounding object or component receives this setting.
+      include: { project: { select: { id: true, code: true, name: true } } },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Stores the value in changes so later lines can reuse this data or behavior for the current feature.
+    const changes = changedSnapshot(existing, input, updated)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: actor.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.UPDATE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'ProjectMilestone',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: id,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: changes.oldData,
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: changes.newData,
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return updated
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function deleteMilestone(actor: ProjectActor, id: number) { // Defines `deleteMilestone` to delete milestone, keeping this behavior reusable.
-  const existing = await getMilestoneForActor(actor, id) // Stores this intermediate `existing` value so later lines can use it.
-  await prisma.$transaction(async (tx) => { // Opens the function, callback, or control-flow block that groups the related statements.
-    await tx.projectMilestone.delete({ where: { id } }) // Waits for this asynchronous operation to finish before using its result.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: actor.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.DELETE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'ProjectMilestone', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: id, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: snapshot(existing), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Implements milestones business rules and database operations.
+// Defines deleteMilestone so this module can perform its named task when needed.
+export async function deleteMilestone(actor: ProjectActor, id: number) {
+  // Stores the value in existing so later lines can reuse this data or behavior for the current feature.
+  const existing = await getMilestoneForActor(actor, id)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await prisma.$transaction(async (tx) => {
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.projectMilestone.delete({ where: { id } })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: actor.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.DELETE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'ProjectMilestone',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: id,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: snapshot(existing),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
