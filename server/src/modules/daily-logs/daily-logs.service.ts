@@ -1,327 +1,636 @@
-import { AuditAction, Role, type Prisma } from '@prisma/client' // Uses Prisma's generated types and client to work safely with database records.
-import { prisma } from '../../utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
-import { AppError } from '../../utils/errors.js' // Uses the shared API error type so failures have a consistent message and HTTP status.
-import type { // Imports type { from  so this module can reuse that functionality.
-  DailyLogInput, // Separates this argument or property from the next item in the surrounding call or object.
-  DailyLogListQuery, // Separates this argument or property from the next item in the surrounding call or object.
-  DailyLogPatch, // Separates this argument or property from the next item in the surrounding call or object.
-} from './daily-logs.validator.js' // Provides `} from './daily-logs.validator.js'` as part of this server module.
+// Imports AuditAction, Role, type Prisma from @prisma/client so this module can reuse that component, helper, or library.
+import { AuditAction, Role, type Prisma } from '@prisma/client'
+// Imports prisma from ../../utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from '../../utils/prisma.js'
+// Imports AppError from ../../utils/errors.js so this module can reuse that component, helper, or library.
+import { AppError } from '../../utils/errors.js'
+// Continues the component or data expression so its related values and behavior stay grouped together.
+import type {
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  DailyLogInput,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  DailyLogListQuery,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  DailyLogPatch,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+} from './daily-logs.validator.js'
 
-type AuthUser = { id: number; role: Role } // Defines the `AuthUser` type so TypeScript can describe the data or behavior used here.
-type DailyLogWithEntries = Prisma.DailyLogGetPayload<{ // Defines the `DailyLogWithEntries` type so TypeScript can describe the data or behavior used here.
-  include: { labourEntries: true; machineryEntries: true } // Sets `include` to loads related records needed alongside the main result.
-}> // Provides `}>` as part of this server module.
-const EDIT_WINDOW_HOURS = 48 // Stores this intermediate `edit window hours` value so later lines can use it.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type AuthUser = { id: number; role: Role }
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type DailyLogWithEntries = Prisma.DailyLogGetPayload<{
+  // Sets the include field so the surrounding object or component receives this setting.
+  include: { labourEntries: true; machineryEntries: true }
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}>
+// Stores the value in EDIT_WINDOW_HOURS so later lines can reuse this data or behavior for the current feature.
+const EDIT_WINDOW_HOURS = 48
 
-function dateAtUtcMidnight(value: string) { // Defines `dateAtUtcMidnight` to convert at utc midnight, keeping this behavior reusable.
-  return new Date(`${value}T00:00:00.000Z`) // Returns `new Date(`${value}T00:00:00.000Z`)` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines dateAtUtcMidnight so this module can perform its named task when needed.
+function dateAtUtcMidnight(value: string) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return new Date(`${value}T00:00:00.000Z`)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function todayAtUtcMidnight() { // Defines `todayAtUtcMidnight` to today at utc midnight, keeping this behavior reusable.
-  const now = new Date() // Converts the supplied date into a JavaScript date value and stores it in `now` for consistent comparisons.
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())) // Returns `new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines todayAtUtcMidnight so this module can perform its named task when needed.
+function todayAtUtcMidnight() {
+  // Stores the value in now so later lines can reuse this data or behavior for the current feature.
+  const now = new Date()
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function assertProgressOrder( // Defines `assertProgressOrder` to assert progress order, keeping this behavior reusable.
-  progress: number, // Separates this argument or property from the next item in the surrounding call or object.
-  previous: { progressPercent: Prisma.Decimal } | null, // Separates this argument or property from the next item in the surrounding call or object.
-  next: { progressPercent: Prisma.Decimal } | null, // Separates this argument or property from the next item in the surrounding call or object.
-) { // Opens the object or callback body that groups the settings for this operation.
-  if (previous && progress < previous.progressPercent.toNumber()) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('BUSINESS_RULE_VIOLATION', 'Progress cannot decrease from the previous log.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  if (next && progress > next.progressPercent.toNumber()) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('BUSINESS_RULE_VIOLATION', 'Progress cannot exceed the following log.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines assertProgressOrder so this module can perform its named task when needed.
+function assertProgressOrder(
+  // Sets the progress field so the surrounding object or component receives this setting.
+  progress: number,
+  // Sets the previous field so the surrounding object or component receives this setting.
+  previous: { progressPercent: Prisma.Decimal } | null,
+  // Sets the next field so the surrounding object or component receives this setting.
+  next: { progressPercent: Prisma.Decimal } | null,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+) {
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (previous && progress < previous.progressPercent.toNumber()) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('BUSINESS_RULE_VIOLATION', 'Progress cannot decrease from the previous log.', 422)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (next && progress > next.progressPercent.toNumber()) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('BUSINESS_RULE_VIOLATION', 'Progress cannot exceed the following log.', 422)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function assertProjectAccess(user: AuthUser, projectId: number) { // Defines `assertProjectAccess` to assert project access, keeping this behavior reusable.
-  const project = await prisma.project.findUnique({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true, status: true, assignedPmId: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) { // Handles a missing database record before later code tries to use it.
-    throw new AppError('NOT_FOUND', 'Project not found.', 404) // Stops this request with `NOT_FOUND` and HTTP 404 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  if (user.role !== Role.ADMIN && project.assignedPmId !== user.id) { // Checks the caller's role before allowing this role-restricted operation.
-    throw new AppError('FORBIDDEN', 'You are not assigned to this project.', 403) // Stops this request with `FORBIDDEN` and HTTP 403 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  return project // Returns `project` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines assertProjectAccess so this module can perform its named task when needed.
+async function assertProjectAccess(user: AuthUser, projectId: number) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true, status: true, assignedPmId: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('NOT_FOUND', 'Project not found.', 404)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (user.role !== Role.ADMIN && project.assignedPmId !== user.id) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('FORBIDDEN', 'You are not assigned to this project.', 403)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return project
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function assertDateAvailable(projectId: number, logDate: Date, id?: number) { // Defines `assertDateAvailable` to assert date available, keeping this behavior reusable.
-  const existing = await prisma.dailyLog.findUnique({ // Looks up one matching database record and stores it in `existing` so its existence or values can be checked.
-    where: { projectId_logDate: { projectId, logDate } }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (existing && existing.id !== id) { // Checks whether the value is missing; the block handles that case before continuing.
-    throw new AppError('CONFLICT', 'A daily log already exists for this project and date.', 409) // Stops this request with `CONFLICT` and HTTP 409 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines assertDateAvailable so this module can perform its named task when needed.
+async function assertDateAvailable(projectId: number, logDate: Date, id?: number) {
+  // Stores the value in existing so later lines can reuse this data or behavior for the current feature.
+  const existing = await prisma.dailyLog.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { projectId_logDate: { projectId, logDate } },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (existing && existing.id !== id) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('CONFLICT', 'A daily log already exists for this project and date.', 409)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function assertLogAccess(user: AuthUser, id: number) { // Defines `assertLogAccess` to assert log access, keeping this behavior reusable.
-  const log = await prisma.dailyLog.findUnique({ // Looks up one matching database record and stores it in `log` so its existence or values can be checked.
-    where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-    include: { labourEntries: true, machineryEntries: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!log) { // Checks whether the value is missing; the block handles that case before continuing.
-    throw new AppError('NOT_FOUND', 'Daily log not found.', 404) // Stops this request with `NOT_FOUND` and HTTP 404 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  await assertProjectAccess(user, log.projectId) // Waits for this asynchronous operation to finish before using its result.
-  if (user.role === Role.PM) { // Checks the caller's role before allowing this role-restricted operation.
-    const ageHours = (Date.now() - log.createdAt.getTime()) / 3_600_000 // Stores this intermediate `age hours` value so later lines can use it.
-    if (ageHours > EDIT_WINDOW_HOURS) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-      throw new AppError('BUSINESS_RULE_VIOLATION', 'Project Managers can edit logs only within 48 hours of creation.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-    } // Closes the current block and marks where its grouped work ends.
-  } // Closes the current block and marks where its grouped work ends.
-  return log // Returns `log` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines assertLogAccess so this module can perform its named task when needed.
+async function assertLogAccess(user: AuthUser, id: number) {
+  // Stores the value in log so later lines can reuse this data or behavior for the current feature.
+  const log = await prisma.dailyLog.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id },
+    // Sets the include field so the surrounding object or component receives this setting.
+    include: { labourEntries: true, machineryEntries: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!log) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('NOT_FOUND', 'Daily log not found.', 404)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(user, log.projectId)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (user.role === Role.PM) {
+    // Stores the value in ageHours so later lines can reuse this data or behavior for the current feature.
+    const ageHours = (Date.now() - log.createdAt.getTime()) / 3_600_000
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (ageHours > EDIT_WINDOW_HOURS) {
+      // Stops the current operation with an error so the calling code can handle the failure.
+      throw new AppError('BUSINESS_RULE_VIOLATION', 'Project Managers can edit logs only within 48 hours of creation.', 422)
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return log
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function auditSnapshot(log: DailyLogWithEntries): Prisma.InputJsonValue { // Defines `auditSnapshot` to audit snapshot, keeping this behavior reusable.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    id: log.id, // Separates this argument or property from the next item in the surrounding call or object.
-    projectId: log.projectId, // Separates this argument or property from the next item in the surrounding call or object.
-    logDate: log.logDate.toISOString(), // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: log.progressPercent.toString(), // Separates this argument or property from the next item in the surrounding call or object.
-    workSummary: log.workSummary, // Separates this argument or property from the next item in the surrounding call or object.
-    weather: log.weather, // Separates this argument or property from the next item in the surrounding call or object.
-    issues: log.issues, // Separates this argument or property from the next item in the surrounding call or object.
-    createdById: log.createdById, // Separates this argument or property from the next item in the surrounding call or object.
-    createdAt: log.createdAt.toISOString(), // Separates this argument or property from the next item in the surrounding call or object.
-    updatedAt: log.updatedAt.toISOString(), // Separates this argument or property from the next item in the surrounding call or object.
-    labourEntries: log.labourEntries.map((entry) => ({ // Sets `labourEntries` to the labour entries value.
-      id: entry.id, // Separates this argument or property from the next item in the surrounding call or object.
-      trade: entry.trade, // Separates this argument or property from the next item in the surrounding call or object.
-      contractorName: entry.contractorName, // Separates this argument or property from the next item in the surrounding call or object.
-      headCount: entry.headCount, // Separates this argument or property from the next item in the surrounding call or object.
-      hoursWorked: entry.hoursWorked.toString(), // Separates this argument or property from the next item in the surrounding call or object.
-      remarks: entry.remarks, // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-    machineryEntries: log.machineryEntries.map((entry) => ({ // Sets `machineryEntries` to the machinery entries value.
-      id: entry.id, // Separates this argument or property from the next item in the surrounding call or object.
-      machineName: entry.machineName, // Separates this argument or property from the next item in the surrounding call or object.
-      operatorName: entry.operatorName, // Separates this argument or property from the next item in the surrounding call or object.
-      hoursUsed: entry.hoursUsed.toString(), // Separates this argument or property from the next item in the surrounding call or object.
-      fuelLitres: entry.fuelLitres?.toString() ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-      remarks: entry.remarks, // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines auditSnapshot so this module can perform its named task when needed.
+function auditSnapshot(log: DailyLogWithEntries): Prisma.InputJsonValue {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Sets the id field so the surrounding object or component receives this setting.
+    id: log.id,
+    // Sets the projectId field so the surrounding object or component receives this setting.
+    projectId: log.projectId,
+    // Sets the logDate field so the surrounding object or component receives this setting.
+    logDate: log.logDate.toISOString(),
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: log.progressPercent.toString(),
+    // Sets the workSummary field so the surrounding object or component receives this setting.
+    workSummary: log.workSummary,
+    // Sets the weather field so the surrounding object or component receives this setting.
+    weather: log.weather,
+    // Sets the issues field so the surrounding object or component receives this setting.
+    issues: log.issues,
+    // Sets the createdById field so the surrounding object or component receives this setting.
+    createdById: log.createdById,
+    // Sets the createdAt field so the surrounding object or component receives this setting.
+    createdAt: log.createdAt.toISOString(),
+    // Sets the updatedAt field so the surrounding object or component receives this setting.
+    updatedAt: log.updatedAt.toISOString(),
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    labourEntries: log.labourEntries.map((entry) => ({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: entry.id,
+      // Sets the trade field so the surrounding object or component receives this setting.
+      trade: entry.trade,
+      // Sets the contractorName field so the surrounding object or component receives this setting.
+      contractorName: entry.contractorName,
+      // Sets the headCount field so the surrounding object or component receives this setting.
+      headCount: entry.headCount,
+      // Sets the hoursWorked field so the surrounding object or component receives this setting.
+      hoursWorked: entry.hoursWorked.toString(),
+      // Sets the remarks field so the surrounding object or component receives this setting.
+      remarks: entry.remarks,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    machineryEntries: log.machineryEntries.map((entry) => ({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: entry.id,
+      // Sets the machineName field so the surrounding object or component receives this setting.
+      machineName: entry.machineName,
+      // Sets the operatorName field so the surrounding object or component receives this setting.
+      operatorName: entry.operatorName,
+      // Sets the hoursUsed field so the surrounding object or component receives this setting.
+      hoursUsed: entry.hoursUsed.toString(),
+      // Sets the fuelLitres field so the surrounding object or component receives this setting.
+      fuelLitres: entry.fuelLitres?.toString() ?? null,
+      // Sets the remarks field so the surrounding object or component receives this setting.
+      remarks: entry.remarks,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function childCreateData(input: DailyLogInput | DailyLogPatch) { // Defines `childCreateData` to child create data, keeping this behavior reusable.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    labour: input.labourEntries?.map((entry) => ({ // Sets `labour` to the labour value.
-      trade: entry.trade, // Separates this argument or property from the next item in the surrounding call or object.
-      contractorName: entry.contractorName, // Separates this argument or property from the next item in the surrounding call or object.
-      headCount: entry.headCount, // Separates this argument or property from the next item in the surrounding call or object.
-      hoursWorked: entry.hoursWorked, // Separates this argument or property from the next item in the surrounding call or object.
-      remarks: entry.remarks, // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-    machinery: input.machineryEntries?.map((entry) => ({ // Sets `machinery` to the machinery value.
-      machineName: entry.machineName, // Separates this argument or property from the next item in the surrounding call or object.
-      operatorName: entry.operatorName, // Separates this argument or property from the next item in the surrounding call or object.
-      hoursUsed: entry.hoursUsed, // Separates this argument or property from the next item in the surrounding call or object.
-      fuelLitres: entry.fuelLitres, // Separates this argument or property from the next item in the surrounding call or object.
-      remarks: entry.remarks, // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines childCreateData so this module can perform its named task when needed.
+function childCreateData(input: DailyLogInput | DailyLogPatch) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    labour: input.labourEntries?.map((entry) => ({
+      // Sets the trade field so the surrounding object or component receives this setting.
+      trade: entry.trade,
+      // Sets the contractorName field so the surrounding object or component receives this setting.
+      contractorName: entry.contractorName,
+      // Sets the headCount field so the surrounding object or component receives this setting.
+      headCount: entry.headCount,
+      // Sets the hoursWorked field so the surrounding object or component receives this setting.
+      hoursWorked: entry.hoursWorked,
+      // Sets the remarks field so the surrounding object or component receives this setting.
+      remarks: entry.remarks,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    machinery: input.machineryEntries?.map((entry) => ({
+      // Sets the machineName field so the surrounding object or component receives this setting.
+      machineName: entry.machineName,
+      // Sets the operatorName field so the surrounding object or component receives this setting.
+      operatorName: entry.operatorName,
+      // Sets the hoursUsed field so the surrounding object or component receives this setting.
+      hoursUsed: entry.hoursUsed,
+      // Sets the fuelLitres field so the surrounding object or component receives this setting.
+      fuelLitres: entry.fuelLitres,
+      // Sets the remarks field so the surrounding object or component receives this setting.
+      remarks: entry.remarks,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function listDailyLogs( // Defines `listDailyLogs` to retrieve a list of daily logs, keeping this behavior reusable.
-  user: AuthUser, // Separates this argument or property from the next item in the surrounding call or object.
-  projectId: number, // Separates this argument or property from the next item in the surrounding call or object.
-  query: DailyLogListQuery, // Separates this argument or property from the next item in the surrounding call or object.
-) { // Opens the object or callback body that groups the settings for this operation.
-  await assertProjectAccess(user, projectId) // Waits for this asynchronous operation to finish before using its result.
-  const where: Prisma.DailyLogWhereInput = { // Stores this intermediate `prisma.daily log where input` value so later lines can use it.
-    projectId, // Separates this argument or property from the next item in the surrounding call or object.
-    ...(query.from || query.to ? { // Opens the object or callback body that groups the settings for this operation.
-      logDate: { // Sets `logDate` to the date covered by the daily report.
-        ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-  const [logs, total] = await prisma.$transaction([ // Fetches the page and its matching-record count in one transaction so the response metadata stays consistent; stores both results in `logs,total`.
-    prisma.dailyLog.findMany({ // Opens the object or callback body that groups the settings for this operation.
-      where, // Separates this argument or property from the next item in the surrounding call or object.
-      orderBy: { logDate: 'desc' }, // Separates this argument or property from the next item in the surrounding call or object.
-      skip: (query.page - 1) * query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      take: query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      include: { // Sets `include` to loads related records needed alongside the main result.
-        labourEntries: { select: { headCount: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-        machineryEntries: { select: { hoursUsed: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }), // Separates this argument or property from the next item in the surrounding call or object.
-    prisma.dailyLog.count({ where }), // Separates this argument or property from the next item in the surrounding call or object.
-  ]) // Closes the current call, object, or collection so the surrounding expression can continue.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    logs: logs.map((log) => ({ // Sets `logs` to the logs value.
-      ...log, // Separates this argument or property from the next item in the surrounding call or object.
-      labourHeadCountTotal: log.labourEntries.reduce((total, entry) => total + entry.headCount, 0), // Separates this argument or property from the next item in the surrounding call or object.
-      machineryHoursTotal: log.machineryEntries.reduce((total, entry) => total + entry.hoursUsed.toNumber(), 0), // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-    meta: { // Sets `meta` to the meta value.
-      page: query.page, // Separates this argument or property from the next item in the surrounding call or object.
-      limit: query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      total, // Separates this argument or property from the next item in the surrounding call or object.
-      totalPages: Math.ceil(total / query.limit), // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines listDailyLogs so this module can perform its named task when needed.
+export async function listDailyLogs(
+  // Sets the user field so the surrounding object or component receives this setting.
+  user: AuthUser,
+  // Sets the projectId field so the surrounding object or component receives this setting.
+  projectId: number,
+  // Sets the query field so the surrounding object or component receives this setting.
+  query: DailyLogListQuery,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+) {
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(user, projectId)
+  // Stores the value in where so later lines can reuse this data or behavior for the current feature.
+  const where: Prisma.DailyLogWhereInput = {
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    projectId,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ...(query.from || query.to ? {
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: {
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    } : {}),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  const [logs, total] = await prisma.$transaction([
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.dailyLog.findMany({
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      where,
+      // Sets the orderBy field so the surrounding object or component receives this setting.
+      orderBy: { logDate: 'desc' },
+      // Sets the skip field so the surrounding object or component receives this setting.
+      skip: (query.page - 1) * query.limit,
+      // Sets the take field so the surrounding object or component receives this setting.
+      take: query.limit,
+      // Sets the include field so the surrounding object or component receives this setting.
+      include: {
+        // Sets the labourEntries field so the surrounding object or component receives this setting.
+        labourEntries: { select: { headCount: true } },
+        // Sets the machineryEntries field so the surrounding object or component receives this setting.
+        machineryEntries: { select: { hoursUsed: true } },
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }),
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.dailyLog.count({ where }),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ])
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    logs: logs.map((log) => ({
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ...log,
+      // Sets the labourHeadCountTotal field so the surrounding object or component receives this setting.
+      labourHeadCountTotal: log.labourEntries.reduce((total, entry) => total + entry.headCount, 0),
+      // Sets the machineryHoursTotal field so the surrounding object or component receives this setting.
+      machineryHoursTotal: log.machineryEntries.reduce((total, entry) => total + entry.hoursUsed.toNumber(), 0),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+    // Sets the meta field so the surrounding object or component receives this setting.
+    meta: {
+      // Sets the page field so the surrounding object or component receives this setting.
+      page: query.page,
+      // Sets the limit field so the surrounding object or component receives this setting.
+      limit: query.limit,
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      total,
+      // Sets the totalPages field so the surrounding object or component receives this setting.
+      totalPages: Math.ceil(total / query.limit),
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getDailyLog(user: AuthUser, id: number) { // Defines `getDailyLog` to retrieve daily log, keeping this behavior reusable.
-  const log = await prisma.dailyLog.findUnique({ // Looks up one matching database record and stores it in `log` so its existence or values can be checked.
-    where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-    include: { // Sets `include` to loads related records needed alongside the main result.
-      labourEntries: true, // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: true, // Separates this argument or property from the next item in the surrounding call or object.
-      stockTransactions: true, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!log) throw new AppError('NOT_FOUND', 'Daily log not found.', 404) // Checks whether the value is missing; the block handles that case before continuing.
-  await assertProjectAccess(user, log.projectId) // Waits for this asynchronous operation to finish before using its result.
-  return log // Returns `log` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getDailyLog so this module can perform its named task when needed.
+export async function getDailyLog(user: AuthUser, id: number) {
+  // Stores the value in log so later lines can reuse this data or behavior for the current feature.
+  const log = await prisma.dailyLog.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id },
+    // Sets the include field so the surrounding object or component receives this setting.
+    include: {
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: true,
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: true,
+      // Sets the stockTransactions field so the surrounding object or component receives this setting.
+      stockTransactions: true,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!log) throw new AppError('NOT_FOUND', 'Daily log not found.', 404)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(user, log.projectId)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return log
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function createDailyLog(user: AuthUser, projectId: number, input: DailyLogInput) { // Defines `createDailyLog` to create daily log, keeping this behavior reusable.
-  const project = await assertProjectAccess(user, projectId) // Stores this intermediate `project` value so later lines can use it.
-  if (project.status !== 'ACTIVE') { // Checks whether the value is missing; the block handles that case before continuing.
-    throw new AppError('BUSINESS_RULE_VIOLATION', 'Daily logs can only be created for ACTIVE projects.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  const logDate = dateAtUtcMidnight(input.logDate) // Stores this intermediate `log date` value so later lines can use it.
-  if (logDate > todayAtUtcMidnight()) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('BUSINESS_RULE_VIOLATION', 'Log date cannot be in the future.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  await assertDateAvailable(projectId, logDate) // Waits for this asynchronous operation to finish before using its result.
-  const [previous, next] = await Promise.all([ // Stores this intermediate `next` value so later lines can use it.
-    prisma.dailyLog.findFirst({ // Opens the object or callback body that groups the settings for this operation.
-      where: { projectId, logDate: { lt: logDate } }, // Separates this argument or property from the next item in the surrounding call or object.
-      orderBy: { logDate: 'desc' }, // Separates this argument or property from the next item in the surrounding call or object.
-      select: { progressPercent: true }, // Separates this argument or property from the next item in the surrounding call or object.
-    }), // Separates this argument or property from the next item in the surrounding call or object.
-    prisma.dailyLog.findFirst({ // Opens the object or callback body that groups the settings for this operation.
-      where: { projectId, logDate: { gt: logDate } }, // Separates this argument or property from the next item in the surrounding call or object.
-      orderBy: { logDate: 'asc' }, // Separates this argument or property from the next item in the surrounding call or object.
-      select: { progressPercent: true }, // Separates this argument or property from the next item in the surrounding call or object.
-    }), // Separates this argument or property from the next item in the surrounding call or object.
-  ]) // Closes the current call, object, or collection so the surrounding expression can continue.
-  assertProgressOrder(input.progressPercent, previous, next) // Provides `assertProgressOrder(input.progressPercent, previous, next)` as part of create daily log.
-  const children = childCreateData(input) // Stores this intermediate `children` value so later lines can use it.
+// Defines createDailyLog so this module can perform its named task when needed.
+export async function createDailyLog(user: AuthUser, projectId: number, input: DailyLogInput) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await assertProjectAccess(user, projectId)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (project.status !== 'ACTIVE') {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('BUSINESS_RULE_VIOLATION', 'Daily logs can only be created for ACTIVE projects.', 422)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Stores the value in logDate so later lines can reuse this data or behavior for the current feature.
+  const logDate = dateAtUtcMidnight(input.logDate)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (logDate > todayAtUtcMidnight()) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('BUSINESS_RULE_VIOLATION', 'Log date cannot be in the future.', 422)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertDateAvailable(projectId, logDate)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  const [previous, next] = await Promise.all([
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.dailyLog.findFirst({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: { projectId, logDate: { lt: logDate } },
+      // Sets the orderBy field so the surrounding object or component receives this setting.
+      orderBy: { logDate: 'desc' },
+      // Sets the select field so the surrounding object or component receives this setting.
+      select: { progressPercent: true },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }),
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.dailyLog.findFirst({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: { projectId, logDate: { gt: logDate } },
+      // Sets the orderBy field so the surrounding object or component receives this setting.
+      orderBy: { logDate: 'asc' },
+      // Sets the select field so the surrounding object or component receives this setting.
+      select: { progressPercent: true },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ])
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  assertProgressOrder(input.progressPercent, previous, next)
+  // Stores the value in children so later lines can reuse this data or behavior for the current feature.
+  const children = childCreateData(input)
 
-  return prisma.$transaction(async (tx) => { // Returns the database result to the route handler so it can form the API response.
-    const created = await tx.dailyLog.create({ // Stores this intermediate `created` value so later lines can use it.
-      data: { // Sets `data` to the values to write to the database.
-        projectId, // Separates this argument or property from the next item in the surrounding call or object.
-        logDate, // Separates this argument or property from the next item in the surrounding call or object.
-        progressPercent: input.progressPercent, // Separates this argument or property from the next item in the surrounding call or object.
-        workSummary: input.workSummary, // Separates this argument or property from the next item in the surrounding call or object.
-        weather: input.weather, // Separates this argument or property from the next item in the surrounding call or object.
-        issues: input.issues, // Separates this argument or property from the next item in the surrounding call or object.
-        createdById: user.id, // Separates this argument or property from the next item in the surrounding call or object.
-        labourEntries: children.labour ? { create: children.labour } : undefined, // Separates this argument or property from the next item in the surrounding call or object.
-        machineryEntries: children.machinery ? { create: children.machinery } : undefined, // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-      include: { labourEntries: true, machineryEntries: true }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: user.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.CREATE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'DailyLog', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: created.id, // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: auditSnapshot(created), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    return created // Returns `created` to the caller so the next layer can use the result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.$transaction(async (tx) => {
+    // Stores the value in created so later lines can reuse this data or behavior for the current feature.
+    const created = await tx.dailyLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        projectId,
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        logDate,
+        // Sets the progressPercent field so the surrounding object or component receives this setting.
+        progressPercent: input.progressPercent,
+        // Sets the workSummary field so the surrounding object or component receives this setting.
+        workSummary: input.workSummary,
+        // Sets the weather field so the surrounding object or component receives this setting.
+        weather: input.weather,
+        // Sets the issues field so the surrounding object or component receives this setting.
+        issues: input.issues,
+        // Sets the createdById field so the surrounding object or component receives this setting.
+        createdById: user.id,
+        // Sets the labourEntries field so the surrounding object or component receives this setting.
+        labourEntries: children.labour ? { create: children.labour } : undefined,
+        // Sets the machineryEntries field so the surrounding object or component receives this setting.
+        machineryEntries: children.machinery ? { create: children.machinery } : undefined,
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+      // Sets the include field so the surrounding object or component receives this setting.
+      include: { labourEntries: true, machineryEntries: true },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: user.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.CREATE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'DailyLog',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: created.id,
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: auditSnapshot(created),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return created
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function updateDailyLog(user: AuthUser, id: number, input: DailyLogPatch) { // Defines `updateDailyLog` to update daily log, keeping this behavior reusable.
-  const existing = await assertLogAccess(user, id) // Stores this intermediate `existing` value so later lines can use it.
-  if (input.logDate && dateAtUtcMidnight(input.logDate) > todayAtUtcMidnight()) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-    throw new AppError('BUSINESS_RULE_VIOLATION', 'Log date cannot be in the future.', 422) // Stops this request with `BUSINESS_RULE_VIOLATION` and HTTP 422 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  const nextDate = input.logDate ? dateAtUtcMidnight(input.logDate) : existing.logDate // Stores this intermediate `next date` value so later lines can use it.
-  await assertDateAvailable(existing.projectId, nextDate, id) // Waits for this asynchronous operation to finish before using its result.
-  const previous = await prisma.dailyLog.findFirst({ // Looks up one matching database record and stores it in `previous` so its existence or values can be checked.
-    where: { // Sets `where` to filters the database records to the requested scope.
-      projectId: existing.projectId, // Separates this argument or property from the next item in the surrounding call or object.
-      id: { not: id }, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: { lt: nextDate }, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    orderBy: { logDate: 'desc' }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { progressPercent: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  const next = await prisma.dailyLog.findFirst({ // Looks up one matching database record and stores it in `next` so its existence or values can be checked.
-    where: { // Sets `where` to filters the database records to the requested scope.
-      projectId: existing.projectId, // Separates this argument or property from the next item in the surrounding call or object.
-      id: { not: id }, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: { gt: nextDate }, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    orderBy: { logDate: 'asc' }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { progressPercent: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (input.progressPercent !== undefined) { // Checks whether the caller supplied this optional value before validating or applying it.
-    assertProgressOrder(input.progressPercent, previous, next) // Provides `assertProgressOrder(input.progressPercent, previous, next)` as part of update daily log.
-  } // Closes the current block and marks where its grouped work ends.
-  const children = childCreateData(input) // Stores this intermediate `children` value so later lines can use it.
+// Defines updateDailyLog so this module can perform its named task when needed.
+export async function updateDailyLog(user: AuthUser, id: number, input: DailyLogPatch) {
+  // Stores the value in existing so later lines can reuse this data or behavior for the current feature.
+  const existing = await assertLogAccess(user, id)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.logDate && dateAtUtcMidnight(input.logDate) > todayAtUtcMidnight()) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('BUSINESS_RULE_VIOLATION', 'Log date cannot be in the future.', 422)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Stores the value in nextDate so later lines can reuse this data or behavior for the current feature.
+  const nextDate = input.logDate ? dateAtUtcMidnight(input.logDate) : existing.logDate
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertDateAvailable(existing.projectId, nextDate, id)
+  // Stores the value in previous so later lines can reuse this data or behavior for the current feature.
+  const previous = await prisma.dailyLog.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: {
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: existing.projectId,
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: { not: id },
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: { lt: nextDate },
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: { logDate: 'desc' },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { progressPercent: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Stores the value in next so later lines can reuse this data or behavior for the current feature.
+  const next = await prisma.dailyLog.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: {
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: existing.projectId,
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: { not: id },
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: { gt: nextDate },
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: { logDate: 'asc' },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { progressPercent: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.progressPercent !== undefined) {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    assertProgressOrder(input.progressPercent, previous, next)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Stores the value in children so later lines can reuse this data or behavior for the current feature.
+  const children = childCreateData(input)
 
-  return prisma.$transaction(async (tx) => { // Returns the database result to the route handler so it can form the API response.
-    if (input.labourEntries) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-      await tx.labourEntry.deleteMany({ where: { dailyLogId: id } }) // Waits for this asynchronous operation to finish before using its result.
-    } // Closes the current block and marks where its grouped work ends.
-    if (input.machineryEntries) { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-      await tx.machineryEntry.deleteMany({ where: { dailyLogId: id } }) // Waits for this asynchronous operation to finish before using its result.
-    } // Closes the current block and marks where its grouped work ends.
-    const updated = await tx.dailyLog.update({ // Stores this intermediate `updated` value so later lines can use it.
-      where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-      data: { // Sets `data` to the values to write to the database.
-        ...(input.logDate ? { logDate: nextDate } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(input.progressPercent !== undefined ? { progressPercent: input.progressPercent } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(input.workSummary !== undefined ? { workSummary: input.workSummary } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(input.weather !== undefined ? { weather: input.weather } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(input.issues !== undefined ? { issues: input.issues } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(children.labour ? { labourEntries: { create: children.labour } } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        ...(children.machinery ? { machineryEntries: { create: children.machinery } } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-      include: { labourEntries: true, machineryEntries: true }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: user.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.UPDATE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'DailyLog', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: updated.id, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: auditSnapshot(existing), // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: auditSnapshot(updated), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    return updated // Returns `updated` to the caller so the next layer can use the result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.$transaction(async (tx) => {
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (input.labourEntries) {
+      // Waits for the asynchronous result before using it, so later work receives completed data.
+      await tx.labourEntry.deleteMany({ where: { dailyLogId: id } })
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (input.machineryEntries) {
+      // Waits for the asynchronous result before using it, so later work receives completed data.
+      await tx.machineryEntry.deleteMany({ where: { dailyLogId: id } })
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+    // Stores the value in updated so later lines can reuse this data or behavior for the current feature.
+    const updated = await tx.dailyLog.update({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: { id },
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(input.logDate ? { logDate: nextDate } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(input.progressPercent !== undefined ? { progressPercent: input.progressPercent } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(input.workSummary !== undefined ? { workSummary: input.workSummary } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(input.weather !== undefined ? { weather: input.weather } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(input.issues !== undefined ? { issues: input.issues } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(children.labour ? { labourEntries: { create: children.labour } } : {}),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        ...(children.machinery ? { machineryEntries: { create: children.machinery } } : {}),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+      // Sets the include field so the surrounding object or component receives this setting.
+      include: { labourEntries: true, machineryEntries: true },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: user.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.UPDATE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'DailyLog',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: updated.id,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: auditSnapshot(existing),
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: auditSnapshot(updated),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return updated
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function deleteDailyLog(user: AuthUser, id: number) { // Defines `deleteDailyLog` to delete daily log, keeping this behavior reusable.
-  const existing = await prisma.dailyLog.findUnique({ // Looks up one matching database record and stores it in `existing` so its existence or values can be checked.
-    where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-    include: { labourEntries: true, machineryEntries: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!existing) throw new AppError('NOT_FOUND', 'Daily log not found.', 404) // Checks whether the value is missing; the block handles that case before continuing.
-  await assertProjectAccess(user, existing.projectId) // Waits for this asynchronous operation to finish before using its result.
-  if (user.role !== Role.ADMIN) { // Checks the caller's role before allowing this role-restricted operation.
-    throw new AppError('FORBIDDEN', 'Only Administrators can delete daily logs.', 403) // Stops this request with `FORBIDDEN` and HTTP 403 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  await prisma.$transaction(async (tx) => { // Opens the function, callback, or control-flow block that groups the related statements.
-    await tx.dailyLog.delete({ where: { id } }) // Waits for this asynchronous operation to finish before using its result.
-    await tx.auditLog.create({ // Waits for this asynchronous operation to finish before using its result.
-      data: { // Sets `data` to the values to write to the database.
-        userId: user.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: AuditAction.DELETE, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'DailyLog', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: id, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: auditSnapshot(existing), // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Implements daily logs business rules and database operations.
+// Defines deleteDailyLog so this module can perform its named task when needed.
+export async function deleteDailyLog(user: AuthUser, id: number) {
+  // Stores the value in existing so later lines can reuse this data or behavior for the current feature.
+  const existing = await prisma.dailyLog.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id },
+    // Sets the include field so the surrounding object or component receives this setting.
+    include: { labourEntries: true, machineryEntries: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!existing) throw new AppError('NOT_FOUND', 'Daily log not found.', 404)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await assertProjectAccess(user, existing.projectId)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (user.role !== Role.ADMIN) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('FORBIDDEN', 'Only Administrators can delete daily logs.', 403)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await prisma.$transaction(async (tx) => {
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.dailyLog.delete({ where: { id } })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await tx.auditLog.create({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: {
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: user.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: AuditAction.DELETE,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'DailyLog',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: id,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: auditSnapshot(existing),
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
