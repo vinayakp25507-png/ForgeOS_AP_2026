@@ -216,27 +216,19 @@ function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) 
         // Continues the component or data expression so its related values and behavior stay grouped together.
         <motion.div
             /* Sets the style property so this element receives the data or behavior required by this screen. */
-            /* Sets the style property so this element receives the data or behavior required by this screen. */
             style={{
-                /* Sets the width field so the surrounding object or component receives this setting. */
                 /* Sets the width field so the surrounding object or component receives this setting. */
                 width: cardWidth,
                 /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 transform,
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 opacity,
                 /* Sets the zIndex field so the surrounding object or component receives this setting. */
-                /* Sets the zIndex field so the surrounding object or component receives this setting. */
                 zIndex: card.index + 1,
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             /* Continues the component or data expression so its related values and behavior stay grouped together. */
             }}
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="pointer-events-auto absolute left-1/2 top-1/2 aspect-[4/5] will-change-transform select-none cursor-pointer"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
             {/* Starts the <div> element to organize this part of the interface. */}
             <div className="group relative h-full w-full overflow-hidden rounded-2xl bg-[#E8DCD4] shadow-xl ring-1 ring-[#323232]/15 transition-all duration-500 hover:ring-[#323232]/50 hover:shadow-2xl">
@@ -245,15 +237,11 @@ function TunnelCard({ card, progress, pointer, total, stage }: TunnelCardProps) 
                     /* Selects the image or other resource displayed by this element. */
                     src={card.item.src}
                     /* Sets the alt property so this element receives the data or behavior required by this screen. */
-                    /* Sets the alt property so this element receives the data or behavior required by this screen. */
                     alt={card.item.title}
-                    /* Sets the draggable property so this element receives the data or behavior required by this screen. */
                     /* Sets the draggable property so this element receives the data or behavior required by this screen. */
                     draggable={false}
                     /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                     className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 />
                 {/* Starts the <div> element to organize this part of the interface. */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-4 sm:p-5">
@@ -353,31 +341,22 @@ export default function PerspectiveTunnelHero() {
         // Continues the component or data expression so its related values and behavior stay grouped together.
         <div
             /* Sets the ref property so this element receives the data or behavior required by this screen. */
-            /* Sets the ref property so this element receives the data or behavior required by this screen. */
             ref={containerRef}
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="relative h-[250vh] w-full bg-[#DDD0C8]"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
             {/* Starts the <div> element to organize this part of the interface. */}
             <div
                 /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className="sticky top-0 h-screen w-full overflow-hidden text-[#323232] select-none flex items-center justify-center"
                 /* Sets the style property so this element receives the data or behavior required by this screen. */
-                /* Sets the style property so this element receives the data or behavior required by this screen. */
                 style={{
-                    /* Sets the perspective field so the surrounding object or component receives this setting. */
                     /* Sets the perspective field so the surrounding object or component receives this setting. */
                     perspective: stage.isMobile ? "900px" : "1200px",
                     /* Sets the transformStyle field so the surrounding object or component receives this setting. */
-                    /* Sets the transformStyle field so the surrounding object or component receives this setting. */
                     transformStyle: "preserve-3d",
                 /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 }}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
                 {/* Subtle Grid in Dark Grey */}
                 {/* Starts the <div> element to organize this part of the interface. */}
@@ -393,12 +372,9 @@ export default function PerspectiveTunnelHero() {
                 {/* Starts the <motion.div> element to organize this part of the interface. */}
                 <motion.div
                     /* Sets the style property so this element receives the data or behavior required by this screen. */
-                    /* Sets the style property so this element receives the data or behavior required by this screen. */
                     style={{ scale: titleScale, opacity: titleOpacity }}
                     /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                     className="pointer-events-none z-0 flex flex-col items-center text-center px-6 max-w-xl"
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 >
                     {/* Starts the <p> element to organize this part of the interface. */}
                     <p className="text-xs font-mono uppercase tracking-[0.4em] text-[#595552] mb-4">
@@ -429,12 +405,9 @@ export default function PerspectiveTunnelHero() {
                 {/* Starts the <motion.div> element to organize this part of the interface. */}
                 <motion.div
                     /* Sets the style property so this element receives the data or behavior required by this screen. */
-                    /* Sets the style property so this element receives the data or behavior required by this screen. */
                     style={{ opacity: promptOpacity }}
                     /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                     className="pointer-events-none absolute bottom-8 z-20 flex flex-col items-center gap-2 text-xs font-mono uppercase tracking-[0.3em] text-[#595552]"
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 >
                     {/* Starts the <span> element to organize this part of the interface. */}
                     <span>Scroll to Explore Sites</span>
@@ -449,10 +422,7 @@ export default function PerspectiveTunnelHero() {
                     /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                     className="absolute inset-0 pointer-events-none"
                     /* Sets the style property so this element receives the data or behavior required by this screen. */
-                    /* Sets the style property so this element receives the data or behavior required by this screen. */
                     style={{ transformStyle: "preserve-3d" }}
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 >
                     {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                     {TUNNEL_CARDS.map((card, i) => (
@@ -461,22 +431,15 @@ export default function PerspectiveTunnelHero() {
                             /* Gives this rendered item a stable identity so React can update lists efficiently. */
                             key={i}
                             /* Sets the card property so this element receives the data or behavior required by this screen. */
-                            /* Sets the card property so this element receives the data or behavior required by this screen. */
                             card={card}
-                            /* Sets the progress property so this element receives the data or behavior required by this screen. */
                             /* Sets the progress property so this element receives the data or behavior required by this screen. */
                             progress={smoothProgress}
                             /* Sets the pointer property so this element receives the data or behavior required by this screen. */
-                            /* Sets the pointer property so this element receives the data or behavior required by this screen. */
                             pointer={pointer}
-                            /* Sets the total property so this element receives the data or behavior required by this screen. */
                             /* Sets the total property so this element receives the data or behavior required by this screen. */
                             total={TUNNEL_CARDS.length}
                             /* Sets the stage property so this element receives the data or behavior required by this screen. */
-                            /* Sets the stage property so this element receives the data or behavior required by this screen. */
                             stage={stage}
-                        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                        /* Continues the component or data expression so its related values and behavior stay grouped together. */
                         />
                     // Continues the component or data expression so its related values and behavior stay grouped together.
                     ))}
@@ -490,4 +453,3 @@ export default function PerspectiveTunnelHero() {
     );
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable perspective tunnel hero interface component.
