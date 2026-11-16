@@ -1,350 +1,666 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest' // Imports test-runner helpers for defining and checking this behavior.
+// Imports beforeEach, describe, expect, it, vi from vitest so this module can reuse that component, helper, or library.
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const mocks = vi.hoisted(() => ({ // Stores this intermediate `mocks` value so later lines can use it.
-  projectFindUnique: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogFindUnique: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogFindFirst: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogFindMany: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogCount: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogCreate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogUpdate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  dailyLogDelete: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  auditLogCreate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  labourDeleteMany: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  machineryDeleteMany: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  transaction: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-})) // Provides `}))` as part of this server module.
+// Stores the value in mocks so later lines can reuse this data or behavior for the current feature.
+const mocks = vi.hoisted(() => ({
+  // Sets the projectFindUnique field so the surrounding object or component receives this setting.
+  projectFindUnique: vi.fn(),
+  // Sets the dailyLogFindUnique field so the surrounding object or component receives this setting.
+  dailyLogFindUnique: vi.fn(),
+  // Sets the dailyLogFindFirst field so the surrounding object or component receives this setting.
+  dailyLogFindFirst: vi.fn(),
+  // Sets the dailyLogFindMany field so the surrounding object or component receives this setting.
+  dailyLogFindMany: vi.fn(),
+  // Sets the dailyLogCount field so the surrounding object or component receives this setting.
+  dailyLogCount: vi.fn(),
+  // Sets the dailyLogCreate field so the surrounding object or component receives this setting.
+  dailyLogCreate: vi.fn(),
+  // Sets the dailyLogUpdate field so the surrounding object or component receives this setting.
+  dailyLogUpdate: vi.fn(),
+  // Sets the dailyLogDelete field so the surrounding object or component receives this setting.
+  dailyLogDelete: vi.fn(),
+  // Sets the auditLogCreate field so the surrounding object or component receives this setting.
+  auditLogCreate: vi.fn(),
+  // Sets the labourDeleteMany field so the surrounding object or component receives this setting.
+  labourDeleteMany: vi.fn(),
+  // Sets the machineryDeleteMany field so the surrounding object or component receives this setting.
+  machineryDeleteMany: vi.fn(),
+  // Sets the transaction field so the surrounding object or component receives this setting.
+  transaction: vi.fn(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}))
 
-vi.mock('../src/utils/prisma.js', () => ({ // Configures the test double or mock so this test can control the external behavior it depends on.
-  prisma: { // Sets `prisma` to the prisma value.
-    project: { findUnique: mocks.projectFindUnique }, // Separates this argument or property from the next item in the surrounding call or object.
-    dailyLog: { // Sets `dailyLog` to the daily log value.
-      findUnique: mocks.dailyLogFindUnique, // Separates this argument or property from the next item in the surrounding call or object.
-      findFirst: mocks.dailyLogFindFirst, // Separates this argument or property from the next item in the surrounding call or object.
-      findMany: mocks.dailyLogFindMany, // Separates this argument or property from the next item in the surrounding call or object.
-      count: mocks.dailyLogCount, // Separates this argument or property from the next item in the surrounding call or object.
-      create: mocks.dailyLogCreate, // Separates this argument or property from the next item in the surrounding call or object.
-      update: mocks.dailyLogUpdate, // Separates this argument or property from the next item in the surrounding call or object.
-      delete: mocks.dailyLogDelete, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    $transaction: mocks.transaction, // Separates this argument or property from the next item in the surrounding call or object.
-  }, // Closes the current call, object, or collection so the surrounding expression can continue.
-})) // Provides `}))` as part of this server module.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vi.mock('../src/utils/prisma.js', () => ({
+  // Sets the prisma field so the surrounding object or component receives this setting.
+  prisma: {
+    // Sets the project field so the surrounding object or component receives this setting.
+    project: { findUnique: mocks.projectFindUnique },
+    // Sets the dailyLog field so the surrounding object or component receives this setting.
+    dailyLog: {
+      // Sets the findUnique field so the surrounding object or component receives this setting.
+      findUnique: mocks.dailyLogFindUnique,
+      // Sets the findFirst field so the surrounding object or component receives this setting.
+      findFirst: mocks.dailyLogFindFirst,
+      // Sets the findMany field so the surrounding object or component receives this setting.
+      findMany: mocks.dailyLogFindMany,
+      // Sets the count field so the surrounding object or component receives this setting.
+      count: mocks.dailyLogCount,
+      // Sets the create field so the surrounding object or component receives this setting.
+      create: mocks.dailyLogCreate,
+      // Sets the update field so the surrounding object or component receives this setting.
+      update: mocks.dailyLogUpdate,
+      // Sets the delete field so the surrounding object or component receives this setting.
+      delete: mocks.dailyLogDelete,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the $transaction field so the surrounding object or component receives this setting.
+    $transaction: mocks.transaction,
+  // Closes the current block or object so the grouped statements or settings end here.
+  },
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}))
 
-import { // Imports { from  so this module can reuse that functionality.
-  createDailyLog, // Separates this argument or property from the next item in the surrounding call or object.
-  deleteDailyLog, // Separates this argument or property from the next item in the surrounding call or object.
-  getDailyLog, // Separates this argument or property from the next item in the surrounding call or object.
-  listDailyLogs, // Separates this argument or property from the next item in the surrounding call or object.
-  updateDailyLog, // Separates this argument or property from the next item in the surrounding call or object.
-} from '../src/modules/daily-logs/daily-logs.service.js' // Provides `} from '../src/modules/daily-logs/daily-logs.service.js'` as part of this server module.
-import { dailyLogListQuerySchema } from '../src/modules/daily-logs/daily-logs.validator.js' // Imports { dailyLogListQuerySchema } from '../src/modules/daily-logs/daily-logs.validator.js' so this module can reuse that functionality.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+import {
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  createDailyLog,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  deleteDailyLog,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  getDailyLog,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  listDailyLogs,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  updateDailyLog,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+} from '../src/modules/daily-logs/daily-logs.service.js'
+// Imports dailyLogListQuerySchema from ../src/modules/daily-logs/daily-logs.validator.js so this module can reuse that component, helper, or library.
+import { dailyLogListQuerySchema } from '../src/modules/daily-logs/daily-logs.validator.js'
 
-const admin = { id: 1, role: 'ADMIN' as const } // Stores this intermediate `admin` value so later lines can use it.
-const pm = { id: 2, role: 'PM' as const } // Stores this intermediate `pm` value so later lines can use it.
-const today = new Date() // Converts the supplied date into a JavaScript date value and stores it in `today` for consistent comparisons.
-const date = today.toISOString().slice(0, 10) // Stores this intermediate `date` value so later lines can use it.
-const yesterday = new Date(today.getTime() - 86_400_000).toISOString().slice(0, 10) // Converts the supplied date into a JavaScript date value and stores it in `yesterday` for consistent comparisons.
-const tomorrow = new Date(today.getTime() + 86_400_000).toISOString().slice(0, 10) // Converts the supplied date into a JavaScript date value and stores it in `tomorrow` for consistent comparisons.
+// Stores the value in admin so later lines can reuse this data or behavior for the current feature.
+const admin = { id: 1, role: 'ADMIN' as const }
+// Stores the value in pm so later lines can reuse this data or behavior for the current feature.
+const pm = { id: 2, role: 'PM' as const }
+// Stores the value in today so later lines can reuse this data or behavior for the current feature.
+const today = new Date()
+// Stores the value in date so later lines can reuse this data or behavior for the current feature.
+const date = today.toISOString().slice(0, 10)
+// Stores the value in yesterday so later lines can reuse this data or behavior for the current feature.
+const yesterday = new Date(today.getTime() - 86_400_000).toISOString().slice(0, 10)
+// Stores the value in tomorrow so later lines can reuse this data or behavior for the current feature.
+const tomorrow = new Date(today.getTime() + 86_400_000).toISOString().slice(0, 10)
 
-const input = { // Stores this intermediate `input` value so later lines can use it.
-  logDate: date, // Separates this argument or property from the next item in the surrounding call or object.
-  progressPercent: 40, // Separates this argument or property from the next item in the surrounding call or object.
-  workSummary: 'Concrete work completed.', // Separates this argument or property from the next item in the surrounding call or object.
-  labourEntries: [{ trade: 'Mason', headCount: 4, hoursWorked: 8 }], // Separates this argument or property from the next item in the surrounding call or object.
-  machineryEntries: [{ machineName: 'Mixer', hoursUsed: 3, fuelLitres: 5 }], // Separates this argument or property from the next item in the surrounding call or object.
-} // Closes the current block and marks where its grouped work ends.
+// Stores the value in input so later lines can reuse this data or behavior for the current feature.
+const input = {
+  // Sets the logDate field so the surrounding object or component receives this setting.
+  logDate: date,
+  // Sets the progressPercent field so the surrounding object or component receives this setting.
+  progressPercent: 40,
+  // Sets the workSummary field so the surrounding object or component receives this setting.
+  workSummary: 'Concrete work completed.',
+  // Sets the labourEntries field so the surrounding object or component receives this setting.
+  labourEntries: [{ trade: 'Mason', headCount: 4, hoursWorked: 8 }],
+  // Sets the machineryEntries field so the surrounding object or component receives this setting.
+  machineryEntries: [{ machineName: 'Mixer', hoursUsed: 3, fuelLitres: 5 }],
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function decimal(value: number) { // Defines `decimal` to decimal, keeping this behavior reusable.
-  return { toNumber: () => value, toString: () => String(value) } // Returns the assembled result object so the caller receives the fields it needs.
-} // Closes the current block and marks where its grouped work ends.
+// Defines decimal so this module can perform its named task when needed.
+function decimal(value: number) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return { toNumber: () => value, toString: () => String(value) }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function configureTransaction() { // Defines `configureTransaction` to configure transaction, keeping this behavior reusable.
-  mocks.transaction.mockImplementation(async (operation: unknown) => { // Opens the function, callback, or control-flow block that groups the related statements.
-    if (typeof operation === 'function') { // Checks whether the supplied values meet this condition; the block handles that case before continuing.
-      return operation({ // Returns `operation({` to the caller so the next layer can use the result.
-        dailyLog: { create: mocks.dailyLogCreate, update: mocks.dailyLogUpdate, delete: mocks.dailyLogDelete }, // Separates this argument or property from the next item in the surrounding call or object.
-        labourEntry: { deleteMany: mocks.labourDeleteMany }, // Separates this argument or property from the next item in the surrounding call or object.
-        machineryEntry: { deleteMany: mocks.machineryDeleteMany }, // Separates this argument or property from the next item in the surrounding call or object.
-        auditLog: { create: mocks.auditLogCreate }, // Separates this argument or property from the next item in the surrounding call or object.
-      }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    } // Closes the current block and marks where its grouped work ends.
-    return Promise.all(operation as Array<Promise<unknown>>) // Returns `Promise.all(operation as Array<Promise<unknown>>)` to the caller so the next layer can use the result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines configureTransaction so this module can perform its named task when needed.
+function configureTransaction() {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.transaction.mockImplementation(async (operation: unknown) => {
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (typeof operation === 'function') {
+      // Returns the result so the caller or React receives the value or interface this function provides.
+      return operation({
+        // Sets the dailyLog field so the surrounding object or component receives this setting.
+        dailyLog: { create: mocks.dailyLogCreate, update: mocks.dailyLogUpdate, delete: mocks.dailyLogDelete },
+        // Sets the labourEntry field so the surrounding object or component receives this setting.
+        labourEntry: { deleteMany: mocks.labourDeleteMany },
+        // Sets the machineryEntry field so the surrounding object or component receives this setting.
+        machineryEntry: { deleteMany: mocks.machineryDeleteMany },
+        // Sets the auditLog field so the surrounding object or component receives this setting.
+        auditLog: { create: mocks.auditLogCreate },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      })
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return Promise.all(operation as Array<Promise<unknown>>)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-beforeEach(() => { // Opens the function, callback, or control-flow block that groups the related statements.
-  vi.clearAllMocks() // Configures the test double or mock so this test can control the external behavior it depends on.
-  configureTransaction() // Provides `configureTransaction()` as part of configure transaction.
-  mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id }) // Provides `mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id })` as part of configure transaction.
-  mocks.dailyLogFindUnique.mockResolvedValue(null) // Provides `mocks.dailyLogFindUnique.mockResolvedValue(null)` as part of configure transaction.
-  mocks.dailyLogFindFirst.mockResolvedValue(null) // Provides `mocks.dailyLogFindFirst.mockResolvedValue(null)` as part of configure transaction.
-  mocks.dailyLogCreate.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-    id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-    projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-    logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: decimal(input.progressPercent), // Separates this argument or property from the next item in the surrounding call or object.
-    workSummary: input.workSummary, // Separates this argument or property from the next item in the surrounding call or object.
-    weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-    issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-    createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-    createdAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-    updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-    labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-    machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: decimal(5), remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  mocks.dailyLogUpdate.mockImplementation(async (args: { data: Record<string, unknown> }) => ({ // Opens the object or callback body that groups the settings for this operation.
-    id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-    projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-    logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: decimal(input.progressPercent), // Separates this argument or property from the next item in the surrounding call or object.
-    workSummary: args.data.workSummary ?? input.workSummary, // Separates this argument or property from the next item in the surrounding call or object.
-    weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-    issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-    createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-    createdAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-    updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-    labourEntries: args.data.labourEntries // Sets `labourEntries` to the labour entries value.
-      ? [{ id: 2, ...((args.data.labourEntries as { create: unknown[] }).create[0] as object), hoursWorked: decimal(6) }] // Provides `? [{ id: 2, ...((args.data.labourEntries as { create: unknown[] }).create[0] as object), hoursWorked: decimal(6) }]` as part of configure transaction.
-      : [], // Separates this argument or property from the next item in the surrounding call or object.
-    machineryEntries: args.data.machineryEntries // Sets `machineryEntries` to the machinery entries value.
-      ? [{ id: 2, ...((args.data.machineryEntries as { create: unknown[] }).create[0] as object), hoursUsed: decimal(4), fuelLitres: null }] // Provides `? [{ id: 2, ...((args.data.machineryEntries as { create: unknown[] }).create[0] as object), hoursUsed: decimal(4), fuelLitres: null }]` as part of configure transaction.
-      : [], // Separates this argument or property from the next item in the surrounding call or object.
-  })) // Provides `}))` as part of configure transaction.
-  mocks.dailyLogDelete.mockResolvedValue({}) // Provides `mocks.dailyLogDelete.mockResolvedValue({})` as part of configure transaction.
-  mocks.auditLogCreate.mockResolvedValue({ id: 100 }) // Provides `mocks.auditLogCreate.mockResolvedValue({ id: 100 })` as part of configure transaction.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+beforeEach(() => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  vi.clearAllMocks()
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  configureTransaction()
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id })
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.dailyLogFindUnique.mockResolvedValue(null)
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.dailyLogFindFirst.mockResolvedValue(null)
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.dailyLogCreate.mockResolvedValue({
+    // Sets the id field so the surrounding object or component receives this setting.
+    id: 10,
+    // Sets the projectId field so the surrounding object or component receives this setting.
+    projectId: 3,
+    // Sets the logDate field so the surrounding object or component receives this setting.
+    logDate: new Date(`${date}T00:00:00.000Z`),
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: decimal(input.progressPercent),
+    // Sets the workSummary field so the surrounding object or component receives this setting.
+    workSummary: input.workSummary,
+    // Sets the weather field so the surrounding object or component receives this setting.
+    weather: null,
+    // Sets the issues field so the surrounding object or component receives this setting.
+    issues: null,
+    // Sets the createdById field so the surrounding object or component receives this setting.
+    createdById: pm.id,
+    // Sets the createdAt field so the surrounding object or component receives this setting.
+    createdAt: new Date(),
+    // Sets the updatedAt field so the surrounding object or component receives this setting.
+    updatedAt: new Date(),
+    // Sets the labourEntries field so the surrounding object or component receives this setting.
+    labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }],
+    // Sets the machineryEntries field so the surrounding object or component receives this setting.
+    machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: decimal(5), remarks: null }],
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.dailyLogUpdate.mockImplementation(async (args: { data: Record<string, unknown> }) => ({
+    // Sets the id field so the surrounding object or component receives this setting.
+    id: 10,
+    // Sets the projectId field so the surrounding object or component receives this setting.
+    projectId: 3,
+    // Sets the logDate field so the surrounding object or component receives this setting.
+    logDate: new Date(`${date}T00:00:00.000Z`),
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: decimal(input.progressPercent),
+    // Sets the workSummary field so the surrounding object or component receives this setting.
+    workSummary: args.data.workSummary ?? input.workSummary,
+    // Sets the weather field so the surrounding object or component receives this setting.
+    weather: null,
+    // Sets the issues field so the surrounding object or component receives this setting.
+    issues: null,
+    // Sets the createdById field so the surrounding object or component receives this setting.
+    createdById: pm.id,
+    // Sets the createdAt field so the surrounding object or component receives this setting.
+    createdAt: new Date(),
+    // Sets the updatedAt field so the surrounding object or component receives this setting.
+    updatedAt: new Date(),
+    // Sets the labourEntries field so the surrounding object or component receives this setting.
+    labourEntries: args.data.labourEntries
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ? [{ id: 2, ...((args.data.labourEntries as { create: unknown[] }).create[0] as object), hoursWorked: decimal(6) }]
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      : [],
+    // Sets the machineryEntries field so the surrounding object or component receives this setting.
+    machineryEntries: args.data.machineryEntries
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ? [{ id: 2, ...((args.data.machineryEntries as { create: unknown[] }).create[0] as object), hoursUsed: decimal(4), fuelLitres: null }]
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      : [],
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  }))
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.dailyLogDelete.mockResolvedValue({})
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  mocks.auditLogCreate.mockResolvedValue({ id: 100 })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
 
-describe('daily log authorization and creation rules', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  it('allows ADMIN and assigned PM to list project logs', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindMany.mockResolvedValue([]) // Provides `mocks.dailyLogFindMany.mockResolvedValue([])` as part of configure transaction.
-    mocks.dailyLogCount.mockResolvedValue(0) // Provides `mocks.dailyLogCount.mockResolvedValue(0)` as part of configure transaction.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('daily log authorization and creation rules', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN and assigned PM to list project logs', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindMany.mockResolvedValue([])
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogCount.mockResolvedValue(0)
 
-    await expect(listDailyLogs(admin, 3, { page: 1, limit: 20 })).resolves.toMatchObject({ logs: [] }) // Waits for this asynchronous operation to finish before using its result.
-    await expect(listDailyLogs(pm, 3, { page: 1, limit: 20 })).resolves.toMatchObject({ logs: [] }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.projectFindUnique).toHaveBeenCalledTimes(2) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(listDailyLogs(admin, 3, { page: 1, limit: 20 })).resolves.toMatchObject({ logs: [] })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(listDailyLogs(pm, 3, { page: 1, limit: 20 })).resolves.toMatchObject({ logs: [] })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.projectFindUnique).toHaveBeenCalledTimes(2)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects PM access to an unassigned project', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: 99 }) // Provides `mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: 99 })` as part of configure transaction.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects PM access to an unassigned project', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: 99 })
 
-    await expect(listDailyLogs(pm, 3, { page: 1, limit: 20 })).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 }) // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(listDailyLogs(pm, 3, { page: 1, limit: 20 })).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows ADMIN and assigned PM to create logs with labour and machinery entries', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    await createDailyLog(admin, 3, input) // Waits for this asynchronous operation to finish before using its result.
-    await createDailyLog(pm, 3, input) // Waits for this asynchronous operation to finish before using its result.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN and assigned PM to create logs with labour and machinery entries', async () => {
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await createDailyLog(admin, 3, input)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await createDailyLog(pm, 3, input)
 
-    expect(mocks.dailyLogCreate).toHaveBeenCalledTimes(2) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.dailyLogCreate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        labourEntries: { create: [{ trade: 'Mason', contractorName: undefined, headCount: 4, hoursWorked: 8, remarks: undefined }] }, // Separates this argument or property from the next item in the surrounding call or object.
-        machineryEntries: { create: [{ machineName: 'Mixer', operatorName: undefined, hoursUsed: 3, fuelLitres: 5, remarks: undefined }] }, // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
-    expect(mocks.auditLogCreate).toHaveBeenCalledTimes(2) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        userId: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: 'CREATE', // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'DailyLog', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: 10, // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: expect.objectContaining({ // Sets `newValues` to the record values after the change.
-          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Mason', headCount: 4 })]), // Separates this argument or property from the next item in the surrounding call or object.
-          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Mixer', hoursUsed: '3' })]), // Separates this argument or property from the next item in the surrounding call or object.
-        }), // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.dailyLogCreate).toHaveBeenCalledTimes(2)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.dailyLogCreate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the labourEntries field so the surrounding object or component receives this setting.
+        labourEntries: { create: [{ trade: 'Mason', contractorName: undefined, headCount: 4, hoursWorked: 8, remarks: undefined }] },
+        // Sets the machineryEntries field so the surrounding object or component receives this setting.
+        machineryEntries: { create: [{ machineName: 'Mixer', operatorName: undefined, hoursUsed: 3, fuelLitres: 5, remarks: undefined }] },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledTimes(2)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: pm.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: 'CREATE',
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'DailyLog',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: 10,
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: expect.objectContaining({
+          // Sets the labourEntries field so the surrounding object or component receives this setting.
+          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Mason', headCount: 4 })]),
+          // Sets the machineryEntries field so the surrounding object or component receives this setting.
+          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Mixer', hoursUsed: '3' })]),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        }),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects creation for inactive projects and future dates', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'PLANNING', assignedPmId: pm.id }) // Provides `mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'PLANNING', assignedPmId: pm.id })` as part of configure transaction.
-    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 }) // Waits for this asynchronous operation to finish before using its result.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects creation for inactive projects and future dates', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'PLANNING', assignedPmId: pm.id })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 })
 
-    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id }) // Provides `mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id })` as part of configure transaction.
-    await expect(createDailyLog(pm, 3, { ...input, logDate: tomorrow })).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 }) // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindUnique.mockResolvedValue({ id: 3, status: 'ACTIVE', assignedPmId: pm.id })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, { ...input, logDate: tomorrow })).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects duplicate dates and progress that violates chronological order', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ id: 20 }) // Provides `mocks.dailyLogFindUnique.mockResolvedValue({ id: 20 })` as part of configure transaction.
-    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'CONFLICT', status: 409 }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.auditLogCreate).not.toHaveBeenCalled() // Asserts that the observed result matches the behavior this test is meant to guarantee.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects duplicate dates and progress that violates chronological order', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({ id: 20 })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'CONFLICT', status: 409 })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).not.toHaveBeenCalled()
 
-    mocks.dailyLogFindUnique.mockResolvedValue(null) // Provides `mocks.dailyLogFindUnique.mockResolvedValue(null)` as part of configure transaction.
-    mocks.dailyLogFindFirst.mockResolvedValueOnce({ progressPercent: decimal(50) }).mockResolvedValueOnce(null) // Provides `mocks.dailyLogFindFirst.mockResolvedValueOnce({ progressPercent: decimal(50) }).mockResolvedValueOnce(null)` as part of configure transaction.
-    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 }) // Waits for this asynchronous operation to finish before using its result.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue(null)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindFirst.mockResolvedValueOnce({ progressPercent: decimal(50) }).mockResolvedValueOnce(null)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 })
 
-    mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(30) }) // Provides `mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(30) })` as part of configure transaction.
-    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 }) // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(30) })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, input)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('does not create an audit entry when the log transaction fails', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogCreate.mockRejectedValue(new Error('database failure')) // Provides `mocks.dailyLogCreate.mockRejectedValue(new Error('database failure'))` as part of configure transaction.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('does not create an audit entry when the log transaction fails', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogCreate.mockRejectedValue(new Error('database failure'))
 
-    await expect(createDailyLog(pm, 3, input)).rejects.toThrow('database failure') // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.auditLogCreate).not.toHaveBeenCalled() // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(createDailyLog(pm, 3, input)).rejects.toThrow('database failure')
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).not.toHaveBeenCalled()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
 
-describe('daily log editing and deletion rules', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  it('allows PM edits within 48 hours and rejects older logs', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: decimal(30), // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Original.', // Separates this argument or property from the next item in the surrounding call or object.
-      weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-      issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-      createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(Date.now() - 47 * 3_600_000), // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await expect(updateDailyLog(pm, 10, { workSummary: 'Updated.' })).resolves.toBeDefined() // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        userId: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: 'UPDATE', // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: expect.objectContaining({ workSummary: 'Original.' }), // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: expect.objectContaining({ workSummary: 'Updated.' }), // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('daily log editing and deletion rules', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows PM edits within 48 hours and rejects older logs', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${date}T00:00:00.000Z`),
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: decimal(30),
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Original.',
+      // Sets the weather field so the surrounding object or component receives this setting.
+      weather: null,
+      // Sets the issues field so the surrounding object or component receives this setting.
+      issues: null,
+      // Sets the createdById field so the surrounding object or component receives this setting.
+      createdById: pm.id,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(Date.now() - 47 * 3_600_000),
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: new Date(),
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(updateDailyLog(pm, 10, { workSummary: 'Updated.' })).resolves.toBeDefined()
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: pm.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: 'UPDATE',
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: expect.objectContaining({ workSummary: 'Original.' }),
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: expect.objectContaining({ workSummary: 'Updated.' }),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
 
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: decimal(30), // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Original.', // Separates this argument or property from the next item in the surrounding call or object.
-      weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-      issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-      createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(Date.now() - 49 * 3_600_000), // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await expect(updateDailyLog(pm, 10, { workSummary: 'Too late.' })).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.auditLogCreate).toHaveBeenCalledTimes(1) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${date}T00:00:00.000Z`),
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: decimal(30),
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Original.',
+      // Sets the weather field so the surrounding object or component receives this setting.
+      weather: null,
+      // Sets the issues field so the surrounding object or component receives this setting.
+      issues: null,
+      // Sets the createdById field so the surrounding object or component receives this setting.
+      createdById: pm.id,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(Date.now() - 49 * 3_600_000),
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: new Date(),
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(updateDailyLog(pm, 10, { workSummary: 'Too late.' })).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 422 })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledTimes(1)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows ADMIN to edit logs regardless of age', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: decimal(30), // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Original.', // Separates this argument or property from the next item in the surrounding call or object.
-      weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-      issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-      createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(Date.now() - 100 * 3_600_000), // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN to edit logs regardless of age', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${date}T00:00:00.000Z`),
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: decimal(30),
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Original.',
+      // Sets the weather field so the surrounding object or component receives this setting.
+      weather: null,
+      // Sets the issues field so the surrounding object or component receives this setting.
+      issues: null,
+      // Sets the createdById field so the surrounding object or component receives this setting.
+      createdById: pm.id,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(Date.now() - 100 * 3_600_000),
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: new Date(),
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
 
-    await expect(updateDailyLog(admin, 10, { workSummary: 'Admin correction.' })).resolves.toBeDefined() // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(updateDailyLog(admin, 10, { workSummary: 'Admin correction.' })).resolves.toBeDefined()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('replaces nested labour and machinery entries on update', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: decimal(30), // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Original.', // Separates this argument or property from the next item in the surrounding call or object.
-      weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-      issues: null, // Separates this argument or property from the next item in the surrounding call or object.
-      createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: decimal(5), remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('replaces nested labour and machinery entries on update', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${date}T00:00:00.000Z`),
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: decimal(30),
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Original.',
+      // Sets the weather field so the surrounding object or component receives this setting.
+      weather: null,
+      // Sets the issues field so the surrounding object or component receives this setting.
+      issues: null,
+      // Sets the createdById field so the surrounding object or component receives this setting.
+      createdById: pm.id,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(),
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: new Date(),
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: decimal(5), remarks: null }],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
 
-    await updateDailyLog(pm, 10, { // Waits for this asynchronous operation to finish before using its result.
-      labourEntries: [{ trade: 'Helper', headCount: 2, hoursWorked: 6 }], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [{ machineName: 'Crane', hoursUsed: 4 }], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await updateDailyLog(pm, 10, {
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [{ trade: 'Helper', headCount: 2, hoursWorked: 6 }],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [{ machineName: 'Crane', hoursUsed: 4 }],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
 
-    expect(mocks.labourDeleteMany).toHaveBeenCalledWith({ where: { dailyLogId: 10 } }) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.machineryDeleteMany).toHaveBeenCalledWith({ where: { dailyLogId: 10 } }) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.dailyLogUpdate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        labourEntries: { create: [{ trade: 'Helper', contractorName: undefined, headCount: 2, hoursWorked: 6, remarks: undefined }] }, // Separates this argument or property from the next item in the surrounding call or object.
-        machineryEntries: { create: [{ machineName: 'Crane', operatorName: undefined, hoursUsed: 4, fuelLitres: undefined, remarks: undefined }] }, // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
-    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        oldValues: expect.objectContaining({ // Sets `oldValues` to the record values before the change.
-          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Mason' })]), // Separates this argument or property from the next item in the surrounding call or object.
-          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Mixer' })]), // Separates this argument or property from the next item in the surrounding call or object.
-        }), // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: expect.objectContaining({ // Sets `newValues` to the record values after the change.
-          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Helper' })]), // Separates this argument or property from the next item in the surrounding call or object.
-          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Crane' })]), // Separates this argument or property from the next item in the surrounding call or object.
-        }), // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.labourDeleteMany).toHaveBeenCalledWith({ where: { dailyLogId: 10 } })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.machineryDeleteMany).toHaveBeenCalledWith({ where: { dailyLogId: 10 } })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.dailyLogUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the labourEntries field so the surrounding object or component receives this setting.
+        labourEntries: { create: [{ trade: 'Helper', contractorName: undefined, headCount: 2, hoursWorked: 6, remarks: undefined }] },
+        // Sets the machineryEntries field so the surrounding object or component receives this setting.
+        machineryEntries: { create: [{ machineName: 'Crane', operatorName: undefined, hoursUsed: 4, fuelLitres: undefined, remarks: undefined }] },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: expect.objectContaining({
+          // Sets the labourEntries field so the surrounding object or component receives this setting.
+          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Mason' })]),
+          // Sets the machineryEntries field so the surrounding object or component receives this setting.
+          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Mixer' })]),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        }),
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: expect.objectContaining({
+          // Sets the labourEntries field so the surrounding object or component receives this setting.
+          labourEntries: expect.arrayContaining([expect.objectContaining({ trade: 'Helper' })]),
+          // Sets the machineryEntries field so the surrounding object or component receives this setting.
+          machineryEntries: expect.arrayContaining([expect.objectContaining({ machineName: 'Crane' })]),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        }),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows only ADMIN to delete daily logs', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${date}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: decimal(40), // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: 'Deleted log.', // Separates this argument or property from the next item in the surrounding call or object.
-      weather: null, // Separates this argument or property from the next item in the surrounding call or object.
-      issues: 'None', // Separates this argument or property from the next item in the surrounding call or object.
-      createdById: pm.id, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: null, remarks: null }], // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await expect(deleteDailyLog(pm, 10)).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 }) // Waits for this asynchronous operation to finish before using its result.
-    await expect(deleteDailyLog(admin, 10)).resolves.toBeUndefined() // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.dailyLogDelete).toHaveBeenCalledWith({ where: { id: 10 } }) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      data: expect.objectContaining({ // Sets `data` to the values to write to the database.
-        userId: admin.id, // Separates this argument or property from the next item in the surrounding call or object.
-        action: 'DELETE', // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: 'DailyLog', // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: 10, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: expect.objectContaining({ // Sets `oldValues` to the record values before the change.
-          workSummary: 'Deleted log.', // Separates this argument or property from the next item in the surrounding call or object.
-          labourEntries: expect.any(Array), // Separates this argument or property from the next item in the surrounding call or object.
-          machineryEntries: expect.any(Array), // Separates this argument or property from the next item in the surrounding call or object.
-        }), // Separates this argument or property from the next item in the surrounding call or object.
-      }), // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of configure transaction.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows only ADMIN to delete daily logs', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${date}T00:00:00.000Z`),
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: decimal(40),
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: 'Deleted log.',
+      // Sets the weather field so the surrounding object or component receives this setting.
+      weather: null,
+      // Sets the issues field so the surrounding object or component receives this setting.
+      issues: 'None',
+      // Sets the createdById field so the surrounding object or component receives this setting.
+      createdById: pm.id,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(),
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: new Date(),
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: [{ id: 1, trade: 'Mason', contractorName: null, headCount: 4, hoursWorked: decimal(8), remarks: null }],
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: [{ id: 1, machineName: 'Mixer', operatorName: null, hoursUsed: decimal(3), fuelLitres: null, remarks: null }],
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(deleteDailyLog(pm, 10)).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(deleteDailyLog(admin, 10)).resolves.toBeUndefined()
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.dailyLogDelete).toHaveBeenCalledWith({ where: { id: 10 } })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.auditLogCreate).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the data field so the surrounding object or component receives this setting.
+      data: expect.objectContaining({
+        // Sets the userId field so the surrounding object or component receives this setting.
+        userId: admin.id,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: 'DELETE',
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: 'DailyLog',
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: 10,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: expect.objectContaining({
+          // Sets the workSummary field so the surrounding object or component receives this setting.
+          workSummary: 'Deleted log.',
+          // Sets the labourEntries field so the surrounding object or component receives this setting.
+          labourEntries: expect.any(Array),
+          // Sets the machineryEntries field so the surrounding object or component receives this setting.
+          machineryEntries: expect.any(Array),
+        // Continues the component or data expression so its related values and behavior stay grouped together.
+        }),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      }),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects a historical update that exceeds the next log progress', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.dailyLogFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      projectId: 3, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: new Date(`${yesterday}T00:00:00.000Z`), // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: new Date(), // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(60) }) // Provides `mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(60) })` as part of configure transaction.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects a historical update that exceeds the next log progress', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 10,
+      // Sets the projectId field so the surrounding object or component receives this setting.
+      projectId: 3,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: new Date(`${yesterday}T00:00:00.000Z`),
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: new Date(),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.dailyLogFindFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ progressPercent: decimal(60) })
 
-    await expect(updateDailyLog(admin, 10, { progressPercent: 70 })).rejects.toMatchObject({ // Waits for this asynchronous operation to finish before using its result.
-      code: 'BUSINESS_RULE_VIOLATION', // Separates this argument or property from the next item in the surrounding call or object.
-      status: 422, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(updateDailyLog(admin, 10, { progressPercent: 70 })).rejects.toMatchObject({
+      // Sets the code field so the surrounding object or component receives this setting.
+      code: 'BUSINESS_RULE_VIOLATION',
+      // Sets the status field so the surrounding object or component receives this setting.
+      status: 422,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
 
-describe('daily log validation', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  it('rejects inverted date filters', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    expect(dailyLogListQuerySchema.safeParse({ from: '2026-11-11', to: '2026-11-10' }).success).toBe(false) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(dailyLogListQuerySchema.safeParse({ from: '2026-11-10', to: '2026-11-11' }).success).toBe(true) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Checks expected behavior for daily logs.service.test using the project test runner.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('daily log validation', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects inverted date filters', () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(dailyLogListQuerySchema.safeParse({ from: '2026-11-11', to: '2026-11-10' }).success).toBe(false)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(dailyLogListQuerySchema.safeParse({ from: '2026-11-10', to: '2026-11-11' }).success).toBe(true)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
