@@ -1,336 +1,642 @@
-import type { Prisma, Role } from '@prisma/client' // Uses Prisma's generated types and client to work safely with database records.
-import { prisma } from '../../utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
-import { AppError } from '../../utils/errors.js' // Uses the shared API error type so failures have a consistent message and HTTP status.
+// Imports type  Prisma, Role from @prisma/client so this module can reuse that component, helper, or library.
+import type { Prisma, Role } from '@prisma/client'
+// Imports prisma from ../../utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from '../../utils/prisma.js'
+// Imports AppError from ../../utils/errors.js so this module can reuse that component, helper, or library.
+import { AppError } from '../../utils/errors.js'
 
-export type ProjectActor = { id: number; role: Role } // Defines the `ProjectActor` type so TypeScript can describe the data or behavior used here.
-type Actor = ProjectActor // Defines the `Actor` type so TypeScript can describe the data or behavior used here.
-type ProgressHistoryQuery = { from?: string; to?: string } // Defines the `ProgressHistoryQuery` type so TypeScript can describe the data or behavior used here.
-type ActivityQuery = { page: number; limit: number } // Defines the `ActivityQuery` type so TypeScript can describe the data or behavior used here.
-type DateRangeQuery = { from?: string; to?: string } // Defines the `DateRangeQuery` type so TypeScript can describe the data or behavior used here.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type ProjectActor = { id: number; role: Role }
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type Actor = ProjectActor
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type ProgressHistoryQuery = { from?: string; to?: string }
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type ActivityQuery = { page: number; limit: number }
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type DateRangeQuery = { from?: string; to?: string }
 
-export function projectAccess(actor: ProjectActor) { // Defines `projectAccess` to work with access, keeping this behavior reusable.
-  // Apply PM ownership in the database filter, so every caller shares the same project scope.
-  return actor.role === 'ADMIN' ? {} : { assignedPmId: actor.id } // Returns `actor.role === 'ADMIN' ? {} : { assignedPmId: actor.id }` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines projectAccess so this module can perform its named task when needed.
+export function projectAccess(actor: ProjectActor) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return actor.role === 'ADMIN' ? {} : { assignedPmId: actor.id }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function validateRelations(input: { landId?: number; assignedPmId?: number | null }) { // Defines `validateRelations` to check relations, keeping this behavior reusable.
-  if (input.landId !== undefined && !await prisma.land.findUnique({ where: { id: input.landId }, select: { id: true } })) { // Checks whether the caller supplied this optional value before validating or applying it.
-    throw new AppError('NOT_FOUND', 'Land not found.', 404) // Stops this request with `NOT_FOUND` and HTTP 404 so the client receives a clear failure.
-  } // Closes the current block and marks where its grouped work ends.
-  if (input.assignedPmId !== undefined && input.assignedPmId !== null) { // Checks whether the caller supplied this optional value before validating or applying it.
-    const user = await prisma.user.findUnique({ where: { id: input.assignedPmId }, select: { role: true, isActive: true } }) // Looks up one matching database record and stores it in `user` so its existence or values can be checked.
-    if (!user || user.role !== 'PM' || !user.isActive) throw new AppError('VALIDATION_ERROR', 'assignedPmId must reference an active PM.', 400) // Rejects an inactive account so deactivated users cannot continue using the API.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines validateRelations so this module can perform its named task when needed.
+async function validateRelations(input: { landId?: number; assignedPmId?: number | null }) {
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.landId !== undefined && !await prisma.land.findUnique({ where: { id: input.landId }, select: { id: true } })) {
+    // Stops the current operation with an error so the calling code can handle the failure.
+    throw new AppError('NOT_FOUND', 'Land not found.', 404)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (input.assignedPmId !== undefined && input.assignedPmId !== null) {
+    // Stores the value in user so later lines can reuse this data or behavior for the current feature.
+    const user = await prisma.user.findUnique({ where: { id: input.assignedPmId }, select: { role: true, isActive: true } })
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (!user || user.role !== 'PM' || !user.isActive) throw new AppError('VALIDATION_ERROR', 'assignedPmId must reference an active PM.', 400)
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function listProjects(actor: Actor, page: number, pageSize: number, status?: string, search?: string) { // Defines `listProjects` to retrieve a list of projects, keeping this behavior reusable.
-  const where = { // Builds the database filter so role access, status, and search rules are applied together.
-    ...projectAccess(actor), // Separates this argument or property from the next item in the surrounding call or object.
-    ...(status ? { status: status as never } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-    ...(search ? { OR: [{ code: { contains: search, mode: 'insensitive' as const } }, { name: { contains: search, mode: 'insensitive' as const } }] } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-  const [projects, total] = await prisma.$transaction([ // Fetches the page and its matching-record count in one transaction so the response metadata stays consistent; stores both results in `projects,total`.
-    prisma.project.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } }), // Separates this argument or property from the next item in the surrounding call or object.
-    prisma.project.count({ where }), // Separates this argument or property from the next item in the surrounding call or object.
-  ]) // Closes the current call, object, or collection so the surrounding expression can continue.
-  return { projects, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } } // Returns the requested data together with pagination or summary metadata for the client.
-} // Closes the current block and marks where its grouped work ends.
+// Defines listProjects so this module can perform its named task when needed.
+export async function listProjects(actor: Actor, page: number, pageSize: number, status?: string, search?: string) {
+  // Stores the value in where so later lines can reuse this data or behavior for the current feature.
+  const where = {
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ...projectAccess(actor),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ...(status ? { status: status as never } : {}),
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ...(search ? { OR: [{ code: { contains: search, mode: 'insensitive' as const } }, { name: { contains: search, mode: 'insensitive' as const } }] } : {}),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  const [projects, total] = await prisma.$transaction([
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.project.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * pageSize, take: pageSize, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } }),
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.project.count({ where }),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ])
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return { projects, meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getProject(actor: Actor, id: number) { // Defines `getProject` to retrieve project, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ where: { id, ...projectAccess(actor) }, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } }) // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
-  return project // Returns `project` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getProject so this module can perform its named task when needed.
+export async function getProject(actor: Actor, id: number) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({ where: { id, ...projectAccess(actor) }, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return project
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function dateAtUtcMidnight(value: string) { // Defines `dateAtUtcMidnight` to convert at utc midnight, keeping this behavior reusable.
-  return new Date(`${value}T00:00:00.000Z`) // Returns `new Date(`${value}T00:00:00.000Z`)` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines dateAtUtcMidnight so this module can perform its named task when needed.
+function dateAtUtcMidnight(value: string) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return new Date(`${value}T00:00:00.000Z`)
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-function logDateFilter(query: DateRangeQuery) { // Defines `logDateFilter` to write a log entry for date filter, keeping this behavior reusable.
-  return query.from || query.to // Returns `query.from || query.to` to the caller so the next layer can use the result.
-    ? { // Opens the object or callback body that groups the settings for this operation.
-        logDate: { // Sets `logDate` to the date covered by the daily report.
-          ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-          ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        }, // Closes the current call, object, or collection so the surrounding expression can continue.
-      } // Closes the current block and marks where its grouped work ends.
-    : {} // Provides `: {}` as part of log date filter.
-} // Closes the current block and marks where its grouped work ends.
+// Defines logDateFilter so this module can perform its named task when needed.
+function logDateFilter(query: DateRangeQuery) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return query.from || query.to
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ? {
+        // Sets the logDate field so the surrounding object or component receives this setting.
+        logDate: {
+          // Continues the component or data expression so its related values and behavior stay grouped together.
+          ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}),
+          // Continues the component or data expression so its related values and behavior stay grouped together.
+          ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}),
+        // Closes the current block or object so the grouped statements or settings end here.
+        },
+      // Closes the current block or object so the grouped statements or settings end here.
+      }
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    : {}
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-async function getProjectLogsForReporting(actor: Actor, projectId: number, query: DateRangeQuery) { // Defines `getProjectLogsForReporting` to retrieve project logs for reporting, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId, ...projectAccess(actor) }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
-  return prisma.dailyLog.findMany({ // Returns the database result to the route handler so it can form the API response.
-    where: { projectId, ...logDateFilter(query) }, // Separates this argument or property from the next item in the surrounding call or object.
-    orderBy: { logDate: 'asc' }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { // Sets `select` to requests only the fields needed for this response.
-      id: true, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: true, // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: { select: { trade: true, headCount: true, hoursWorked: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: { select: { machineName: true, operatorName: true, hoursUsed: true, fuelLitres: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getProjectLogsForReporting so this module can perform its named task when needed.
+async function getProjectLogsForReporting(actor: Actor, projectId: number, query: DateRangeQuery) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId, ...projectAccess(actor) },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.dailyLog.findMany({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { projectId, ...logDateFilter(query) },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: { logDate: 'asc' },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: {
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: true,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: true,
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: { select: { trade: true, headCount: true, hoursWorked: true } },
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: { select: { machineName: true, operatorName: true, hoursUsed: true, fuelLitres: true } },
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-type LabourTotals = { workerCount: number; labourHours: number; entries: number } // Defines the `LabourTotals` type so TypeScript can describe the data or behavior used here.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type LabourTotals = { workerCount: number; labourHours: number; entries: number }
 
-function aggregateLabour(logs: Awaited<ReturnType<typeof getProjectLogsForReporting>>) { // Defines `aggregateLabour` to combine and total labour, keeping this behavior reusable.
-  const byTrade = new Map<string, LabourTotals>() // Creates a lookup map named `byTrade` so values can be grouped by key while records are processed.
-  let totalWorkerCount = 0 // Initializes `totalWorkerCount` with a safe starting value before the operation continues.
-  let totalLabourHours = 0 // Initializes `totalLabourHours` with a safe starting value before the operation continues.
-  let totalLabourEntries = 0 // Initializes `totalLabourEntries` with a safe starting value before the operation continues.
-  for (const log of logs) { // Repeats the block for each `log` in `logs` so every item is processed.
-    for (const entry of log.labourEntries) { // Repeats the block for each `entry` in `log.labourEntries` so every item is processed.
-      const hours = entry.hoursWorked.toNumber() // Stores this intermediate `hours` value so later lines can use it.
-      totalWorkerCount += entry.headCount // Adds `entry.headCount` to the running `totalWorkerCount` total.
-      totalLabourHours += hours // Adds `hours` to the running `totalLabourHours` total.
-      totalLabourEntries += 1 // Adds `1` to the running `totalLabourEntries` total.
-      const current = byTrade.get(entry.trade) ?? { workerCount: 0, labourHours: 0, entries: 0 } // Stores this intermediate `current` value so later lines can use it.
-      current.workerCount += entry.headCount // Adds `entry.headCount` to the running `current.workerCount` total.
-      current.labourHours += hours // Adds `hours` to the running `current.labourHours` total.
-      current.entries += 1 // Adds `1` to the running `current.entries` total.
-      byTrade.set(entry.trade, current) // Provides `byTrade.set(entry.trade, current)` as part of aggregate labour.
-    } // Closes the current block and marks where its grouped work ends.
-  } // Closes the current block and marks where its grouped work ends.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    totalWorkerCount, // Separates this argument or property from the next item in the surrounding call or object.
-    totalLabourHours, // Separates this argument or property from the next item in the surrounding call or object.
-    totalLabourEntries, // Separates this argument or property from the next item in the surrounding call or object.
-    byTrade: [...byTrade.entries()].map(([trade, totals]) => ({ trade, ...totals })), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines aggregateLabour so this module can perform its named task when needed.
+function aggregateLabour(logs: Awaited<ReturnType<typeof getProjectLogsForReporting>>) {
+  // Stores the value in byTrade so later lines can reuse this data or behavior for the current feature.
+  const byTrade = new Map<string, LabourTotals>()
+  // Stores the value in totalWorkerCount so later lines can reuse this data or behavior for the current feature.
+  let totalWorkerCount = 0
+  // Stores the value in totalLabourHours so later lines can reuse this data or behavior for the current feature.
+  let totalLabourHours = 0
+  // Stores the value in totalLabourEntries so later lines can reuse this data or behavior for the current feature.
+  let totalLabourEntries = 0
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  for (const log of logs) {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    for (const entry of log.labourEntries) {
+      // Stores the value in hours so later lines can reuse this data or behavior for the current feature.
+      const hours = entry.hoursWorked.toNumber()
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalWorkerCount += entry.headCount
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalLabourHours += hours
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalLabourEntries += 1
+      // Stores the value in current so later lines can reuse this data or behavior for the current feature.
+      const current = byTrade.get(entry.trade) ?? { workerCount: 0, labourHours: 0, entries: 0 }
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.workerCount += entry.headCount
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.labourHours += hours
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.entries += 1
+      // Calls this helper or component so the feature can perform the operation or render the control represented here.
+      byTrade.set(entry.trade, current)
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalWorkerCount,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalLabourHours,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalLabourEntries,
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    byTrade: [...byTrade.entries()].map(([trade, totals]) => ({ trade, ...totals })),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-type MachineryTotals = { hoursUsed: number; fuelConsumption: number; entries: number } // Defines the `MachineryTotals` type so TypeScript can describe the data or behavior used here.
+// Continues the component or data expression so its related values and behavior stay grouped together.
+type MachineryTotals = { hoursUsed: number; fuelConsumption: number; entries: number }
 
-function aggregateMachinery(logs: Awaited<ReturnType<typeof getProjectLogsForReporting>>) { // Defines `aggregateMachinery` to combine and total machinery, keeping this behavior reusable.
-  const byMachine = new Map<string, MachineryTotals>() // Creates a lookup map named `byMachine` so values can be grouped by key while records are processed.
-  let totalMachineryHours = 0 // Initializes `totalMachineryHours` with a safe starting value before the operation continues.
-  let totalFuelConsumption = 0 // Initializes `totalFuelConsumption` with a safe starting value before the operation continues.
-  let totalMachineryEntries = 0 // Initializes `totalMachineryEntries` with a safe starting value before the operation continues.
-  for (const log of logs) { // Repeats the block for each `log` in `logs` so every item is processed.
-    for (const entry of log.machineryEntries) { // Repeats the block for each `entry` in `log.machineryEntries` so every item is processed.
-      const hours = entry.hoursUsed.toNumber() // Stores this intermediate `hours` value so later lines can use it.
-      const fuel = entry.fuelLitres?.toNumber() ?? 0 // Stores this intermediate `fuel` value so later lines can use it.
-      totalMachineryHours += hours // Adds `hours` to the running `totalMachineryHours` total.
-      totalFuelConsumption += fuel // Adds `fuel` to the running `totalFuelConsumption` total.
-      totalMachineryEntries += 1 // Adds `1` to the running `totalMachineryEntries` total.
-      const current = byMachine.get(entry.machineName) ?? { hoursUsed: 0, fuelConsumption: 0, entries: 0 } // Stores this intermediate `current` value so later lines can use it.
-      current.hoursUsed += hours // Adds `hours` to the running `current.hoursUsed` total.
-      current.fuelConsumption += fuel // Adds `fuel` to the running `current.fuelConsumption` total.
-      current.entries += 1 // Adds `1` to the running `current.entries` total.
-      byMachine.set(entry.machineName, current) // Provides `byMachine.set(entry.machineName, current)` as part of aggregate machinery.
-    } // Closes the current block and marks where its grouped work ends.
-  } // Closes the current block and marks where its grouped work ends.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    totalMachineryHours, // Separates this argument or property from the next item in the surrounding call or object.
-    totalFuelConsumption, // Separates this argument or property from the next item in the surrounding call or object.
-    totalMachineryEntries, // Separates this argument or property from the next item in the surrounding call or object.
-    byMachine: [...byMachine.entries()].map(([machineName, totals]) => ({ machineName, ...totals })), // Separates this argument or property from the next item in the surrounding call or object.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+// Defines aggregateMachinery so this module can perform its named task when needed.
+function aggregateMachinery(logs: Awaited<ReturnType<typeof getProjectLogsForReporting>>) {
+  // Stores the value in byMachine so later lines can reuse this data or behavior for the current feature.
+  const byMachine = new Map<string, MachineryTotals>()
+  // Stores the value in totalMachineryHours so later lines can reuse this data or behavior for the current feature.
+  let totalMachineryHours = 0
+  // Stores the value in totalFuelConsumption so later lines can reuse this data or behavior for the current feature.
+  let totalFuelConsumption = 0
+  // Stores the value in totalMachineryEntries so later lines can reuse this data or behavior for the current feature.
+  let totalMachineryEntries = 0
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  for (const log of logs) {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    for (const entry of log.machineryEntries) {
+      // Stores the value in hours so later lines can reuse this data or behavior for the current feature.
+      const hours = entry.hoursUsed.toNumber()
+      // Stores the value in fuel so later lines can reuse this data or behavior for the current feature.
+      const fuel = entry.fuelLitres?.toNumber() ?? 0
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalMachineryHours += hours
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalFuelConsumption += fuel
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      totalMachineryEntries += 1
+      // Stores the value in current so later lines can reuse this data or behavior for the current feature.
+      const current = byMachine.get(entry.machineName) ?? { hoursUsed: 0, fuelConsumption: 0, entries: 0 }
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.hoursUsed += hours
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.fuelConsumption += fuel
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      current.entries += 1
+      // Calls this helper or component so the feature can perform the operation or render the control represented here.
+      byMachine.set(entry.machineName, current)
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalMachineryHours,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalFuelConsumption,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    totalMachineryEntries,
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    byMachine: [...byMachine.entries()].map(([machineName, totals]) => ({ machineName, ...totals })),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getLabourSummary(actor: Actor, projectId: number, query: DateRangeQuery) { // Defines `getLabourSummary` to retrieve labour summary, keeping this behavior reusable.
-  return aggregateLabour(await getProjectLogsForReporting(actor, projectId, query)) // Returns `aggregateLabour(await getProjectLogsForReporting(actor, projectId, query))` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getLabourSummary so this module can perform its named task when needed.
+export async function getLabourSummary(actor: Actor, projectId: number, query: DateRangeQuery) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return aggregateLabour(await getProjectLogsForReporting(actor, projectId, query))
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getMachinerySummary(actor: Actor, projectId: number, query: DateRangeQuery) { // Defines `getMachinerySummary` to retrieve machinery summary, keeping this behavior reusable.
-  return aggregateMachinery(await getProjectLogsForReporting(actor, projectId, query)) // Returns `aggregateMachinery(await getProjectLogsForReporting(actor, projectId, query))` to the caller so the next layer can use the result.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getMachinerySummary so this module can perform its named task when needed.
+export async function getMachinerySummary(actor: Actor, projectId: number, query: DateRangeQuery) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return aggregateMachinery(await getProjectLogsForReporting(actor, projectId, query))
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getWorkerCountHistory(actor: Actor, projectId: number, query: DateRangeQuery) { // Defines `getWorkerCountHistory` to retrieve worker count history, keeping this behavior reusable.
-  const logs = await getProjectLogsForReporting(actor, projectId, query) // Stores this intermediate `logs` value so later lines can use it.
-  return logs.map((log) => { // Opens the function, callback, or control-flow block that groups the related statements.
-    const labour = aggregateLabour([log]) // Stores this intermediate `labour` value so later lines can use it.
-    return { // Returns the assembled result object so the caller receives the fields it needs.
-      dailyLogId: log.id, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: log.logDate, // Separates this argument or property from the next item in the surrounding call or object.
-      totalWorkerCount: labour.totalWorkerCount, // Separates this argument or property from the next item in the surrounding call or object.
-      labourHours: labour.totalLabourHours, // Separates this argument or property from the next item in the surrounding call or object.
-      byTrade: labour.byTrade, // Separates this argument or property from the next item in the surrounding call or object.
-    } // Closes the current block and marks where its grouped work ends.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getWorkerCountHistory so this module can perform its named task when needed.
+export async function getWorkerCountHistory(actor: Actor, projectId: number, query: DateRangeQuery) {
+  // Stores the value in logs so later lines can reuse this data or behavior for the current feature.
+  const logs = await getProjectLogsForReporting(actor, projectId, query)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return logs.map((log) => {
+    // Stores the value in labour so later lines can reuse this data or behavior for the current feature.
+    const labour = aggregateLabour([log])
+    // Returns the result so the caller or React receives the value or interface this function provides.
+    return {
+      // Sets the dailyLogId field so the surrounding object or component receives this setting.
+      dailyLogId: log.id,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: log.logDate,
+      // Sets the totalWorkerCount field so the surrounding object or component receives this setting.
+      totalWorkerCount: labour.totalWorkerCount,
+      // Sets the labourHours field so the surrounding object or component receives this setting.
+      labourHours: labour.totalLabourHours,
+      // Sets the byTrade field so the surrounding object or component receives this setting.
+      byTrade: labour.byTrade,
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getMachineryUsageHistory(actor: Actor, projectId: number, query: DateRangeQuery) { // Defines `getMachineryUsageHistory` to retrieve machinery usage history, keeping this behavior reusable.
-  const logs = await getProjectLogsForReporting(actor, projectId, query) // Stores this intermediate `logs` value so later lines can use it.
-  return logs.flatMap((log) => log.machineryEntries.map((entry) => ({ // Returns `logs.flatMap((log) => log.machineryEntries.map((entry) => ({` to the caller so the next layer can use the result.
-    dailyLogId: log.id, // Separates this argument or property from the next item in the surrounding call or object.
-    logDate: log.logDate, // Separates this argument or property from the next item in the surrounding call or object.
-    machineName: entry.machineName, // Separates this argument or property from the next item in the surrounding call or object.
-    hoursUsed: entry.hoursUsed.toNumber(), // Separates this argument or property from the next item in the surrounding call or object.
-    fuelConsumption: entry.fuelLitres?.toNumber() ?? 0, // Separates this argument or property from the next item in the surrounding call or object.
-    operatorName: entry.operatorName, // Separates this argument or property from the next item in the surrounding call or object.
-  }))) // Provides `})))` as part of get machinery usage history.
-} // Closes the current block and marks where its grouped work ends.
+// Defines getMachineryUsageHistory so this module can perform its named task when needed.
+export async function getMachineryUsageHistory(actor: Actor, projectId: number, query: DateRangeQuery) {
+  // Stores the value in logs so later lines can reuse this data or behavior for the current feature.
+  const logs = await getProjectLogsForReporting(actor, projectId, query)
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return logs.flatMap((log) => log.machineryEntries.map((entry) => ({
+    // Sets the dailyLogId field so the surrounding object or component receives this setting.
+    dailyLogId: log.id,
+    // Sets the logDate field so the surrounding object or component receives this setting.
+    logDate: log.logDate,
+    // Sets the machineName field so the surrounding object or component receives this setting.
+    machineName: entry.machineName,
+    // Sets the hoursUsed field so the surrounding object or component receives this setting.
+    hoursUsed: entry.hoursUsed.toNumber(),
+    // Sets the fuelConsumption field so the surrounding object or component receives this setting.
+    fuelConsumption: entry.fuelLitres?.toNumber() ?? 0,
+    // Sets the operatorName field so the surrounding object or component receives this setting.
+    operatorName: entry.operatorName,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })))
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getProjectProgressHistory(actor: Actor, projectId: number, query: ProgressHistoryQuery) { // Defines `getProjectProgressHistory` to retrieve project progress history, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId, ...projectAccess(actor) }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
+// Defines getProjectProgressHistory so this module can perform its named task when needed.
+export async function getProjectProgressHistory(actor: Actor, projectId: number, query: ProgressHistoryQuery) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId, ...projectAccess(actor) },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
 
-  const logs = await prisma.dailyLog.findMany({ // Fetches matching database records and stores them in `logs` for the response or next calculation.
-    where: { // Sets `where` to filters the database records to the requested scope.
-      projectId, // Separates this argument or property from the next item in the surrounding call or object.
-      ...(query.from || query.to ? { // Opens the object or callback body that groups the settings for this operation.
-        logDate: { // Sets `logDate` to the date covered by the daily report.
-          ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-          ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-        }, // Closes the current call, object, or collection so the surrounding expression can continue.
-      } : {}), // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    orderBy: { logDate: 'asc' }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { // Sets `select` to requests only the fields needed for this response.
-      id: true, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: true, // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: true, // Separates this argument or property from the next item in the surrounding call or object.
-      workSummary: true, // Separates this argument or property from the next item in the surrounding call or object.
-      createdBy: { select: { id: true, name: true, email: true, role: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: true, // Separates this argument or property from the next item in the surrounding call or object.
-      updatedAt: true, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Stores the value in logs so later lines can reuse this data or behavior for the current feature.
+  const logs = await prisma.dailyLog.findMany({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: {
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      projectId,
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      ...(query.from || query.to ? {
+        // Sets the logDate field so the surrounding object or component receives this setting.
+        logDate: {
+          // Continues the component or data expression so its related values and behavior stay grouped together.
+          ...(query.from ? { gte: dateAtUtcMidnight(query.from) } : {}),
+          // Continues the component or data expression so its related values and behavior stay grouped together.
+          ...(query.to ? { lte: dateAtUtcMidnight(query.to) } : {}),
+        // Closes the current block or object so the grouped statements or settings end here.
+        },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      } : {}),
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: { logDate: 'asc' },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: {
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: true,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: true,
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: true,
+      // Sets the workSummary field so the surrounding object or component receives this setting.
+      workSummary: true,
+      // Sets the createdBy field so the surrounding object or component receives this setting.
+      createdBy: { select: { id: true, name: true, email: true, role: true } },
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: true,
+      // Sets the updatedAt field so the surrounding object or component receives this setting.
+      updatedAt: true,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  return logs.map((log) => ({ // Returns `logs.map((log) => ({` to the caller so the next layer can use the result.
-    id: log.id, // Separates this argument or property from the next item in the surrounding call or object.
-    logDate: log.logDate, // Separates this argument or property from the next item in the surrounding call or object.
-    progressPercent: log.progressPercent, // Separates this argument or property from the next item in the surrounding call or object.
-    workSummary: log.workSummary, // Separates this argument or property from the next item in the surrounding call or object.
-    createdBy: log.createdBy, // Separates this argument or property from the next item in the surrounding call or object.
-    createdAt: log.createdAt, // Separates this argument or property from the next item in the surrounding call or object.
-    updatedAt: log.updatedAt, // Separates this argument or property from the next item in the surrounding call or object.
-  })) // Provides `}))` as part of get project progress history.
-} // Closes the current block and marks where its grouped work ends.
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return logs.map((log) => ({
+    // Sets the id field so the surrounding object or component receives this setting.
+    id: log.id,
+    // Sets the logDate field so the surrounding object or component receives this setting.
+    logDate: log.logDate,
+    // Sets the progressPercent field so the surrounding object or component receives this setting.
+    progressPercent: log.progressPercent,
+    // Sets the workSummary field so the surrounding object or component receives this setting.
+    workSummary: log.workSummary,
+    // Sets the createdBy field so the surrounding object or component receives this setting.
+    createdBy: log.createdBy,
+    // Sets the createdAt field so the surrounding object or component receives this setting.
+    createdAt: log.createdAt,
+    // Sets the updatedAt field so the surrounding object or component receives this setting.
+    updatedAt: log.updatedAt,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  }))
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getProjectSummary(actor: Actor, projectId: number) { // Defines `getProjectSummary` to retrieve project summary, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId, ...projectAccess(actor) }, // Separates this argument or property from the next item in the surrounding call or object.
-    include: { // Sets `include` to loads related records needed alongside the main result.
-      land: true, // Separates this argument or property from the next item in the surrounding call or object.
-      assignedPm: { select: { id: true, name: true, email: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
+// Defines getProjectSummary so this module can perform its named task when needed.
+export async function getProjectSummary(actor: Actor, projectId: number) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId, ...projectAccess(actor) },
+    // Sets the include field so the surrounding object or component receives this setting.
+    include: {
+      // Sets the land field so the surrounding object or component receives this setting.
+      land: true,
+      // Sets the assignedPm field so the surrounding object or component receives this setting.
+      assignedPm: { select: { id: true, name: true, email: true } },
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
 
-  const logs = await prisma.dailyLog.findMany({ // Fetches matching database records and stores them in `logs` for the response or next calculation.
-    where: { projectId }, // Separates this argument or property from the next item in the surrounding call or object.
-    orderBy: { logDate: 'desc' }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { // Sets `select` to requests only the fields needed for this response.
-      id: true, // Separates this argument or property from the next item in the surrounding call or object.
-      logDate: true, // Separates this argument or property from the next item in the surrounding call or object.
-      progressPercent: true, // Separates this argument or property from the next item in the surrounding call or object.
-      labourEntries: { select: { headCount: true, hoursWorked: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-      machineryEntries: { select: { hoursUsed: true, fuelLitres: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  const latest = logs[0] // Stores this intermediate `latest` value so later lines can use it.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    project, // Separates this argument or property from the next item in the surrounding call or object.
-    latestProgressPercent: latest?.progressPercent ?? 0, // Separates this argument or property from the next item in the surrounding call or object.
-    latestLogDate: latest?.logDate ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-    totalDailyLogs: logs.length, // Separates this argument or property from the next item in the surrounding call or object.
-    totalLabourHeadCount: logs.reduce( // Sets `totalLabourHeadCount` to the total labour head count value.
-      (total, log) => total + log.labourEntries.reduce((sum, entry) => sum + entry.headCount, 0), // Separates this argument or property from the next item in the surrounding call or object.
-      0, // Separates this argument or property from the next item in the surrounding call or object.
-    ), // Closes the current call, object, or collection so the surrounding expression can continue.
-    totalLabourHours: logs.reduce( // Sets `totalLabourHours` to the total labour hours value.
-      (total, log) => total + log.labourEntries.reduce((sum, entry) => sum + entry.hoursWorked.toNumber(), 0), // Separates this argument or property from the next item in the surrounding call or object.
-      0, // Separates this argument or property from the next item in the surrounding call or object.
-    ), // Closes the current call, object, or collection so the surrounding expression can continue.
-    totalMachineryHours: logs.reduce( // Sets `totalMachineryHours` to the total machinery hours value.
-      (total, log) => total + log.machineryEntries.reduce((sum, entry) => sum + entry.hoursUsed.toNumber(), 0), // Separates this argument or property from the next item in the surrounding call or object.
-      0, // Separates this argument or property from the next item in the surrounding call or object.
-    ), // Closes the current call, object, or collection so the surrounding expression can continue.
-    totalMachineryFuel: logs.reduce( // Sets `totalMachineryFuel` to the total machinery fuel value.
-      (total, log) => total + log.machineryEntries.reduce((sum, entry) => sum + (entry.fuelLitres?.toNumber() ?? 0), 0), // Separates this argument or property from the next item in the surrounding call or object.
-      0, // Separates this argument or property from the next item in the surrounding call or object.
-    ), // Closes the current call, object, or collection so the surrounding expression can continue.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+  // Stores the value in logs so later lines can reuse this data or behavior for the current feature.
+  const logs = await prisma.dailyLog.findMany({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { projectId },
+    // Sets the orderBy field so the surrounding object or component receives this setting.
+    orderBy: { logDate: 'desc' },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: {
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: true,
+      // Sets the logDate field so the surrounding object or component receives this setting.
+      logDate: true,
+      // Sets the progressPercent field so the surrounding object or component receives this setting.
+      progressPercent: true,
+      // Sets the labourEntries field so the surrounding object or component receives this setting.
+      labourEntries: { select: { headCount: true, hoursWorked: true } },
+      // Sets the machineryEntries field so the surrounding object or component receives this setting.
+      machineryEntries: { select: { hoursUsed: true, fuelLitres: true } },
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Stores the value in latest so later lines can reuse this data or behavior for the current feature.
+  const latest = logs[0]
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    project,
+    // Sets the latestProgressPercent field so the surrounding object or component receives this setting.
+    latestProgressPercent: latest?.progressPercent ?? 0,
+    // Sets the latestLogDate field so the surrounding object or component receives this setting.
+    latestLogDate: latest?.logDate ?? null,
+    // Sets the totalDailyLogs field so the surrounding object or component receives this setting.
+    totalDailyLogs: logs.length,
+    // Sets the totalLabourHeadCount field so the surrounding object or component receives this setting.
+    totalLabourHeadCount: logs.reduce(
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      (total, log) => total + log.labourEntries.reduce((sum, entry) => sum + entry.headCount, 0),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      0,
+    // Closes this function call or grouped expression so the surrounding code can continue.
+    ),
+    // Sets the totalLabourHours field so the surrounding object or component receives this setting.
+    totalLabourHours: logs.reduce(
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      (total, log) => total + log.labourEntries.reduce((sum, entry) => sum + entry.hoursWorked.toNumber(), 0),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      0,
+    // Closes this function call or grouped expression so the surrounding code can continue.
+    ),
+    // Sets the totalMachineryHours field so the surrounding object or component receives this setting.
+    totalMachineryHours: logs.reduce(
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      (total, log) => total + log.machineryEntries.reduce((sum, entry) => sum + entry.hoursUsed.toNumber(), 0),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      0,
+    // Closes this function call or grouped expression so the surrounding code can continue.
+    ),
+    // Sets the totalMachineryFuel field so the surrounding object or component receives this setting.
+    totalMachineryFuel: logs.reduce(
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      (total, log) => total + log.machineryEntries.reduce((sum, entry) => sum + (entry.fuelLitres?.toNumber() ?? 0), 0),
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      0,
+    // Closes this function call or grouped expression so the surrounding code can continue.
+    ),
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function getProjectActivity(actor: Actor, projectId: number, query: ActivityQuery) { // Defines `getProjectActivity` to retrieve project activity, keeping this behavior reusable.
-  const project = await prisma.project.findFirst({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id: projectId, ...projectAccess(actor) }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
+// Defines getProjectActivity so this module can perform its named task when needed.
+export async function getProjectActivity(actor: Actor, projectId: number, query: ActivityQuery) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findFirst({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id: projectId, ...projectAccess(actor) },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
 
-  const scope: Prisma.AuditLogWhereInput = { // Stores this intermediate `prisma.audit log where input` value so later lines can use it.
-    OR: [ // Sets `OR` to matches a record when any listed condition is true.
-      { entityType: 'Project', entityId: projectId }, // Separates this argument or property from the next item in the surrounding call or object.
-      { oldValues: { path: ['projectId'], equals: projectId } }, // Separates this argument or property from the next item in the surrounding call or object.
-      { newValues: { path: ['projectId'], equals: projectId } }, // Separates this argument or property from the next item in the surrounding call or object.
-    ], // Closes the current call, object, or collection so the surrounding expression can continue.
-  } // Closes the current block and marks where its grouped work ends.
-  const [activities, total] = await prisma.$transaction([ // Fetches the page and its matching-record count in one transaction so the response metadata stays consistent; stores both results in `activities,total`.
-    prisma.auditLog.findMany({ // Opens the object or callback body that groups the settings for this operation.
-      where: scope, // Separates this argument or property from the next item in the surrounding call or object.
-      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], // Separates this argument or property from the next item in the surrounding call or object.
-      skip: (query.page - 1) * query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      take: query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      select: { // Sets `select` to requests only the fields needed for this response.
-        id: true, // Separates this argument or property from the next item in the surrounding call or object.
-        action: true, // Separates this argument or property from the next item in the surrounding call or object.
-        entityType: true, // Separates this argument or property from the next item in the surrounding call or object.
-        entityId: true, // Separates this argument or property from the next item in the surrounding call or object.
-        oldValues: true, // Separates this argument or property from the next item in the surrounding call or object.
-        newValues: true, // Separates this argument or property from the next item in the surrounding call or object.
-        createdAt: true, // Separates this argument or property from the next item in the surrounding call or object.
-        user: { select: { id: true, name: true } }, // Separates this argument or property from the next item in the surrounding call or object.
-      }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    }), // Separates this argument or property from the next item in the surrounding call or object.
-    prisma.auditLog.count({ where: scope }), // Separates this argument or property from the next item in the surrounding call or object.
-  ]) // Closes the current call, object, or collection so the surrounding expression can continue.
-  return { // Returns the assembled result object so the caller receives the fields it needs.
-    activities: activities.map((activity) => ({ // Sets `activities` to the activities value.
-      id: activity.id, // Separates this argument or property from the next item in the surrounding call or object.
-      action: activity.action, // Separates this argument or property from the next item in the surrounding call or object.
-      entityType: activity.entityType, // Separates this argument or property from the next item in the surrounding call or object.
-      entityId: activity.entityId, // Separates this argument or property from the next item in the surrounding call or object.
-      userId: activity.user?.id ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-      userName: activity.user?.name ?? null, // Separates this argument or property from the next item in the surrounding call or object.
-      oldData: activity.oldValues, // Separates this argument or property from the next item in the surrounding call or object.
-      newData: activity.newValues, // Separates this argument or property from the next item in the surrounding call or object.
-      createdAt: activity.createdAt, // Separates this argument or property from the next item in the surrounding call or object.
-    })), // Separates this argument or property from the next item in the surrounding call or object.
-    meta: { // Sets `meta` to the meta value.
-      page: query.page, // Separates this argument or property from the next item in the surrounding call or object.
-      limit: query.limit, // Separates this argument or property from the next item in the surrounding call or object.
-      total, // Separates this argument or property from the next item in the surrounding call or object.
-      totalPages: Math.ceil(total / query.limit), // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-  } // Closes the current block and marks where its grouped work ends.
-} // Closes the current block and marks where its grouped work ends.
+  // Stores the value in scope so later lines can reuse this data or behavior for the current feature.
+  const scope: Prisma.AuditLogWhereInput = {
+    // Sets the OR field so the surrounding object or component receives this setting.
+    OR: [
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      { entityType: 'Project', entityId: projectId },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      { oldValues: { path: ['projectId'], equals: projectId } },
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      { newValues: { path: ['projectId'], equals: projectId } },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    ],
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  const [activities, total] = await prisma.$transaction([
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.auditLog.findMany({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: scope,
+      // Sets the orderBy field so the surrounding object or component receives this setting.
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      // Sets the skip field so the surrounding object or component receives this setting.
+      skip: (query.page - 1) * query.limit,
+      // Sets the take field so the surrounding object or component receives this setting.
+      take: query.limit,
+      // Sets the select field so the surrounding object or component receives this setting.
+      select: {
+        // Sets the id field so the surrounding object or component receives this setting.
+        id: true,
+        // Sets the action field so the surrounding object or component receives this setting.
+        action: true,
+        // Sets the entityType field so the surrounding object or component receives this setting.
+        entityType: true,
+        // Sets the entityId field so the surrounding object or component receives this setting.
+        entityId: true,
+        // Sets the oldValues field so the surrounding object or component receives this setting.
+        oldValues: true,
+        // Sets the newValues field so the surrounding object or component receives this setting.
+        newValues: true,
+        // Sets the createdAt field so the surrounding object or component receives this setting.
+        createdAt: true,
+        // Sets the user field so the surrounding object or component receives this setting.
+        user: { select: { id: true, name: true } },
+      // Closes the current block or object so the grouped statements or settings end here.
+      },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }),
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    prisma.auditLog.count({ where: scope }),
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  ])
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return {
+    // Transforms each collection item so the corresponding values or interface elements can be produced.
+    activities: activities.map((activity) => ({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: activity.id,
+      // Sets the action field so the surrounding object or component receives this setting.
+      action: activity.action,
+      // Sets the entityType field so the surrounding object or component receives this setting.
+      entityType: activity.entityType,
+      // Sets the entityId field so the surrounding object or component receives this setting.
+      entityId: activity.entityId,
+      // Sets the userId field so the surrounding object or component receives this setting.
+      userId: activity.user?.id ?? null,
+      // Sets the userName field so the surrounding object or component receives this setting.
+      userName: activity.user?.name ?? null,
+      // Sets the oldData field so the surrounding object or component receives this setting.
+      oldData: activity.oldValues,
+      // Sets the newData field so the surrounding object or component receives this setting.
+      newData: activity.newValues,
+      // Sets the createdAt field so the surrounding object or component receives this setting.
+      createdAt: activity.createdAt,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })),
+    // Sets the meta field so the surrounding object or component receives this setting.
+    meta: {
+      // Sets the page field so the surrounding object or component receives this setting.
+      page: query.page,
+      // Sets the limit field so the surrounding object or component receives this setting.
+      limit: query.limit,
+      // Continues the component or data expression so its related values and behavior stay grouped together.
+      total,
+      // Sets the totalPages field so the surrounding object or component receives this setting.
+      totalPages: Math.ceil(total / query.limit),
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function createProject(actor: Actor, input: Record<string, unknown>) { // Defines `createProject` to create project, keeping this behavior reusable.
-  await validateRelations(input as { landId: number; assignedPmId?: number | null }) // Waits for this asynchronous operation to finish before using its result.
-  return prisma.project.create({ data: { ...input, createdById: actor.id } as never, include: { land: true } }) // Returns the database result to the route handler so it can form the API response.
-} // Closes the current block and marks where its grouped work ends.
+// Defines createProject so this module can perform its named task when needed.
+export async function createProject(actor: Actor, input: Record<string, unknown>) {
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await validateRelations(input as { landId: number; assignedPmId?: number | null })
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.project.create({ data: { ...input, createdById: actor.id } as never, include: { land: true } })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function updateProject(actor: Actor, id: number, input: Record<string, unknown>) { // Defines `updateProject` to update project, keeping this behavior reusable.
-  await getProject(actor, id) // Waits for this asynchronous operation to finish before using its result.
-  if (actor.role !== 'ADMIN') { // Checks the caller's role before allowing this role-restricted operation.
-    const administrativeFields = ['landId', 'assignedPmId', 'createdById', 'totalBudget', 'wastageThresholdPct', 'startDate', 'expectedEndDate', 'actualEndDate'] // Stores this intermediate `administrative fields` value so later lines can use it.
-    if (administrativeFields.some((field) => field in input)) { // Checks whether any item violates this rule before the operation continues.
-      throw new AppError('FORBIDDEN', 'Project assignment and administrative fields can only be changed by an administrator.', 403) // Stops this request with `FORBIDDEN` and HTTP 403 so the client receives a clear failure.
-    } // Closes the current block and marks where its grouped work ends.
-  } // Closes the current block and marks where its grouped work ends.
-  const data = actor.role === 'ADMIN' ? input : Object.fromEntries(Object.entries(input).filter(([key]) => ['name', 'description', 'status'].includes(key))) // Builds `data` from only the permitted input fields so unapproved values are not written.
-  if (actor.role === 'ADMIN') await validateRelations(input as { landId?: number; assignedPmId?: number | null }) // Checks the caller's role before allowing this role-restricted operation.
-  return prisma.project.update({ where: { id }, data: data as never, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } }) // Returns the database result to the route handler so it can form the API response.
-} // Closes the current block and marks where its grouped work ends.
+// Defines updateProject so this module can perform its named task when needed.
+export async function updateProject(actor: Actor, id: number, input: Record<string, unknown>) {
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await getProject(actor, id)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (actor.role !== 'ADMIN') {
+    // Stores the value in administrativeFields so later lines can reuse this data or behavior for the current feature.
+    const administrativeFields = ['landId', 'assignedPmId', 'createdById', 'totalBudget', 'wastageThresholdPct', 'startDate', 'expectedEndDate', 'actualEndDate']
+    // Checks this condition before continuing so the code can choose the correct path for the current state.
+    if (administrativeFields.some((field) => field in input)) {
+      // Stops the current operation with an error so the calling code can handle the failure.
+      throw new AppError('FORBIDDEN', 'Project assignment and administrative fields can only be changed by an administrator.', 403)
+    // Closes the current block or object so the grouped statements or settings end here.
+    }
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
+  // Stores the value in data so later lines can reuse this data or behavior for the current feature.
+  const data = actor.role === 'ADMIN' ? input : Object.fromEntries(Object.entries(input).filter(([key]) => ['name', 'description', 'status'].includes(key)))
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (actor.role === 'ADMIN') await validateRelations(input as { landId?: number; assignedPmId?: number | null })
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return prisma.project.update({ where: { id }, data: data as never, include: { land: true, assignedPm: { select: { id: true, name: true, email: true } } } })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-export async function deleteProject(id: number) { // Defines `deleteProject` to delete project, keeping this behavior reusable.
-  const project = await prisma.project.findUnique({ // Looks up one matching database record and stores it in `project` so its existence or values can be checked.
-    where: { id }, // Separates this argument or property from the next item in the surrounding call or object.
-    select: { id: true, _count: { select: { materialPlans: true, milestones: true, dailyLogs: true, stockTransactions: true, bills: true, notifications: true } } }, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404) // Handles a missing database record before later code tries to use it.
-  if (Object.values(project._count).some((count) => count > 0)) throw new AppError('BUSINESS_RULE_VIOLATION', 'Project cannot be deleted while dependent records exist.', 409) // Checks whether any item violates this rule before the operation continues.
-  await prisma.project.delete({ where: { id } }) // Waits for the database to deletes a record in the project table before dependent work continues.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Implements projects business rules and database operations.
+// Defines deleteProject so this module can perform its named task when needed.
+export async function deleteProject(id: number) {
+  // Stores the value in project so later lines can reuse this data or behavior for the current feature.
+  const project = await prisma.project.findUnique({
+    // Sets the where field so the surrounding object or component receives this setting.
+    where: { id },
+    // Sets the select field so the surrounding object or component receives this setting.
+    select: { id: true, _count: { select: { materialPlans: true, milestones: true, dailyLogs: true, stockTransactions: true, bills: true, notifications: true } } },
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (!project) throw new AppError('NOT_FOUND', 'Project not found.', 404)
+  // Checks this condition before continuing so the code can choose the correct path for the current state.
+  if (Object.values(project._count).some((count) => count > 0)) throw new AppError('BUSINESS_RULE_VIOLATION', 'Project cannot be deleted while dependent records exist.', 409)
+  // Waits for the asynchronous result before using it, so later work receives completed data.
+  await prisma.project.delete({ where: { id } })
+// Closes the current block or object so the grouped statements or settings end here.
+}
