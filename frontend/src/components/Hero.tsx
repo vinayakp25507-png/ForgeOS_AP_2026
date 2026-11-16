@@ -15,26 +15,19 @@ export const Hero: React.FC = () => {
         /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
         className="absolute inset-0 pointer-events-none opacity-20"
         /* Sets the style property so this element receives the data or behavior required by this screen. */
-        /* Sets the style property so this element receives the data or behavior required by this screen. */
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(50, 50, 50, 0.08) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(50, 50, 50, 0.08) 1px, transparent 1px)
           `,
           /* Sets the backgroundSize field so the surrounding object or component receives this setting. */
-          /* Sets the backgroundSize field so the surrounding object or component receives this setting. */
           backgroundSize: '40px 40px',
-          /* Sets the maskImage field so the surrounding object or component receives this setting. */
           /* Sets the maskImage field so the surrounding object or component receives this setting. */
           maskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 80%)',
           /* Sets the WebkitMaskImage field so the surrounding object or component receives this setting. */
-          /* Sets the WebkitMaskImage field so the surrounding object or component receives this setting. */
           WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 80%)',
         /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         }}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       />
 
       {/* Floating Decorative Preview - Left */}
@@ -125,8 +118,6 @@ export const Hero: React.FC = () => {
             className="flex items-center gap-1 text-xs font-bold text-[#323232] hover:underline transition-all active:scale-95 whitespace-nowrap"
             /* Provides aria-label accessibility information so assistive technology can describe the element. */
             aria-label="Read more"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
             Explore features
@@ -162,8 +153,6 @@ export const Hero: React.FC = () => {
             href="/login"
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-[#DDD0C8] bg-[#323232] hover:bg-[#1E1E1E] transition-all duration-200 shadow-md group"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <span> element to organize this part of the interface. */}
             <span>Start Free Trial</span>
@@ -178,8 +167,6 @@ export const Hero: React.FC = () => {
             href="#showcase"
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-xs font-semibold uppercase tracking-widest text-[#323232] border border-[#323232]/30 hover:border-[#323232] hover:bg-[#323232]/5 transition-all duration-200"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <Play> element to organize this part of the interface. */}
             <Play className="w-3.5 h-3.5 fill-[#323232]" />
@@ -199,21 +186,15 @@ export const Hero: React.FC = () => {
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="absolute left-1/2 w-[92%] h-48 pointer-events-none z-0 bg-[#323232]/10 blur-xl rounded-full"
             /* Sets the style property so this element receives the data or behavior required by this screen. */
-            /* Sets the style property so this element receives the data or behavior required by this screen. */
             style={{
-              /* Sets the top field so the surrounding object or component receives this setting. */
               /* Sets the top field so the surrounding object or component receives this setting. */
               top: "-5%",
               /* Sets the transform field so the surrounding object or component receives this setting. */
-              /* Sets the transform field so the surrounding object or component receives this setting. */
               transform: "translateX(-50%)"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             /* Continues the component or data expression so its related values and behavior stay grouped together. */
             }}
             /* Provides aria-hidden accessibility information so assistive technology can describe the element. */
             aria-hidden="true"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           />
           
           {/* Main Dashboard Preview Card */}
@@ -317,12 +298,9 @@ export const Hero: React.FC = () => {
                 /* Selects the image or other resource displayed by this element. */
                 src="https://images.unsplash.com/photo-1541888946425-d0fbb18615f8?auto=format&fit=crop&w=1600&q=85"
                 /* Sets the alt property so this element receives the data or behavior required by this screen. */
-                /* Sets the alt property so this element receives the data or behavior required by this screen. */
                 alt="ForgeOS Centralized Site Construction Dashboard"
                 /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className="w-full h-auto object-cover max-h-[360px]"
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               />
               {/* Starts the <div> element to organize this part of the interface. */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#323232]/90 via-[#323232]/25 to-transparent flex items-end p-6">
@@ -409,4 +387,3 @@ export const Hero: React.FC = () => {
 
 // Exports Hero as this file’s default value so other modules can load the main feature.
 export default Hero;
-// File purpose: Renders the reusable Hero interface component.
