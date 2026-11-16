@@ -1,17 +1,31 @@
-import type { Response } from 'express' // Imports Express types or tools used to build the HTTP API.
+// Imports type  Response from express so this module can reuse that component, helper, or library.
+import type { Response } from 'express'
 
-export function sendSuccess<T>( // Defines `sendSuccess` to send success, keeping this behavior reusable.
-  response: Response, // Separates this argument or property from the next item in the surrounding call or object.
-  status: number, // Separates this argument or property from the next item in the surrounding call or object.
-  data: T, // Separates this argument or property from the next item in the surrounding call or object.
-  message: string, // Separates this argument or property from the next item in the surrounding call or object.
-  meta: unknown = null, // Separates this argument or property from the next item in the surrounding call or object.
-) { // Opens the object or callback body that groups the settings for this operation.
-  return response.status(status).json({ // Returns `response.status(status).json({` to the caller so the next layer can use the result.
-    success: true, // Separates this argument or property from the next item in the surrounding call or object.
-    message, // Separates this argument or property from the next item in the surrounding call or object.
-    data, // Separates this argument or property from the next item in the surrounding call or object.
-    meta, // Separates this argument or property from the next item in the surrounding call or object.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
-// File purpose: Builds consistent success response envelopes for API handlers.
+// Defines sendSuccess so this module can perform its named task when needed.
+export function sendSuccess<T>(
+  // Sets the response field so the surrounding object or component receives this setting.
+  response: Response,
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: number,
+  // Sets the data field so the surrounding object or component receives this setting.
+  data: T,
+  // Sets the message field so the surrounding object or component receives this setting.
+  message: string,
+  // Sets the meta field so the surrounding object or component receives this setting.
+  meta: unknown = null,
+// Continues the component or data expression so its related values and behavior stay grouped together.
+) {
+  // Returns the result so the caller or React receives the value or interface this function provides.
+  return response.status(status).json({
+    // Sets the success field so the surrounding object or component receives this setting.
+    success: true,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    message,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    data,
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    meta,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
