@@ -98,7 +98,7 @@ export function SectionTitle({ title, description, action }: SectionTitleProps) 
       <div>
         {/* Starts the <h2> element to organize this part of the interface. */}
         <h2>{title}</h2>
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {description && <p>{description}</p>}
       {/* Closes the <div> element so later content is no longer part of this region. */}
       </div>
@@ -156,4 +156,3 @@ export function Skeleton({ className = '' }: { className?: string }) {
   return <span aria-hidden="true" className={`dashboard-skeleton inline-block ${className}`} />
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable dashboard ui interface component.
