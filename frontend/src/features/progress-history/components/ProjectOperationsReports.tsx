@@ -252,6 +252,7 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
   // Closes the current block or object so the grouped statements or settings end here.
   }
 
+  /* Returns the result so the caller or React receives the value or interface this function provides. */
   // Returns the result so the caller or React receives the value or interface this function provides.
   return <div className="mt-6 space-y-5">
     {/* Starts the <div> element to organize this part of the interface. */}
@@ -259,26 +260,19 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
       {/* Starts the <ReportPanel> element to organize this part of the interface. */}
       <ReportPanel
         /* Sets the title property so this element receives the data or behavior required by this screen. */
-        /* Sets the title property so this element receives the data or behavior required by this screen. */
         title="Labour attendance"
-        /* Sets the icon property so this element receives the data or behavior required by this screen. */
         /* Sets the icon property so this element receives the data or behavior required by this screen. */
         icon={<HardHat size={17} />}
         /* Sets the error property so this element receives the data or behavior required by this screen. */
-        /* Sets the error property so this element receives the data or behavior required by this screen. */
         error={data?.labour.error ?? data?.workerHistory.error ?? null}
-        /* Sets the loading property so this element receives the data or behavior required by this screen. */
         /* Sets the loading property so this element receives the data or behavior required by this screen. */
         loading={!data}
         /* Connects the Retry event to its handler so the interface can respond to interaction. */
         onRetry={refresh}
         /* Sets the empty property so this element receives the data or behavior required by this screen. */
-        /* Sets the empty property so this element receives the data or behavior required by this screen. */
         empty={!data?.labour.data?.byTrade.length && !data?.workerHistory.data?.length}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {data?.labour.data && <>
           {/* Starts the <div> element to organize this part of the interface. */}
           <div className="grid grid-cols-3 gap-3">
@@ -290,9 +284,9 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
             <SmallMetric label="Entries" value={data.labour.data.totalLabourEntries} />
           {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           {data.labour.data.byTrade.length > 0 && <div className="mt-4 divide-y divide-[#F1EBE6]">
-            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+            // Transforms each collection item so the corresponding values or interface elements can be produced.
             {data.labour.data.byTrade.map((trade) => <div key={trade.trade} className="flex items-center justify-between gap-3 py-3 text-sm">
               {/* Starts the <span> element to organize this part of the interface. */}
               <span>{trade.trade}</span><span className="text-right text-[#8E827A]">{trade.workerCount} workers · {trade.labourHours}h · {trade.entries} entries</span>
@@ -302,11 +296,11 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
           </div>}
         {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
         </>}
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {data?.workerHistory.data && data.workerHistory.data.length > 0 && <div className="mt-4 border-t border-[#E8E0DA] pt-3">
           {/* Starts the <h3> element to organize this part of the interface. */}
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#8E827A]">Worker-count history</h3>
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Transforms each collection item so the corresponding values or interface elements can be produced.
           {data.workerHistory.data.map((record) => <div key={record.dailyLogId} className="flex justify-between py-2 text-sm">
             {/* Starts the <span> element to organize this part of the interface. */}
             <span>{displayDate(record.logDate)}</span><span>{record.totalWorkerCount} workers · {record.labourHours}h</span>
@@ -320,26 +314,19 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
       {/* Starts the <ReportPanel> element to organize this part of the interface. */}
       <ReportPanel
         /* Sets the title property so this element receives the data or behavior required by this screen. */
-        /* Sets the title property so this element receives the data or behavior required by this screen. */
         title="Machinery usage"
-        /* Sets the icon property so this element receives the data or behavior required by this screen. */
         /* Sets the icon property so this element receives the data or behavior required by this screen. */
         icon={<Wrench size={17} />}
         /* Sets the error property so this element receives the data or behavior required by this screen. */
-        /* Sets the error property so this element receives the data or behavior required by this screen. */
         error={data?.machinery.error ?? data?.machineryHistory.error ?? null}
-        /* Sets the loading property so this element receives the data or behavior required by this screen. */
         /* Sets the loading property so this element receives the data or behavior required by this screen. */
         loading={!data}
         /* Connects the Retry event to its handler so the interface can respond to interaction. */
         onRetry={refresh}
         /* Sets the empty property so this element receives the data or behavior required by this screen. */
-        /* Sets the empty property so this element receives the data or behavior required by this screen. */
         empty={!data?.machinery.data?.byMachine.length && !data?.machineryHistory.data?.length}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {data?.machinery.data && <>
           {/* Starts the <div> element to organize this part of the interface. */}
           <div className="grid grid-cols-3 gap-3">
@@ -351,9 +338,9 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
             <SmallMetric label="Entries" value={data.machinery.data.totalMachineryEntries} />
           {/* Closes the <div> element so later content is no longer part of this region. */}
           </div>
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           {data.machinery.data.byMachine.length > 0 && <div className="mt-4 divide-y divide-[#F1EBE6]">
-            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+            // Transforms each collection item so the corresponding values or interface elements can be produced.
             {data.machinery.data.byMachine.map((machine) => <div key={machine.machineName} className="flex items-center justify-between gap-3 py-3 text-sm">
               {/* Starts the <span> element to organize this part of the interface. */}
               <span>{machine.machineName}</span><span className="text-right text-[#8E827A]">{machine.hoursUsed}h · {machine.fuelConsumption} L · {machine.entries} entries</span>
@@ -363,11 +350,11 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
           </div>}
         {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
         </>}
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {data?.machineryHistory.data && data.machineryHistory.data.length > 0 && <div className="mt-4 border-t border-[#E8E0DA] pt-3">
           {/* Starts the <h3> element to organize this part of the interface. */}
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#8E827A]">Usage history</h3>
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Transforms each collection item so the corresponding values or interface elements can be produced.
           {data.machineryHistory.data.map((record, index) => <div key={`${record.dailyLogId}:${record.machineName}:${index}`} className="flex justify-between gap-3 py-2 text-sm">
             {/* Starts the <span> element to organize this part of the interface. */}
             <span>{displayDate(record.logDate)} · {record.machineName}{record.operatorName ? ` · ${record.operatorName}` : ''}</span><span className="whitespace-nowrap">{record.hoursUsed}h · {record.fuelConsumption} L</span>
@@ -383,26 +370,19 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
     {/* Starts the <ReportPanel> element to organize this part of the interface. */}
     <ReportPanel
       /* Sets the title property so this element receives the data or behavior required by this screen. */
-      /* Sets the title property so this element receives the data or behavior required by this screen. */
       title="Project activity"
-      /* Sets the icon property so this element receives the data or behavior required by this screen. */
       /* Sets the icon property so this element receives the data or behavior required by this screen. */
       icon={<Activity size={17} />}
       /* Sets the error property so this element receives the data or behavior required by this screen. */
-      /* Sets the error property so this element receives the data or behavior required by this screen. */
       error={data?.activity.error ?? null}
-      /* Sets the loading property so this element receives the data or behavior required by this screen. */
       /* Sets the loading property so this element receives the data or behavior required by this screen. */
       loading={!data}
       /* Connects the Retry event to its handler so the interface can respond to interaction. */
       onRetry={refresh}
       /* Sets the empty property so this element receives the data or behavior required by this screen. */
-      /* Sets the empty property so this element receives the data or behavior required by this screen. */
       empty={!data?.activity.data?.activities.length}
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
     >
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Transforms each collection item so the corresponding values or interface elements can be produced.
       {data?.activity.data?.activities.map((entry) => <article key={entry.id} className="border-b border-[#F1EBE6] py-3 last:border-0">
         {/* Starts the <div> element to organize this part of the interface. */}
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -416,7 +396,7 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
         <p className="mt-1 text-xs text-[#8E827A]">{entry.userName ? `By ${entry.userName}` : 'User unavailable'}</p>
       {/* Closes the <article> element so later content is no longer part of this region. */}
       </article>)}
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       {data?.activity.data && data.activity.data.total > data.activity.data.activities.length && <p className="pt-3 text-xs text-[#8E827A]">Showing {data.activity.data.activities.length} of {data.activity.data.total} activity records.</p>}
     {/* Closes the <ReportPanel> element so later content is no longer part of this region. */}
     </ReportPanel>
@@ -427,23 +407,23 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         {/* Starts the <div> element to organize this part of the interface. */}
         <div><h2 className="font-semibold">Project milestones</h2><p className="mt-1 text-xs text-[#8E827A]">Milestone dates, progress, and status recorded by the backend.</p></div>
-        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+        // Continues the component or data expression so its related values and behavior stay grouped together.
         {!isFormOpen && <button type="button" onClick={() => { setEditing(null); setIsFormOpen(true); setMutationError(null) }} className="inline-flex items-center gap-2 rounded-xl bg-[#323232] px-3 py-2 text-xs font-semibold text-white"><Plus size={14} /> Add milestone</button>}
       {/* Closes the <div> element so later content is no longer part of this region. */}
       </div>
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       {mutationError && <p role="alert" className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{mutationError}</p>}
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       {(!data || data.milestones.error) && <InlineLoadState loading={!data} error={data?.milestones.error ?? null} onRetry={refresh} />}
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       {data?.milestones.data && data.milestones.data.length === 0 && <p className="py-6 text-center text-sm text-[#8E827A]">No milestones have been recorded for this project.</p>}
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Transforms each collection item so the corresponding values or interface elements can be produced.
       {data?.milestones.data?.map((milestone) => <div key={milestone.id} className="flex flex-wrap items-center justify-between gap-3 border-t border-[#F1EBE6] py-4">
         {/* Starts the <div> element to organize this part of the interface. */}
         <div className="min-w-[220px] flex-1">
           {/* Starts the <div> element to organize this part of the interface. */}
           <div className="flex flex-wrap items-center gap-2"><h3 className="font-medium">{milestone.sequence}. {milestone.name}</h3><span className="rounded-full bg-[#F3E9E1] px-2 py-1 text-[10px] font-semibold">{milestone.status.replaceAll('_', ' ')}</span></div>
-          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           {milestone.description && <p className="mt-1 text-sm text-[#595552]">{milestone.description}</p>}
           {/* Starts the <p> element to organize this part of the interface. */}
           <p className="mt-1 text-xs text-[#8E827A]">Planned: {milestone.plannedStartDate ? displayDate(milestone.plannedStartDate) : '—'} to {milestone.plannedEndDate ? displayDate(milestone.plannedEndDate) : '—'} · Actual: {milestone.actualStartDate ? displayDate(milestone.actualStartDate) : '—'} to {milestone.actualEndDate ? displayDate(milestone.actualEndDate) : '—'}</p>
@@ -459,7 +439,7 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
         </div>
       {/* Closes the <div> element so later content is no longer part of this region. */}
       </div>)}
-      {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+      // Continues the component or data expression so its related values and behavior stay grouped together.
       {isFormOpen && <form key={editing?.id ?? 'new'} className="mt-4 grid gap-3 rounded-xl border border-[#E8E0DA] bg-[#FBF9F7] p-4 sm:grid-cols-2" onSubmit={(event) => void saveMilestone(event)}>
         {/* Starts the <label> element to name a form control for users and assistive technology. */}
         <label className="text-xs text-[#8E827A] sm:col-span-2">Name<input required name="name" maxLength={255} defaultValue={editing?.name ?? ''} className="mt-1 w-full rounded-lg border border-[#E8E0DA] bg-white p-2 text-sm text-[#323232]" /></label>
@@ -467,7 +447,7 @@ export function ProjectOperationsReports({ projectId, fromDate, toDate }: Projec
         <label className="text-xs text-[#8E827A] sm:col-span-2">Description<textarea name="description" maxLength={5000} defaultValue={editing?.description ?? ''} className="mt-1 w-full rounded-lg border border-[#E8E0DA] bg-white p-2 text-sm text-[#323232]" /></label>
         {/* Starts the <label> element to name a form control for users and assistive technology. */}
         <label className="text-xs text-[#8E827A]">Sequence<input required type="number" min="1" step="1" name="sequence" defaultValue={editing?.sequence ?? (data?.milestones.data?.length ?? 0) + 1} className="mt-1 w-full rounded-lg border border-[#E8E0DA] bg-white p-2 text-sm text-[#323232]" /></label>
-        {/* Starts the <label> element to name a form control for users and assistive technology. */}
+        // Transforms each collection item so the corresponding values or interface elements can be produced.
         <label className="text-xs text-[#8E827A]">Status<select name="status" defaultValue={editing?.status ?? 'PLANNED'} className="mt-1 w-full rounded-lg border border-[#E8E0DA] bg-white p-2 text-sm text-[#323232]">{statuses.map((status) => <option key={status} value={status}>{status.replaceAll('_', ' ')}</option>)}</select></label>
         {/* Starts the <label> element to name a form control for users and assistive technology. */}
         <label className="text-xs text-[#8E827A]">Progress (%)<input required type="number" min="0" max="100" step="0.01" name="progressPercent" defaultValue={Number(editing?.progressPercent ?? 0)} className="mt-1 w-full rounded-lg border border-[#E8E0DA] bg-white p-2 text-sm text-[#323232]" /></label>
@@ -538,11 +518,12 @@ function ReportPanel({
   children: React.ReactNode
 // Continues the component or data expression so its related values and behavior stay grouped together.
 }) {
+  /* Returns the result so the caller or React receives the value or interface this function provides. */
   // Returns the result so the caller or React receives the value or interface this function provides.
   return <section className="rounded-2xl border border-[#E8E0DA] bg-white p-5 shadow-[0_8px_24px_rgba(50,50,50,0.04)] sm:p-6">
     {/* Starts the <h2> element to organize this part of the interface. */}
     <h2 className="mb-4 flex items-center gap-2 font-semibold"><span className="text-[#9A5E3A]">{icon}</span>{title}</h2>
-    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     {loading ? <p aria-live="polite" className="py-8 text-center text-sm text-[#8E827A]">Loading {title.toLowerCase()}…</p>
       // Continues the component or data expression so its related values and behavior stay grouped together.
       : error ? <InlineLoadState loading={false} error={error} onRetry={onRetry} />
@@ -559,9 +540,9 @@ function ReportPanel({
 function InlineLoadState({ loading, error, onRetry }: { loading: boolean; error: string | null; onRetry: () => void }) {
   // Returns the result so the caller or React receives the value or interface this function provides.
   return <div role={error ? 'alert' : 'status'} className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-    {/* Starts the <span> element to organize this part of the interface. */}
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     <span className="flex items-center gap-2">{error ? <AlertCircle size={15} /> : <RefreshCw size={15} />}{error ?? (loading ? 'Loading…' : '')}</span>
-    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+    // Continues the component or data expression so its related values and behavior stay grouped together.
     {error && <button type="button" onClick={onRetry} className="font-semibold underline">Retry</button>}
   {/* Closes the <div> element so later content is no longer part of this region. */}
   </div>
@@ -574,4 +555,3 @@ function SmallMetric({ label, value, suffix = '' }: { label: string; value: numb
   return <div className="rounded-xl bg-[#FBF9F7] p-3"><p className="text-[10px] leading-4 text-[#8E827A]">{label}</p><p className="mt-1 text-lg font-semibold">{value}{suffix}</p></div>
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable ProjectOperationsReports interface component.
