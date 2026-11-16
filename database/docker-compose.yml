@@ -1,24 +1,53 @@
-services: # Lists the containers Compose should run.
-  postgres: # Names the PostgreSQL database service.
-    image: postgres:16-alpine # Uses the small PostgreSQL 16 container image.
-    container_name: forgeos_postgres # Gives the container a predictable local name.
-    restart: unless-stopped # Restarts the database unless it was deliberately stopped.
-    environment: # Sets the database initialization environment variables.
-      POSTGRES_DB: ${POSTGRES_DB:-forgeos_db} # Chooses the initial database name, or uses forgeos_db by default.
-      POSTGRES_USER: ${POSTGRES_USER:-forgeos_user} # Chooses the initial database user, or uses forgeos_user by default.
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forgeos_dev_password} # Chooses a local development password unless one is supplied.
-      PGDATA: /var/lib/postgresql/data/pgdata # Sets the folder where PostgreSQL keeps its database files.
-    ports: # Publishes the database port to the host computer.
-      - '${POSTGRES_PORT:-5432}:5432' # Maps the chosen host port to PostgreSQL port 5432.
-    volumes: # Declares persistent storage used by this service.
-      - pgdata:/var/lib/postgresql/data # Keeps database files in the named persistent volume.
-    healthcheck: # Defines how Compose checks that PostgreSQL is ready.
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-forgeos_user} -d $${POSTGRES_DB:-forgeos_db}'] # Runs PostgreSQL’s readiness check with the configured user and database.
-      interval: 5s # Repeats the readiness check every five seconds.
-      timeout: 5s # Allows each readiness check up to five seconds.
-      retries: 5 # Marks the service unhealthy after five failed checks.
+# Selects the Compose file format used to interpret this configuration.
+version: '3.8'
 
-volumes: # Declares persistent storage used by this service.
-  pgdata: # Declares the named volume that stores PostgreSQL data.
-    driver: local # Stores this volume on the local machine.
-# File purpose: Starts the local PostgreSQL database and keeps its data in a Docker volume.
+# Begins the list of application services that Compose can run.
+services:
+  # Names the PostgreSQL service so other Compose settings can refer to it.
+  postgres:
+    # Chooses the container image that provides this service.
+    image: postgres:16-alpine
+    # Gives the container a predictable local name.
+    container_name: forgeos_postgres
+    # Controls whether Docker restarts the container after it stops.
+    restart: unless-stopped
+    # Supplies configuration values to the running container.
+    environment:
+      # Sets the POSTGRES_DB value used by the surrounding configuration.
+      POSTGRES_DB: forgeos_db
+      # Sets the POSTGRES_USER value used by the surrounding configuration.
+      POSTGRES_USER: forgeos_user
+      # Sets the POSTGRES_PASSWORD value used by the surrounding configuration.
+      POSTGRES_PASSWORD: forgeos_secure_password
+      # Sets the PGDATA value used by the surrounding configuration.
+      PGDATA: /var/lib/postgresql/data/pgdata
+    # Publishes container ports so local applications can connect.
+    ports:
+      # Adds one entry to the list configured by the surrounding key.
+      - '5432:5432'
+    # Connects persistent data or local files to the container.
+    volumes:
+      # Adds one entry to the list configured by the surrounding key.
+      - pgdata:/var/lib/postgresql/data
+      # Entrypoint scripts are executed alphabetically on initial database creation
+      # Adds one entry to the list configured by the surrounding key.
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      # Adds one entry to the list configured by the surrounding key.
+      - ./seeds/0001_seed_data.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    # Defines how Compose determines whether the service is ready.
+    healthcheck:
+      # Runs the command used to check service health.
+      test: ['CMD-SHELL', 'pg_isready -U forgeos_user -d forgeos_db']
+      # Sets how often the health check is repeated.
+      interval: 5s
+      # Limits how long one health check may take.
+      timeout: 5s
+      # Sets how many failed checks are allowed before marking the service unhealthy.
+      retries: 5
+
+# Connects persistent data or local files to the container.
+volumes:
+  # Sets the pgdata value used by the surrounding configuration.
+  pgdata:
+    # Selects the storage driver used by this named volume.
+    driver: local
