@@ -196,4 +196,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Restores, updates, and shares the signed-in user's session with React components.
