@@ -1,21 +1,37 @@
-import { createApp } from './app.js' // Imports { createApp } from './app.js' so this module can reuse that functionality.
-import { env } from './config/env.js' // Uses validated environment settings so invalid configuration is caught at startup.
-import { logger } from './config/logger.js' // Uses the shared structured logger so server events have a consistent format.
-import { prisma } from './utils/prisma.js' // Uses the shared Prisma client to run queries through the server's database connection.
+// Imports createApp from ./app.js so this module can reuse that component, helper, or library.
+import { createApp } from './app.js'
+// Imports env from ./config/env.js so this module can reuse that component, helper, or library.
+import { env } from './config/env.js'
+// Imports logger from ./config/logger.js so this module can reuse that component, helper, or library.
+import { logger } from './config/logger.js'
+// Imports prisma from ./utils/prisma.js so this module can reuse that component, helper, or library.
+import { prisma } from './utils/prisma.js'
 
-const app = createApp() // Stores this intermediate `app` value so later lines can use it.
-const server = app.listen(env.PORT, () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  logger.info({ port: env.PORT }, 'ForgeOS API listening') // Writes an operational log entry so server activity can be monitored.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Stores the value in app so later lines can reuse this data or behavior for the current feature.
+const app = createApp()
+// Stores the value in server so later lines can reuse this data or behavior for the current feature.
+const server = app.listen(env.PORT, () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  logger.info({ port: env.PORT }, 'ForgeOS API listening')
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
 
-async function shutdown(signal: string) { // Defines `shutdown` to gracefully stop, keeping this behavior reusable.
-  logger.info({ signal }, 'Shutting down ForgeOS API') // Writes an operational log entry so server activity can be monitored.
-  server.close(async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    await prisma.$disconnect() // Waits for this asynchronous operation to finish before using its result.
-    process.exit(0) // Provides `process.exit(0)` as part of shutdown.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-} // Closes the current block and marks where its grouped work ends.
+// Defines shutdown so this module can perform its named task when needed.
+async function shutdown(signal: string) {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  logger.info({ signal }, 'Shutting down ForgeOS API')
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  server.close(async () => {
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await prisma.$disconnect()
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    process.exit(0)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Closes the current block or object so the grouped statements or settings end here.
+}
 
-process.once('SIGINT', () => void shutdown('SIGINT')) // Registers a one-time operating-system signal handler so shutdown cleanup runs when the process is stopped.
-process.once('SIGTERM', () => void shutdown('SIGTERM')) // Registers a one-time operating-system signal handler so shutdown cleanup runs when the process is stopped.
-// File purpose: Starts the HTTP API and closes server/database resources during shutdown.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+process.once('SIGINT', () => void shutdown('SIGINT'))
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+process.once('SIGTERM', () => void shutdown('SIGTERM'))
