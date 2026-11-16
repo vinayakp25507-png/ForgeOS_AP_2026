@@ -90,4 +90,3 @@ export function latestProjectActivity(projects: DashboardProjectData[]): Array<P
     .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Provides API and data-access helpers for the app shell feature.
