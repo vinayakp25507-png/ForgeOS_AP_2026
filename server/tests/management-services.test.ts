@@ -1,136 +1,255 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest' // Imports test-runner helpers for defining and checking this behavior.
+// Imports beforeEach, describe, expect, it, vi from vitest so this module can reuse that component, helper, or library.
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const mocks = vi.hoisted(() => ({ // Stores this intermediate `mocks` value so later lines can use it.
-  landFindMany: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  landCount: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  landFindFirst: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  landFindUnique: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  landDelete: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  landCreate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectFindMany: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectCount: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectFindFirst: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectFindUnique: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectUpdate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectCreate: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  projectDelete: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-  transaction: vi.fn(), // Separates this argument or property from the next item in the surrounding call or object.
-})) // Provides `}))` as part of this server module.
+// Stores the value in mocks so later lines can reuse this data or behavior for the current feature.
+const mocks = vi.hoisted(() => ({
+  // Sets the landFindMany field so the surrounding object or component receives this setting.
+  landFindMany: vi.fn(),
+  // Sets the landCount field so the surrounding object or component receives this setting.
+  landCount: vi.fn(),
+  // Sets the landFindFirst field so the surrounding object or component receives this setting.
+  landFindFirst: vi.fn(),
+  // Sets the landFindUnique field so the surrounding object or component receives this setting.
+  landFindUnique: vi.fn(),
+  // Sets the landDelete field so the surrounding object or component receives this setting.
+  landDelete: vi.fn(),
+  // Sets the landCreate field so the surrounding object or component receives this setting.
+  landCreate: vi.fn(),
+  // Sets the projectFindMany field so the surrounding object or component receives this setting.
+  projectFindMany: vi.fn(),
+  // Sets the projectCount field so the surrounding object or component receives this setting.
+  projectCount: vi.fn(),
+  // Sets the projectFindFirst field so the surrounding object or component receives this setting.
+  projectFindFirst: vi.fn(),
+  // Sets the projectFindUnique field so the surrounding object or component receives this setting.
+  projectFindUnique: vi.fn(),
+  // Sets the projectUpdate field so the surrounding object or component receives this setting.
+  projectUpdate: vi.fn(),
+  // Sets the projectCreate field so the surrounding object or component receives this setting.
+  projectCreate: vi.fn(),
+  // Sets the projectDelete field so the surrounding object or component receives this setting.
+  projectDelete: vi.fn(),
+  // Sets the transaction field so the surrounding object or component receives this setting.
+  transaction: vi.fn(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}))
 
-vi.mock('../src/utils/prisma.js', () => ({ // Configures the test double or mock so this test can control the external behavior it depends on.
-  prisma: { // Sets `prisma` to the prisma value.
-    land: { // Sets `land` to the land value.
-      findMany: mocks.landFindMany, // Separates this argument or property from the next item in the surrounding call or object.
-      count: mocks.landCount, // Separates this argument or property from the next item in the surrounding call or object.
-      findFirst: mocks.landFindFirst, // Separates this argument or property from the next item in the surrounding call or object.
-      findUnique: mocks.landFindUnique, // Separates this argument or property from the next item in the surrounding call or object.
-      delete: mocks.landDelete, // Separates this argument or property from the next item in the surrounding call or object.
-      create: mocks.landCreate, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    project: { // Sets `project` to the project value.
-      findMany: mocks.projectFindMany, // Separates this argument or property from the next item in the surrounding call or object.
-      count: mocks.projectCount, // Separates this argument or property from the next item in the surrounding call or object.
-      findFirst: mocks.projectFindFirst, // Separates this argument or property from the next item in the surrounding call or object.
-      findUnique: mocks.projectFindUnique, // Separates this argument or property from the next item in the surrounding call or object.
-      update: mocks.projectUpdate, // Separates this argument or property from the next item in the surrounding call or object.
-      create: mocks.projectCreate, // Separates this argument or property from the next item in the surrounding call or object.
-      delete: mocks.projectDelete, // Separates this argument or property from the next item in the surrounding call or object.
-    }, // Closes the current call, object, or collection so the surrounding expression can continue.
-    $transaction: mocks.transaction, // Separates this argument or property from the next item in the surrounding call or object.
-  }, // Closes the current call, object, or collection so the surrounding expression can continue.
-})) // Provides `}))` as part of this server module.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+vi.mock('../src/utils/prisma.js', () => ({
+  // Sets the prisma field so the surrounding object or component receives this setting.
+  prisma: {
+    // Sets the land field so the surrounding object or component receives this setting.
+    land: {
+      // Sets the findMany field so the surrounding object or component receives this setting.
+      findMany: mocks.landFindMany,
+      // Sets the count field so the surrounding object or component receives this setting.
+      count: mocks.landCount,
+      // Sets the findFirst field so the surrounding object or component receives this setting.
+      findFirst: mocks.landFindFirst,
+      // Sets the findUnique field so the surrounding object or component receives this setting.
+      findUnique: mocks.landFindUnique,
+      // Sets the delete field so the surrounding object or component receives this setting.
+      delete: mocks.landDelete,
+      // Sets the create field so the surrounding object or component receives this setting.
+      create: mocks.landCreate,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the project field so the surrounding object or component receives this setting.
+    project: {
+      // Sets the findMany field so the surrounding object or component receives this setting.
+      findMany: mocks.projectFindMany,
+      // Sets the count field so the surrounding object or component receives this setting.
+      count: mocks.projectCount,
+      // Sets the findFirst field so the surrounding object or component receives this setting.
+      findFirst: mocks.projectFindFirst,
+      // Sets the findUnique field so the surrounding object or component receives this setting.
+      findUnique: mocks.projectFindUnique,
+      // Sets the update field so the surrounding object or component receives this setting.
+      update: mocks.projectUpdate,
+      // Sets the create field so the surrounding object or component receives this setting.
+      create: mocks.projectCreate,
+      // Sets the delete field so the surrounding object or component receives this setting.
+      delete: mocks.projectDelete,
+    // Closes the current block or object so the grouped statements or settings end here.
+    },
+    // Sets the $transaction field so the surrounding object or component receives this setting.
+    $transaction: mocks.transaction,
+  // Closes the current block or object so the grouped statements or settings end here.
+  },
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}))
 
-import { createLand, listLands, getLand, deleteLand } from '../src/modules/lands/lands.service.js' // Imports { createLand, listLands, getLand, deleteLand } from '../src/modules/lands/lands.service.js' so this module can reuse that functionality.
-import { createProject, deleteProject, getProject, listProjects, updateProject } from '../src/modules/projects/projects.service.js' // Imports { createProject, deleteProject, getProject, listProjects, updateProject } from '../src/modules/projects/projects.service.js' so this module can reuse that functionality.
-import { createLandSchema } from '../src/modules/lands/lands.validator.js' // Imports { createLandSchema } from '../src/modules/lands/lands.validator.js' so this module can reuse that functionality.
-import { createProjectSchema } from '../src/modules/projects/projects.validator.js' // Imports { createProjectSchema } from '../src/modules/projects/projects.validator.js' so this module can reuse that functionality.
+// Imports createLand, listLands, getLand, deleteLand from ../src/modules/lands/lands.service.js so this module can reuse that component, helper, or library.
+import { createLand, listLands, getLand, deleteLand } from '../src/modules/lands/lands.service.js'
+// Imports createProject, deleteProject, getProject, listProjects, updateProject from ../src/modules/projects/projects.service.js so this module can reuse that component, helper, or library.
+import { createProject, deleteProject, getProject, listProjects, updateProject } from '../src/modules/projects/projects.service.js'
+// Imports createLandSchema from ../src/modules/lands/lands.validator.js so this module can reuse that component, helper, or library.
+import { createLandSchema } from '../src/modules/lands/lands.validator.js'
+// Imports createProjectSchema from ../src/modules/projects/projects.validator.js so this module can reuse that component, helper, or library.
+import { createProjectSchema } from '../src/modules/projects/projects.validator.js'
 
-const admin = { id: 1, role: 'ADMIN' as const } // Stores this intermediate `admin` value so later lines can use it.
-const pm = { id: 2, role: 'PM' as const } // Stores this intermediate `pm` value so later lines can use it.
+// Stores the value in admin so later lines can reuse this data or behavior for the current feature.
+const admin = { id: 1, role: 'ADMIN' as const }
+// Stores the value in pm so later lines can reuse this data or behavior for the current feature.
+const pm = { id: 2, role: 'PM' as const }
 
-describe('land and project authorization rules', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-  beforeEach(() => { // Opens the function, callback, or control-flow block that groups the related statements.
-    vi.clearAllMocks() // Configures the test double or mock so this test can control the external behavior it depends on.
-    mocks.transaction.mockImplementation(async (operations: Array<Promise<unknown>>) => Promise.all(operations)) // Provides `mocks.transaction.mockImplementation(async (operations: Array<Promise<unknown>>) => Promise.all(operations))` as part of this server module.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+// Calls this helper or component so the feature can perform the operation or render the control represented here.
+describe('land and project authorization rules', () => {
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  beforeEach(() => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    vi.clearAllMocks()
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.transaction.mockImplementation(async (operations: Array<Promise<unknown>>) => Promise.all(operations))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('filters PM land access through assigned projects', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.landFindMany.mockResolvedValue([]) // Provides `mocks.landFindMany.mockResolvedValue([])` as part of this server module.
-    mocks.landCount.mockResolvedValue(0) // Provides `mocks.landCount.mockResolvedValue(0)` as part of this server module.
-    await listLands(pm, 1, 20) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.landFindMany).toHaveBeenCalledWith(expect.objectContaining({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      where: { projects: { some: { assignedPmId: pm.id } } }, // Separates this argument or property from the next item in the surrounding call or object.
-    })) // Provides `}))` as part of this server module.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('filters PM land access through assigned projects', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landFindMany.mockResolvedValue([])
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landCount.mockResolvedValue(0)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await listLands(pm, 1, 20)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.landFindMany).toHaveBeenCalledWith(expect.objectContaining({
+      // Sets the where field so the surrounding object or component receives this setting.
+      where: { projects: { some: { assignedPmId: pm.id } } },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('denies PM access to an unassigned land', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.landFindFirst.mockResolvedValue(null) // Provides `mocks.landFindFirst.mockResolvedValue(null)` as part of this server module.
-    await expect(getLand(pm, 99)).rejects.toMatchObject({ code: 'NOT_FOUND', status: 404 }) // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('denies PM access to an unassigned land', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landFindFirst.mockResolvedValue(null)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(getLand(pm, 99)).rejects.toMatchObject({ code: 'NOT_FOUND', status: 404 })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows ADMIN land listing and creation', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.landFindMany.mockResolvedValue([]) // Provides `mocks.landFindMany.mockResolvedValue([])` as part of this server module.
-    mocks.landCount.mockResolvedValue(0) // Provides `mocks.landCount.mockResolvedValue(0)` as part of this server module.
-    mocks.landCreate.mockResolvedValue({ id: 1 }) // Provides `mocks.landCreate.mockResolvedValue({ id: 1 })` as part of this server module.
-    await listLands(admin, 1, 20) // Waits for this asynchronous operation to finish before using its result.
-    await createLand(admin, { name: 'Parcel', city: 'Pune', state: 'Maharashtra', areaValue: 1, areaUnit: 'ACRE' }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.landFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: {} })) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(mocks.landCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ createdById: admin.id }) })) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN land listing and creation', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landFindMany.mockResolvedValue([])
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landCount.mockResolvedValue(0)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landCreate.mockResolvedValue({ id: 1 })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await listLands(admin, 1, 20)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await createLand(admin, { name: 'Parcel', city: 'Pune', state: 'Maharashtra', areaValue: 1, areaUnit: 'ACRE' })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.landFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: {} }))
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.landCreate).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ createdById: admin.id }) }))
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects invalid land and project data at the validation boundary', () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    expect(createLandSchema.safeParse({ name: '', city: 'Pune', state: 'Maharashtra', areaValue: -1, areaUnit: 'ACRE' }).success).toBe(false) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(createProjectSchema.safeParse({ // Asserts that the observed result matches the behavior this test is meant to guarantee.
-      landId: 1, // Separates this argument or property from the next item in the surrounding call or object.
-      code: 'P-1', // Separates this argument or property from the next item in the surrounding call or object.
-      name: 'Project', // Separates this argument or property from the next item in the surrounding call or object.
-      status: 'ACTIVE', // Separates this argument or property from the next item in the surrounding call or object.
-      totalBudget: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      wastageThresholdPct: 10, // Separates this argument or property from the next item in the surrounding call or object.
-      startDate: '2026-12-10', // Separates this argument or property from the next item in the surrounding call or object.
-      expectedEndDate: '2026-12-01', // Separates this argument or property from the next item in the surrounding call or object.
-    }).success).toBe(false) // Provides `}).success).toBe(false)` as part of this server module.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects invalid land and project data at the validation boundary', () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(createLandSchema.safeParse({ name: '', city: 'Pune', state: 'Maharashtra', areaValue: -1, areaUnit: 'ACRE' }).success).toBe(false)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(createProjectSchema.safeParse({
+      // Sets the landId field so the surrounding object or component receives this setting.
+      landId: 1,
+      // Sets the code field so the surrounding object or component receives this setting.
+      code: 'P-1',
+      // Sets the name field so the surrounding object or component receives this setting.
+      name: 'Project',
+      // Sets the status field so the surrounding object or component receives this setting.
+      status: 'ACTIVE',
+      // Sets the totalBudget field so the surrounding object or component receives this setting.
+      totalBudget: 10,
+      // Sets the wastageThresholdPct field so the surrounding object or component receives this setting.
+      wastageThresholdPct: 10,
+      // Sets the startDate field so the surrounding object or component receives this setting.
+      startDate: '2026-12-10',
+      // Sets the expectedEndDate field so the surrounding object or component receives this setting.
+      expectedEndDate: '2026-12-01',
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    }).success).toBe(false)
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('blocks land deletion when projects depend on it', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.landFindUnique.mockResolvedValue({ id: 1, _count: { projects: 1 } }) // Provides `mocks.landFindUnique.mockResolvedValue({ id: 1, _count: { projects: 1 } })` as part of this server module.
-    await expect(deleteLand(1)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 409 }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.landDelete).not.toHaveBeenCalled() // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('blocks land deletion when projects depend on it', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.landFindUnique.mockResolvedValue({ id: 1, _count: { projects: 1 } })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(deleteLand(1)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 409 })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.landDelete).not.toHaveBeenCalled()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('rejects PM attempts to change project assignment or administrative fields', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindFirst.mockResolvedValue({ id: 1 }) // Provides `mocks.projectFindFirst.mockResolvedValue({ id: 1 })` as part of this server module.
-    await expect(updateProject(pm, 1, { assignedPmId: 3 })).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.projectUpdate).not.toHaveBeenCalled() // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('rejects PM attempts to change project assignment or administrative fields', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindFirst.mockResolvedValue({ id: 1 })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(updateProject(pm, 1, { assignedPmId: 3 })).rejects.toMatchObject({ code: 'FORBIDDEN', status: 403 })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.projectUpdate).not.toHaveBeenCalled()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows ADMIN project access and denies PM access to unassigned projects', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindMany.mockResolvedValue([]) // Provides `mocks.projectFindMany.mockResolvedValue([])` as part of this server module.
-    mocks.projectCount.mockResolvedValue(0) // Provides `mocks.projectCount.mockResolvedValue(0)` as part of this server module.
-    await listProjects(admin, 1, 20) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.projectFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: {} })) // Asserts that the observed result matches the behavior this test is meant to guarantee.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN project access and denies PM access to unassigned projects', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindMany.mockResolvedValue([])
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectCount.mockResolvedValue(0)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await listProjects(admin, 1, 20)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.projectFindMany).toHaveBeenCalledWith(expect.objectContaining({ where: {} }))
 
-    mocks.projectFindFirst.mockResolvedValue(null) // Provides `mocks.projectFindFirst.mockResolvedValue(null)` as part of this server module.
-    await expect(getProject(pm, 99)).rejects.toMatchObject({ code: 'NOT_FOUND', status: 404 }) // Waits for this asynchronous operation to finish before using its result.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindFirst.mockResolvedValue(null)
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(getProject(pm, 99)).rejects.toMatchObject({ code: 'NOT_FOUND', status: 404 })
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('blocks project deletion when dependent records exist', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 1, // Separates this argument or property from the next item in the surrounding call or object.
-      _count: { materialPlans: 0, dailyLogs: 1, stockTransactions: 0, bills: 0, notifications: 0 }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await expect(deleteProject(1)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 409 }) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.projectDelete).not.toHaveBeenCalled() // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('blocks project deletion when dependent records exist', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 1,
+      // Sets the _count field so the surrounding object or component receives this setting.
+      _count: { materialPlans: 0, dailyLogs: 1, stockTransactions: 0, bills: 0, notifications: 0 },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await expect(deleteProject(1)).rejects.toMatchObject({ code: 'BUSINESS_RULE_VIOLATION', status: 409 })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.projectDelete).not.toHaveBeenCalled()
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
 
-  it('allows ADMIN project deletion when no dependent records exist', async () => { // Opens the function, callback, or control-flow block that groups the related statements.
-    mocks.projectFindUnique.mockResolvedValue({ // Opens the object or callback body that groups the settings for this operation.
-      id: 1, // Separates this argument or property from the next item in the surrounding call or object.
-      _count: { materialPlans: 0, dailyLogs: 0, stockTransactions: 0, bills: 0, notifications: 0 }, // Separates this argument or property from the next item in the surrounding call or object.
-    }) // Closes the current call, object, or collection so the surrounding expression can continue.
-    await deleteProject(1) // Waits for this asynchronous operation to finish before using its result.
-    expect(mocks.projectDelete).toHaveBeenCalledWith({ where: { id: 1 } }) // Asserts that the observed result matches the behavior this test is meant to guarantee.
-    expect(admin.role).toBe('ADMIN') // Asserts that the observed result matches the behavior this test is meant to guarantee.
-  }) // Closes the current call, object, or collection so the surrounding expression can continue.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-// File purpose: Checks expected behavior for management services.test using the project test runner.
+  // Calls this helper or component so the feature can perform the operation or render the control represented here.
+  it('allows ADMIN project deletion when no dependent records exist', async () => {
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    mocks.projectFindUnique.mockResolvedValue({
+      // Sets the id field so the surrounding object or component receives this setting.
+      id: 1,
+      // Sets the _count field so the surrounding object or component receives this setting.
+      _count: { materialPlans: 0, dailyLogs: 0, stockTransactions: 0, bills: 0, notifications: 0 },
+    // Continues the component or data expression so its related values and behavior stay grouped together.
+    })
+    // Waits for the asynchronous result before using it, so later work receives completed data.
+    await deleteProject(1)
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(mocks.projectDelete).toHaveBeenCalledWith({ where: { id: 1 } })
+    // Calls this helper or component so the feature can perform the operation or render the control represented here.
+    expect(admin.role).toBe('ADMIN')
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
