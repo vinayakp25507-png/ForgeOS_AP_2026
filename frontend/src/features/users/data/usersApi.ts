@@ -139,4 +139,3 @@ export async function updateUserStatus(id: number, isActive: boolean): Promise<A
   })).data
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Provides API and data-access helpers for the users feature.
