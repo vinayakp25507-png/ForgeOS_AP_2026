@@ -13,15 +13,26 @@ interface AppShellProps {
   currentPath: string
   // Sets the children field so the surrounding object or component receives this setting.
   children: ReactNode
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  projectSelector?: {
+    // Sets the value field so the surrounding object or component receives this setting.
+    value: string
+    // Sets the options field so the surrounding object or component receives this setting.
+    options: Array<{ id: string; name: string }>
+    // Sets the onChange field so the surrounding object or component receives this setting.
+    onChange: (value: string) => void
+  // Closes the current block or object so the grouped statements or settings end here.
+  }
 // Closes the current block or object so the grouped statements or settings end here.
 }
 
 // Defines AppShell so this module can perform its named task when needed.
-export function AppShell({ currentPath, children }: AppShellProps) {
+export function AppShell({ currentPath, children, projectSelector }: AppShellProps) {
   // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const [collapsed, setCollapsed] = useState(false)
   // Calls this helper or component so the feature can perform the operation or render the control represented here.
   const [mobileOpen, setMobileOpen] = useState(false)
+  /* Returns the result so the caller or React receives the value or interface this function provides. */
   // Returns the result so the caller or React receives the value or interface this function provides.
   return <div className="dashboard-shell min-h-screen text-[var(--dashboard-ink)]">
     {/* Starts the <div> element to organize this part of the interface. */}
@@ -33,12 +44,11 @@ export function AppShell({ currentPath, children }: AppShellProps) {
         {/* Starts the <Topbar> element to organize this part of the interface. */}
         <Topbar
           /* Sets the collapsed property so this element receives the data or behavior required by this screen. */
-          /* Sets the collapsed property so this element receives the data or behavior required by this screen. */
           collapsed={collapsed}
           /* Connects the OpenMobileNav event to its handler so the interface can respond to interaction. */
           onOpenMobileNav={() => setMobileOpen(true)}
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
+          /* Sets the projectSelector property so this element receives the data or behavior required by this screen. */
+          projectSelector={projectSelector}
         />
         {/* Starts the <main> element to identify the page’s primary content. */}
         <main className="dashboard-page-transition min-h-screen pt-16">{children}</main>
@@ -50,4 +60,3 @@ export function AppShell({ currentPath, children }: AppShellProps) {
   </div>
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable AppShell interface component.
