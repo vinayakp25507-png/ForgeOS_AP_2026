@@ -1,7 +1,14 @@
+// Groups related TypeScript compiler settings.
 {
-  "files": [], // Keep this root project from compiling files directly; the referenced configs own the source files.
+  // Sets the files TypeScript compiler option for this project.
+  "files": [],
+  // Sets the references TypeScript compiler option for this project.
   "references": [
-    { "path": "./tsconfig.app.json" }, // Build and type-check the browser application with its own compiler settings.
-    { "path": "./tsconfig.node.json" } // Separately type-check Vite's Node-based configuration.
+    // Groups related TypeScript compiler settings.
+    { "path": "./tsconfig.app.json" },
+    // Groups related TypeScript compiler settings.
+    { "path": "./tsconfig.node.json" }
+  // Groups related TypeScript compiler settings.
   ]
+// Groups related TypeScript compiler settings.
 }
