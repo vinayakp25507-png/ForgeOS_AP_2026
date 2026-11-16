@@ -51,15 +51,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       // Continues the component or data expression so its related values and behavior stay grouped together.
       <button
         /* Sets the ref property so this element receives the data or behavior required by this screen. */
-        /* Sets the ref property so this element receives the data or behavior required by this screen. */
         ref={ref}
         /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
         className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
         /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         {...props}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
         {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
         {children}
@@ -142,10 +138,8 @@ export const SaaSTemplateNavigation = React.memo(() => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             /* Provides aria-label accessibility information so assistive technology can describe the element. */
             aria-label="Toggle menu"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
-            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+            // Continues the component or data expression so its related values and behavior stay grouped together.
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           {/* Closes the <button> element so later content is no longer part of this region. */}
           </button>
@@ -168,10 +162,8 @@ export const SaaSTemplateNavigation = React.memo(() => {
               className="text-sm text-[#595552] hover:text-[#323232] transition-colors py-2"
               /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setMobileMenuOpen(false)}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               Getting started
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
@@ -183,10 +175,8 @@ export const SaaSTemplateNavigation = React.memo(() => {
               className="text-sm text-[#595552] hover:text-[#323232] transition-colors py-2"
               /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setMobileMenuOpen(false)}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               Components
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
@@ -198,10 +188,8 @@ export const SaaSTemplateNavigation = React.memo(() => {
               className="text-sm text-[#595552] hover:text-[#323232] transition-colors py-2"
               /* Connects the Click event to its handler so the interface can respond to interaction. */
               onClick={() => setMobileMenuOpen(false)}
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
-              {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               Documentation
             {/* Closes the <a> element so later content is no longer part of this region. */}
             </a>
@@ -209,13 +197,13 @@ export const SaaSTemplateNavigation = React.memo(() => {
             <div className="flex flex-col gap-2 pt-4 border-t border-[#323232]/10">
               {/* Starts the <Button> element to organize this part of the interface. */}
               <Button type="button" variant="ghost" size="sm">
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
                 Sign in
               {/* Closes the <Button> element so later content is no longer part of this region. */}
               </Button>
               {/* Starts the <Button> element to organize this part of the interface. */}
               <Button type="button" variant="default" size="sm" className="rounded-full">
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
                 Sign Up
               {/* Closes the <Button> element so later content is no longer part of this region. */}
               </Button>
@@ -246,8 +234,6 @@ export const SaaSTemplateHero = React.memo(() => {
     <section
       /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
       className="relative min-h-screen flex flex-col items-center justify-start px-6 pt-28 pb-20 md:pt-32 bg-[#DDD0C8] text-[#323232]"
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
     >
       {/* Starts the <aside> element to organize this part of the interface. */}
       <aside className="mb-8 inline-flex flex-wrap items-center justify-center gap-2 px-5 py-2 rounded-full border border-[#323232]/15 bg-[#E8DCD4]/70 backdrop-blur-sm max-w-full shadow-xs">
@@ -265,8 +251,6 @@ export const SaaSTemplateHero = React.memo(() => {
           className="flex items-center gap-1 text-xs font-semibold text-[#323232] hover:underline transition-all active:scale-95 whitespace-nowrap"
           /* Provides aria-label accessibility information so assistive technology can describe the element. */
           aria-label="Read more about the new version"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
           {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
           Explore features
@@ -281,8 +265,6 @@ export const SaaSTemplateHero = React.memo(() => {
       <h1
         /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
         className="text-4xl md:text-5xl lg:text-6xl font-medium text-center max-w-3xl px-6 leading-tight mb-6 text-[#323232] tracking-tight"
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
         {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
         Give your construction projects <br />the platform they deserve
@@ -303,17 +285,13 @@ export const SaaSTemplateHero = React.memo(() => {
           /* Chooses the element’s browser behavior, such as a button action or input format. */
           type="button"
           /* Sets the variant property so this element receives the data or behavior required by this screen. */
-          /* Sets the variant property so this element receives the data or behavior required by this screen. */
           variant="gradient"
-          /* Sets the size property so this element receives the data or behavior required by this screen. */
           /* Sets the size property so this element receives the data or behavior required by this screen. */
           size="lg"
           /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
           className="rounded-full flex items-center justify-center px-8 text-xs font-semibold uppercase tracking-wider"
           /* Provides aria-label accessibility information so assistive technology can describe the element. */
           aria-label="Get started with the platform"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
           {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
           Get started free
@@ -330,36 +308,26 @@ export const SaaSTemplateHero = React.memo(() => {
           /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
           className="absolute left-1/2 w-[90%] pointer-events-none z-0 opacity-40 blur-sm"
           /* Sets the style property so this element receives the data or behavior required by this screen. */
-          /* Sets the style property so this element receives the data or behavior required by this screen. */
           style={{
-            /* Sets the top field so the surrounding object or component receives this setting. */
             /* Sets the top field so the surrounding object or component receives this setting. */
             top: "-15%",
             /* Sets the transform field so the surrounding object or component receives this setting. */
-            /* Sets the transform field so the surrounding object or component receives this setting. */
             transform: "translateX(-50%)"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           /* Continues the component or data expression so its related values and behavior stay grouped together. */
           }}
           /* Provides aria-hidden accessibility information so assistive technology can describe the element. */
           aria-hidden="true"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
           {/* Starts the <img> element to display visual content. */}
           <img
             /* Selects the image or other resource displayed by this element. */
             src="https://images.unsplash.com/photo-1541888946425-d0fbb18615f8?auto=format&fit=crop&w=1600&q=80"
             /* Sets the alt property so this element receives the data or behavior required by this screen. */
-            /* Sets the alt property so this element receives the data or behavior required by this screen. */
             alt=""
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="w-full h-auto rounded-3xl"
             /* Sets the loading property so this element receives the data or behavior required by this screen. */
-            /* Sets the loading property so this element receives the data or behavior required by this screen. */
             loading="eager"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           />
         {/* Closes the <div> element so later content is no longer part of this region. */}
         </div>
@@ -390,15 +358,11 @@ export const SaaSTemplateHero = React.memo(() => {
             /* Selects the image or other resource displayed by this element. */
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80"
             /* Sets the alt property so this element receives the data or behavior required by this screen. */
-            /* Sets the alt property so this element receives the data or behavior required by this screen. */
             alt="Dashboard preview showing analytics and metrics interface"
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="w-full h-auto rounded-xl object-cover max-h-[500px]"
             /* Sets the loading property so this element receives the data or behavior required by this screen. */
-            /* Sets the loading property so this element receives the data or behavior required by this screen. */
             loading="eager"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           />
         {/* Closes the <div> element so later content is no longer part of this region. */}
         </div>
@@ -431,4 +395,3 @@ export default function Component() {
   );
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the reusable saa s template interface component.
