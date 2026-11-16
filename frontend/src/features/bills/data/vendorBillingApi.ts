@@ -419,4 +419,3 @@ export async function paymentHistory(from?: string, to?: string, signal?: AbortS
   return (await apiGet<PaymentHistoryEntry[]>(`/reports/payment-history${queryString({ from, to })}`, { signal })).data
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Provides API and data-access helpers for the bills feature.
