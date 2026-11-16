@@ -79,4 +79,3 @@ export function useDashboardData(projects: Project[]) {
   }
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Encapsulates reusable React state and effects for useDashboardData.
