@@ -1,50 +1,97 @@
-import { z } from 'zod' // Imports { z } from 'zod' so this module can reuse that functionality.
+// Imports z from zod so this module can reuse that component, helper, or library.
+import { z } from 'zod'
 
-const projectFields = { // Stores this intermediate `project fields` value so later lines can use it.
-  landId: z.coerce.number().int().positive(), // Separates this argument or property from the next item in the surrounding call or object.
-  code: z.string().trim().min(1).max(50), // Separates this argument or property from the next item in the surrounding call or object.
-  name: z.string().trim().min(1).max(255), // Separates this argument or property from the next item in the surrounding call or object.
-  description: z.string().trim().max(5000).nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  status: z.enum(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED']), // Separates this argument or property from the next item in the surrounding call or object.
-  startDate: z.coerce.date().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  expectedEndDate: z.coerce.date().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  actualEndDate: z.coerce.date().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  totalBudget: z.coerce.number().nonnegative(), // Separates this argument or property from the next item in the surrounding call or object.
-  wastageThresholdPct: z.coerce.number().min(0).max(100), // Separates this argument or property from the next item in the surrounding call or object.
-  assignedPmId: z.coerce.number().int().positive().nullable().optional(), // Separates this argument or property from the next item in the surrounding call or object.
-} // Closes the current block and marks where its grouped work ends.
-const projectSchema = z.object(projectFields) // Stores this intermediate `project schema` value so later lines can use it.
-const dates = projectSchema.refine((value) => !value.startDate || !value.expectedEndDate || value.expectedEndDate >= value.startDate, { message: 'Expected end date must be on or after start date.', path: ['expectedEndDate'] }) // Stores this intermediate `dates` value so later lines can use it.
-const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must use YYYY-MM-DD format') // Stores this intermediate `date only` value so later lines can use it.
-export const projectIdParamsSchema = z.object({ id: z.coerce.number().int().positive() }) // Provides `export const projectIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })` as part of this server module.
-export const projectScopedIdParamsSchema = z.object({ projectId: z.coerce.number().int().positive() }) // Provides `export const projectScopedIdParamsSchema = z.object({ projectId: z.coerce.number().int().positive() })` as part of this server module.
-export const projectActivityQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  page: z.coerce.number().int().min(1).default(1), // Separates this argument or property from the next item in the surrounding call or object.
-  limit: z.coerce.number().int().min(1).max(100).default(20), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const projectDateRangeQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  from: dateOnly.optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  to: dateOnly.optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}).refine( // Provides `}).refine(` as part of this server module.
-  (value) => !value.from || !value.to || value.from <= value.to, // Separates this argument or property from the next item in the surrounding call or object.
-  { message: 'The from date must be on or before the to date.', path: ['to'] }, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const projectListQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  page: z.coerce.number().int().min(1).default(1), // Separates this argument or property from the next item in the surrounding call or object.
-  pageSize: z.coerce.number().int().min(1).max(100).default(20), // Separates this argument or property from the next item in the surrounding call or object.
-  status: z.enum(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED']).optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  search: z.string().trim().max(100).optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const projectProgressHistoryQuerySchema = z.object({ // Opens the object or callback body that groups the settings for this operation.
-  from: dateOnly.optional(), // Separates this argument or property from the next item in the surrounding call or object.
-  to: dateOnly.optional(), // Separates this argument or property from the next item in the surrounding call or object.
-}).refine( // Provides `}).refine(` as part of this server module.
-  (value) => !value.from || !value.to || value.from <= value.to, // Separates this argument or property from the next item in the surrounding call or object.
-  { message: 'The from date must be on or before the to date.', path: ['to'] }, // Separates this argument or property from the next item in the surrounding call or object.
-) // Closes the current call, object, or collection so the surrounding expression can continue.
-export const createProjectSchema = dates // Provides `export const createProjectSchema = dates` as part of this server module.
-export const updateProjectSchema = projectSchema.partial().refine((value) => !value.startDate || !value.expectedEndDate || value.expectedEndDate >= value.startDate, { message: 'Expected end date must be on or after start date.', path: ['expectedEndDate'] }) // Provides `export const updateProjectSchema = projectSchema.partial().refine((value) => !value.startDate || !value.expectedEndDate || value.expectedEndDate >= value.startDate, { message: 'Expected end date must be on or after start date.', path: ['expectedEndDate'] })` as part of this server module.
-export type ProjectProgressHistoryQuery = z.infer<typeof projectProgressHistoryQuerySchema> // Defines the `ProjectProgressHistoryQuery` type so TypeScript can describe the data or behavior used here.
-export type ProjectActivityQuery = z.infer<typeof projectActivityQuerySchema> // Defines the `ProjectActivityQuery` type so TypeScript can describe the data or behavior used here.
-export type ProjectDateRangeQuery = z.infer<typeof projectDateRangeQuerySchema> // Defines the `ProjectDateRangeQuery` type so TypeScript can describe the data or behavior used here.
-// File purpose: Defines runtime request validation schemas for the projects API.
+// Stores the value in projectFields so later lines can reuse this data or behavior for the current feature.
+const projectFields = {
+  // Sets the landId field so the surrounding object or component receives this setting.
+  landId: z.coerce.number().int().positive(),
+  // Sets the code field so the surrounding object or component receives this setting.
+  code: z.string().trim().min(1).max(50),
+  // Sets the name field so the surrounding object or component receives this setting.
+  name: z.string().trim().min(1).max(255),
+  // Sets the description field so the surrounding object or component receives this setting.
+  description: z.string().trim().max(5000).nullable().optional(),
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: z.enum(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED']),
+  // Sets the startDate field so the surrounding object or component receives this setting.
+  startDate: z.coerce.date().nullable().optional(),
+  // Sets the expectedEndDate field so the surrounding object or component receives this setting.
+  expectedEndDate: z.coerce.date().nullable().optional(),
+  // Sets the actualEndDate field so the surrounding object or component receives this setting.
+  actualEndDate: z.coerce.date().nullable().optional(),
+  // Sets the totalBudget field so the surrounding object or component receives this setting.
+  totalBudget: z.coerce.number().nonnegative(),
+  // Sets the wastageThresholdPct field so the surrounding object or component receives this setting.
+  wastageThresholdPct: z.coerce.number().min(0).max(100),
+  // Sets the assignedPmId field so the surrounding object or component receives this setting.
+  assignedPmId: z.coerce.number().int().positive().nullable().optional(),
+// Closes the current block or object so the grouped statements or settings end here.
+}
+// Stores the value in projectSchema so later lines can reuse this data or behavior for the current feature.
+const projectSchema = z.object(projectFields)
+// Stores the value in dates so later lines can reuse this data or behavior for the current feature.
+const dates = projectSchema.refine((value) => !value.startDate || !value.expectedEndDate || value.expectedEndDate >= value.startDate, { message: 'Expected end date must be on or after start date.', path: ['expectedEndDate'] })
+// Stores the value in dateOnly so later lines can reuse this data or behavior for the current feature.
+const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must use YYYY-MM-DD format')
+// Stores the value in projectIdParamsSchema so later lines can reuse this data or behavior for the current feature.
+export const projectIdParamsSchema = z.object({ id: z.coerce.number().int().positive() })
+// Stores the value in projectScopedIdParamsSchema so later lines can reuse this data or behavior for the current feature.
+export const projectScopedIdParamsSchema = z.object({ projectId: z.coerce.number().int().positive() })
+// Stores the value in projectActivityQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const projectActivityQuerySchema = z.object({
+  // Sets the page field so the surrounding object or component receives this setting.
+  page: z.coerce.number().int().min(1).default(1),
+  // Sets the limit field so the surrounding object or component receives this setting.
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
+// Stores the value in projectDateRangeQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const projectDateRangeQuerySchema = z.object({
+  // Sets the from field so the surrounding object or component receives this setting.
+  from: dateOnly.optional(),
+  // Sets the to field so the surrounding object or component receives this setting.
+  to: dateOnly.optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}).refine(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  (value) => !value.from || !value.to || value.from <= value.to,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  { message: 'The from date must be on or before the to date.', path: ['to'] },
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Stores the value in projectListQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const projectListQuerySchema = z.object({
+  // Sets the page field so the surrounding object or component receives this setting.
+  page: z.coerce.number().int().min(1).default(1),
+  // Sets the pageSize field so the surrounding object or component receives this setting.
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Sets the status field so the surrounding object or component receives this setting.
+  status: z.enum(['PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED']).optional(),
+  // Sets the search field so the surrounding object or component receives this setting.
+  search: z.string().trim().max(100).optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+})
+// Stores the value in projectProgressHistoryQuerySchema so later lines can reuse this data or behavior for the current feature.
+export const projectProgressHistoryQuerySchema = z.object({
+  // Sets the from field so the surrounding object or component receives this setting.
+  from: dateOnly.optional(),
+  // Sets the to field so the surrounding object or component receives this setting.
+  to: dateOnly.optional(),
+// Continues the component or data expression so its related values and behavior stay grouped together.
+}).refine(
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  (value) => !value.from || !value.to || value.from <= value.to,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
+  { message: 'The from date must be on or before the to date.', path: ['to'] },
+// Closes this function call or grouped expression so the surrounding code can continue.
+)
+// Stores the value in createProjectSchema so later lines can reuse this data or behavior for the current feature.
+export const createProjectSchema = dates
+// Stores the value in updateProjectSchema so later lines can reuse this data or behavior for the current feature.
+export const updateProjectSchema = projectSchema.partial().refine((value) => !value.startDate || !value.expectedEndDate || value.expectedEndDate >= value.startDate, { message: 'Expected end date must be on or after start date.', path: ['expectedEndDate'] })
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type ProjectProgressHistoryQuery = z.infer<typeof projectProgressHistoryQuerySchema>
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type ProjectActivityQuery = z.infer<typeof projectActivityQuerySchema>
+// Continues the component or data expression so its related values and behavior stay grouped together.
+export type ProjectDateRangeQuery = z.infer<typeof projectDateRangeQuerySchema>
