@@ -9,6 +9,8 @@ import {
   // Continues the component or data expression so its related values and behavior stay grouped together.
   Boxes,
   // Continues the component or data expression so its related values and behavior stay grouped together.
+  Building2,
+  // Continues the component or data expression so its related values and behavior stay grouped together.
   ClipboardCheck,
   // Continues the component or data expression so its related values and behavior stay grouped together.
   ClipboardList,
@@ -40,8 +42,8 @@ import {
 } from 'lucide-react'
 // Imports type  LucideIcon from lucide-react so this module can reuse that component, helper, or library.
 import type { LucideIcon } from 'lucide-react'
-// Imports useAuth from ../../authentication/auth/useAuth so this module can reuse that component, helper, or library.
-import { useAuth } from '../../authentication/auth/useAuth'
+// Imports getCurrentRole, getAssignedProject from ../../authentication/utils/permissions so this module can reuse that component, helper, or library.
+import { getCurrentRole, getAssignedProject } from '../../authentication/utils/permissions'
 
 // Continues the component or data expression so its related values and behavior stay grouped together.
 interface SidebarProps {
@@ -83,10 +85,14 @@ export function Sidebar({
   onToggleCollapsed,
 // Continues the component or data expression so its related values and behavior stay grouped together.
 }: SidebarProps) {
-  // Calls this helper or component so the feature can perform the operation or render the control represented here.
-  const { user } = useAuth()
+  // Stores the value in currentRole so later lines can reuse this data or behavior for the current feature.
+  const currentRole = getCurrentRole() || 'Admin'
   // Stores the value in isPm so later lines can reuse this data or behavior for the current feature.
-  const isPm = user?.role === 'PM'
+  const isPm = currentRole === 'Project Manager'
+  // Stores the value in assigned so later lines can reuse this data or behavior for the current feature.
+  const assigned = getAssignedProject()
+  // Stores the value in projectCode so later lines can reuse this data or behavior for the current feature.
+  const projectCode = assigned?.code || 'PRJ-001'
 
   // Stores the value in adminItems so later lines can reuse this data or behavior for the current feature.
   const adminItems: NavItem[] = [
@@ -115,7 +121,7 @@ export function Sidebar({
     // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Wastage Analysis', href: '/app/wastage', icon: TrendingUp },
     // Continues the component or data expression so its related values and behavior stay grouped together.
-    { label: 'Vendors & Assignments', href: '/app/vendors', icon: UsersRound },
+    { label: 'Vendors & Negotiations', href: '/app/vendors', icon: UsersRound },
     // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Bills & Approvals', href: '/app/bills', icon: CreditCard },
   // Continues the component or data expression so its related values and behavior stay grouped together.
@@ -128,11 +134,9 @@ export function Sidebar({
     // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'My Project', href: '/app/projects', icon: FolderKanban },
     // Continues the component or data expression so its related values and behavior stay grouped together.
-    { label: 'Project Land', href: '/app/lands', icon: Map },
-    // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Daily Site Logs', href: '/app/daily-logs', icon: ClipboardList },
     // Continues the component or data expression so its related values and behavior stay grouped together.
-    { label: 'Progress History', href: '/app/progress-history', icon: BarChart3 },
+    { label: 'Progress History', href: `/projects/${projectCode}/progress`, icon: BarChart3 },
     // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Site Material Planning', href: '/app/material-planning', icon: ClipboardCheck },
     // Continues the component or data expression so its related values and behavior stay grouped together.
@@ -150,7 +154,7 @@ export function Sidebar({
     // Continues the component or data expression so its related values and behavior stay grouped together.
     { label: 'Bills', href: '/app/bills', icon: CreditCard },
     // Continues the component or data expression so its related values and behavior stay grouped together.
-    { label: 'Create Bill', href: '/app/bills/upload', icon: CreditCard },
+    { label: 'Upload Bills & Challans', href: '/app/bills/upload', icon: CreditCard },
   // Continues the component or data expression so its related values and behavior stay grouped together.
   ]
 
@@ -173,8 +177,6 @@ export function Sidebar({
           type="button"
           /* Provides aria-label accessibility information so assistive technology can describe the element. */
           aria-label="Close navigation"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         />
       // Continues the component or data expression so its related values and behavior stay grouped together.
       )}
@@ -184,26 +186,18 @@ export function Sidebar({
         /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
         className={`dashboard-sidebar fixed inset-y-0 left-0 z-40 flex flex-col border-r transition-all duration-200 lg:static lg:z-auto ${
           /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         } ${collapsed ? 'w-[76px]' : 'w-[250px]'}`}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
         {/* Starts the <div> element to organize this part of the interface. */}
         <div
           /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
           className={`flex h-16 shrink-0 items-center border-b border-[#E8E0DA] px-4 ${
             /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             collapsed ? 'justify-center' : 'justify-between'
           /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           }`}
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
           {/* Starts the <a> element to provide navigation to another location. */}
           <a className="flex items-center gap-2" href="/">
@@ -238,8 +232,6 @@ export function Sidebar({
               type="button"
               /* Provides aria-label accessibility information so assistive technology can describe the element. */
               aria-label="Collapse sidebar"
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-            /* Continues the component or data expression so its related values and behavior stay grouped together. */
             >
               {/* Starts the <PanelLeftClose> element to organize this part of the interface. */}
               <PanelLeftClose className="h-4 w-4" />
@@ -258,10 +250,34 @@ export function Sidebar({
             <div className="mb-2">
               {/* Starts the <p> element to organize this part of the interface. */}
               <p className="px-3 pt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
                 {isPm ? 'Site Operations' : 'Administration'}
               {/* Closes the <p> element so later content is no longer part of this region. */}
               </p>
+              // Continues the component or data expression so its related values and behavior stay grouped together.
+              {isPm && assigned && (
+                // Continues the component or data expression so its related values and behavior stay grouped together.
+                <div className="mx-2 mt-2 rounded-xl border border-white/10 bg-white/[0.05] p-2.5">
+                  {/* Starts the <div> element to organize this part of the interface. */}
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#F2A65A]">
+                    {/* Starts the <Building2> element to organize this part of the interface. */}
+                    <Building2 size={12} />
+                    {/* Starts the <span> element to organize this part of the interface. */}
+                    <span>Assigned Site</span>
+                  {/* Closes the <div> element so later content is no longer part of this region. */}
+                  </div>
+                  {/* Starts the <p> element to organize this part of the interface. */}
+                  <p className="mt-0.5 truncate text-xs font-bold text-white" title={assigned.name}>
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
+                    {assigned.name}
+                  {/* Closes the <p> element so later content is no longer part of this region. */}
+                  </p>
+                  {/* Starts the <p> element to organize this part of the interface. */}
+                  <p className="text-[10px] font-mono text-white/40">{assigned.code}</p>
+                {/* Closes the <div> element so later content is no longer part of this region. */}
+                </div>
+              // Continues the component or data expression so its related values and behavior stay grouped together.
+              )}
             {/* Closes the <div> element so later content is no longer part of this region. */}
             </div>
           // Continues the component or data expression so its related values and behavior stay grouped together.
@@ -291,26 +307,31 @@ export function Sidebar({
                 /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className={`mb-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
                   /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                  /* Continues the component or data expression so its related values and behavior stay grouped together. */
                   active
-                    /* Continues the component or data expression so its related values and behavior stay grouped together. */
                     /* Continues the component or data expression so its related values and behavior stay grouped together. */
                     ? 'bg-[#F2A65A]/15 font-semibold text-[#F2A65A]'
                     /* Continues the component or data expression so its related values and behavior stay grouped together. */
                     : 'font-medium text-white/55 hover:bg-white/[0.07] hover:text-white'
+                /* Continues the component or data expression so its related values and behavior stay grouped together. */
                 } ${collapsed ? 'justify-center' : ''}`}
+                /* Sets the destination so activating this link or route control opens the intended screen. */
                 href={href}
+                /* Gives this rendered item a stable identity so React can update lists efficiently. */
                 key={label}
+                /* Connects the Click event to its handler so the interface can respond to interaction. */
                 onClick={onCloseMobile}
+                /* Sets the title property so this element receives the data or behavior required by this screen. */
                 title={collapsed ? label : undefined}
               >
                 {/* Starts the <Icon> element to organize this part of the interface. */}
                 <Icon className="h-[17px] w-[17px] shrink-0" />
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
                 {!collapsed && <span className="truncate">{label}</span>}
               {/* Closes the <a> element so later content is no longer part of this region. */}
               </a>
+            // Closes this function call or grouped expression so the surrounding code can continue.
             )
+          // Continues the component or data expression so its related values and behavior stay grouped together.
           })}
         {/* Closes the <div> element so later content is no longer part of this region. */}
         </div>
@@ -327,7 +348,7 @@ export function Sidebar({
                 <PackageCheck className="h-4 w-4 text-[#F2A65A]" />
                 {/* Starts the <span> element to organize this part of the interface. */}
                 <span className="text-xs font-semibold text-white/80">
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   {isPm ? 'Site milestone' : 'Portfolio progress'}
                 {/* Closes the <span> element so later content is no longer part of this region. */}
                 </span>
@@ -341,8 +362,8 @@ export function Sidebar({
               </div>
               {/* Starts the <p> element to organize this part of the interface. */}
               <p className="mt-1 text-[10px] text-white/35">
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
-                {isPm ? 'Project-scoped progress' : 'Portfolio overview'}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
+                {isPm ? (assigned ? `${assigned.code} on schedule` : 'On track') : '5 projects active'}
               {/* Closes the <p> element so later content is no longer part of this region. */}
               </p>
             {/* Closes the <div> element so later content is no longer part of this region. */}
@@ -360,8 +381,6 @@ export function Sidebar({
             type="button"
             /* Provides aria-label accessibility information so assistive technology can describe the element. */
             aria-label="Toggle sidebar width"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
             {collapsed ? (
@@ -389,4 +408,3 @@ export function Sidebar({
 }
 // Exports Sidebar as this file’s default value so other modules can load the main feature.
 export default Sidebar
-// File purpose: Renders the reusable Sidebar interface component.
