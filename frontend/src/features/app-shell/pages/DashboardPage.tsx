@@ -336,8 +336,6 @@ export function DashboardPage() {
             onClick={() => { window.location.href = '/app/projects' }}
             /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#323232] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1E1E1E]"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           >
             {/* Starts the <Plus> element to organize this part of the interface. */}
             <Plus size={17} />
@@ -385,8 +383,6 @@ export function DashboardPage() {
                 onClick={() => { window.location.href = '/app/projects' }}
                 /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className="flex items-center gap-1 text-sm font-medium text-[#595552] hover:text-[#1E1E1E]"
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               >
                 {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
                 View all <ArrowUpRight size={15} />
@@ -425,7 +421,7 @@ export function DashboardPage() {
                       <td className="px-5 py-4">
                         {/* Starts the <p> element to organize this part of the interface. */}
                         <p className="text-sm font-medium text-[#323232]">
-                          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                          // Continues the component or data expression so its related values and behavior stay grouped together.
                           {project.name}
                         {/* Closes the <p> element so later content is no longer part of this region. */}
                         </p>
@@ -435,7 +431,7 @@ export function DashboardPage() {
                       </td>
                       {/* Starts the <td> element to organize this part of the interface. */}
                       <td className="px-5 py-4 text-sm text-[#595552]">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {project.manager}
                       {/* Closes the <td> element so later content is no longer part of this region. */}
                       </td>
@@ -450,25 +446,19 @@ export function DashboardPage() {
                               /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                               className="h-full rounded-full"
                               /* Sets the style property so this element receives the data or behavior required by this screen. */
-                              /* Sets the style property so this element receives the data or behavior required by this screen. */
                               style={{
-                                /* Sets the width field so the surrounding object or component receives this setting. */
                                 /* Sets the width field so the surrounding object or component receives this setting. */
                                 width: `${project.progress}%`,
                                 /* Sets the backgroundColor field so the surrounding object or component receives this setting. */
-                                /* Sets the backgroundColor field so the surrounding object or component receives this setting. */
                                 backgroundColor: project.color,
                               /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                              /* Continues the component or data expression so its related values and behavior stay grouped together. */
                               }}
-                            /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                            /* Continues the component or data expression so its related values and behavior stay grouped together. */
                             />
                           {/* Closes the <div> element so later content is no longer part of this region. */}
                           </div>
                           {/* Starts the <span> element to organize this part of the interface. */}
                           <span className="text-xs font-medium text-[#595552]">
-                            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                            // Continues the component or data expression so its related values and behavior stay grouped together.
                             {project.progress}%
                           {/* Closes the <span> element so later content is no longer part of this region. */}
                           </span>
@@ -481,24 +471,18 @@ export function DashboardPage() {
                         {/* Starts the <span> element to organize this part of the interface. */}
                         <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                           /* Sets the project.status property so this element receives the data or behavior required by this screen. */
-                          /* Sets the project.status property so this element receives the data or behavior required by this screen. */
                           project.status === 'Completed'
-                            /* Continues the component or data expression so its related values and behavior stay grouped together. */
                             /* Continues the component or data expression so its related values and behavior stay grouped together. */
                             ? 'bg-[#E8EFE5] text-[#617858]'
                             /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                            /* Continues the component or data expression so its related values and behavior stay grouped together. */
                             : project.status === 'Planning'
-                              /* Continues the component or data expression so its related values and behavior stay grouped together. */
                               /* Continues the component or data expression so its related values and behavior stay grouped together. */
                               ? 'bg-[#F1EAF6] text-[#806B96]'
                               /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                              /* Continues the component or data expression so its related values and behavior stay grouped together. */
                               : 'bg-[#F5EDE1] text-[#9A7950]'
                         /* Continues the component or data expression so its related values and behavior stay grouped together. */
-                        /* Continues the component or data expression so its related values and behavior stay grouped together. */
                         }`}>
-                          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                          // Continues the component or data expression so its related values and behavior stay grouped together.
                           {project.status}
                         {/* Closes the <span> element so later content is no longer part of this region. */}
                         </span>
@@ -506,6 +490,7 @@ export function DashboardPage() {
                       </td>
                     {/* Closes the <tr> element so later content is no longer part of this region. */}
                     </tr>
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   ))}
                 {/* Closes the <tbody> element so later content is no longer part of this region. */}
                 </tbody>
@@ -561,19 +546,19 @@ export function DashboardPage() {
                     <div className="min-w-0">
                       {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="text-sm font-medium text-[#323232]">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {activity.title}
                       {/* Closes the <p> element so later content is no longer part of this region. */}
                       </p>
                       {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="mt-1 text-xs text-[#8E827A]">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {activity.detail}
                       {/* Closes the <p> element so later content is no longer part of this region. */}
                       </p>
                       {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="mt-2 text-[11px] text-[#A69A92]">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {activity.time}
                       {/* Closes the <p> element so later content is no longer part of this region. */}
                       </p>
@@ -677,4 +662,3 @@ export function DashboardPage() {
   )
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Renders the app shell screen and coordinates its page-level interactions.
