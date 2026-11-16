@@ -37,4 +37,3 @@ export function todayISO(): string {
   return new Date().toISOString().slice(0, 10)
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Formats stock values consistently for display in the frontend.
