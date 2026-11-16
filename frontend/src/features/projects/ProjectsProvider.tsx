@@ -138,6 +138,15 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   const selectedProject = projects.find((project) => String(project.id) === selectedProjectId) ?? null
   // Caches value so its calculation is repeated only when its inputs change.
   // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
+  // Caches value so its calculation is repeated only when its inputs change.
   const value = useMemo(() => ({
     // Continues the component or data expression so its related values and behavior stay grouped together.
     projects,
@@ -160,4 +169,3 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Loads and shares project state with frontend pages and components.
