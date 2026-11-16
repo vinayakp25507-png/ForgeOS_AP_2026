@@ -99,10 +99,7 @@ function StoryScene({ scene, index, progress, reduceMotion }: StorySceneProps) {
         /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
         className="relative mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-6 text-center text-[#DDD0C8]"
         /* Sets the style property so this element receives the data or behavior required by this screen. */
-        /* Sets the style property so this element receives the data or behavior required by this screen. */
         style={reduceMotion ? undefined : { y: textY }}
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
-      /* Continues the component or data expression so its related values and behavior stay grouped together. */
       >
         {/* Starts the <p> element to organize this part of the interface. */}
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.35em] text-[#DDD0C8]/75 sm:text-sm">
@@ -161,19 +158,13 @@ export function SiteStoryReveal() {
             /* Gives this rendered item a stable identity so React can update lists efficiently. */
             key={scene.label}
             /* Sets the scene property so this element receives the data or behavior required by this screen. */
-            /* Sets the scene property so this element receives the data or behavior required by this screen. */
             scene={scene}
-            /* Sets the index property so this element receives the data or behavior required by this screen. */
             /* Sets the index property so this element receives the data or behavior required by this screen. */
             index={index}
             /* Sets the progress property so this element receives the data or behavior required by this screen. */
-            /* Sets the progress property so this element receives the data or behavior required by this screen. */
             progress={scrollYProgress}
             /* Sets the reduceMotion property so this element receives the data or behavior required by this screen. */
-            /* Sets the reduceMotion property so this element receives the data or behavior required by this screen. */
             reduceMotion={reduceMotion}
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           />
         // Continues the component or data expression so its related values and behavior stay grouped together.
         ))}
@@ -190,12 +181,9 @@ export function SiteStoryReveal() {
         {/* Starts the <motion.div> element to organize this part of the interface. */}
         <motion.div
           /* Sets the style property so this element receives the data or behavior required by this screen. */
-          /* Sets the style property so this element receives the data or behavior required by this screen. */
           style={{ opacity: reduceMotion ? 0 : promptOpacity }}
           /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
           className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-center text-xs uppercase tracking-[0.25em] text-[#DDD0C8]/75"
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
-        /* Continues the component or data expression so its related values and behavior stay grouped together. */
         >
           {/* Starts the <span> element to organize this part of the interface. */}
           <span>Scroll to move through the site</span>
@@ -214,4 +202,3 @@ export function SiteStoryReveal() {
 
 // Exports SiteStoryReveal as this file’s default value so other modules can load the main feature.
 export default SiteStoryReveal
-// File purpose: Renders the reusable SiteStoryReveal interface component.
