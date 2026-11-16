@@ -154,8 +154,6 @@ export const Features: React.FC = () => {
                 key={feature.title}
                 /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                 className="group relative bg-[#E8DCD4] rounded-3xl p-8 border border-[#323232]/10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#323232]/25 flex flex-col justify-between"
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
-              /* Continues the component or data expression so its related values and behavior stay grouped together. */
               >
                 {/* Starts the <div> element to organize this part of the interface. */}
                 <div>
@@ -167,13 +165,13 @@ export const Features: React.FC = () => {
                   </div>
                   {/* Starts the <h3> element to organize this part of the interface. */}
                   <h3 className="text-xl font-bold text-[#323232] tracking-tight">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     {feature.title}
                   {/* Closes the <h3> element so later content is no longer part of this region. */}
                   </h3>
                   {/* Starts the <p> element to organize this part of the interface. */}
                   <p className="mt-3 text-[#595552] text-sm sm:text-base leading-relaxed font-light">
-                    {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     {feature.description}
                   {/* Closes the <p> element so later content is no longer part of this region. */}
                   </p>
@@ -207,4 +205,3 @@ export const Features: React.FC = () => {
 
 // Exports Features as this file’s default value so other modules can load the main feature.
 export default Features;
-// File purpose: Renders the reusable Features interface component.
