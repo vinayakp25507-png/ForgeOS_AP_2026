@@ -24,4 +24,3 @@ export default defineConfig({
   },
 // Continues the configuration expression so its related values and behavior stay grouped together.
 })
-// File purpose: Configures Vite's React integration and frontend development/build behavior.
