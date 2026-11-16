@@ -906,20 +906,15 @@ export function LiquidNavbar({
     // Continues the component or data expression so its related values and behavior stay grouped together.
     <nav
       /* Sets the ref property so this element receives the data or behavior required by this screen. */
-      /* Sets the ref property so this element receives the data or behavior required by this screen. */
       ref={navRef as any}
       /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
       className={["nimbus-nav", className].filter(Boolean).join(" ")}
       /* Sets the data-tone property so this element receives the data or behavior required by this screen. */
-      /* Sets the data-tone property so this element receives the data or behavior required by this screen. */
       data-tone={tone}
-      /* Sets the data-gl property so this element receives the data or behavior required by this screen. */
       /* Sets the data-gl property so this element receives the data or behavior required by this screen. */
       data-gl={gl}
       /* Sets the data-compact property so this element receives the data or behavior required by this screen. */
-      /* Sets the data-compact property so this element receives the data or behavior required by this screen. */
       data-compact={compact === undefined ? undefined : String(compact)}
-      /* Sets the data-refract property so this element receives the data or behavior required by this screen. */
       /* Sets the data-refract property so this element receives the data or behavior required by this screen. */
       data-refract={refract ? "on" : "off"}
       /* Provides aria-label accessibility information so assistive technology can describe the element. */
@@ -933,10 +928,7 @@ export function LiquidNavbar({
       /* Connects the PointerDown event to its handler so the interface can respond to interaction. */
       onPointerDown={(e) => { const p = local(e.clientX, e.clientY); ripple(p.x, p.y, 0.8) }}
       /* Sets the style property so this element receives the data or behavior required by this screen. */
-      /* Sets the style property so this element receives the data or behavior required by this screen. */
       style={style}
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
     >
       {/* Starts the <style> element to organize this part of the interface. */}
       <style dangerouslySetInnerHTML={{ __html: NIMBUS_CSS }} />
@@ -982,13 +974,15 @@ export function LiquidNavbar({
         const content = (
           // Continues the component or data expression so its related values and behavior stay grouped together.
           <>
-            {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+            // Continues the component or data expression so its related values and behavior stay grouped together.
             {it.icon && (
+              // Continues the component or data expression so its related values and behavior stay grouped together.
               <span className="nv-ico" key={playing ? fx.n : 0} data-fx={playing ? kind : undefined} ref={(el) => { iconRefs.current[i] = el }}>
-                {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                // Continues the component or data expression so its related values and behavior stay grouped together.
                 {it.icon}
               {/* Closes the <span> element so later content is no longer part of this region. */}
               </span>
+            // Continues the component or data expression so its related values and behavior stay grouped together.
             )}
             {/* Starts the <span> element to organize this part of the interface. */}
             <span className="nimbus-label">{it.label}</span>
@@ -1022,4 +1016,3 @@ export { LiquidNavbar as Component }
 // Exports LiquidNavbar as this file’s default value so other modules can load the main feature.
 export default LiquidNavbar
 
-// File purpose: Renders the reusable liquid glass navbar interface component.
