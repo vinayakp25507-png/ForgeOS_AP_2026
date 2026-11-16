@@ -76,4 +76,3 @@ export function mapProject(project: ApiProject): Project {
   }
 // Closes the current block or object so the grouped statements or settings end here.
 }
-// File purpose: Supports the projects frontend feature with project utils.
