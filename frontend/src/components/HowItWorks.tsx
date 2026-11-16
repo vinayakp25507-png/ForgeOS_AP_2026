@@ -87,8 +87,6 @@ export const HowItWorks: React.FC = () => {
       id="how-it-works"
       /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
       className="py-24 sm:py-32 bg-[#E8DCD4]/50 relative border-t border-[#323232]/10"
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
-    /* Continues the component or data expression so its related values and behavior stay grouped together. */
     >
       {/* Starts the <div> element to organize this part of the interface. */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,8 +124,6 @@ export const HowItWorks: React.FC = () => {
             className="hidden lg:block absolute top-1/2 left-[16%] right-[16%] -translate-y-12 h-0.5 border-t-2 border-dashed border-[#323232]/20 z-0"
             /* Provides aria-hidden accessibility information so assistive technology can describe the element. */
             aria-hidden="true"
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
-          /* Continues the component or data expression so its related values and behavior stay grouped together. */
           />
 
           {/* Starts the <div> element to organize this part of the interface. */}
@@ -154,7 +150,7 @@ export const HowItWorks: React.FC = () => {
                         {/* Number Badge with Dark Grey & Beige Text */}
                         {/* Starts the <div> element to organize this part of the interface. */}
                         <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#323232] text-[#DDD0C8] font-bold text-xs shadow-sm">
-                          {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                          // Continues the component or data expression so its related values and behavior stay grouped together.
                           0{step.number}
                         {/* Closes the <div> element so later content is no longer part of this region. */}
                         </div>
@@ -172,13 +168,13 @@ export const HowItWorks: React.FC = () => {
                       {/* Content */}
                       {/* Starts the <h3> element to organize this part of the interface. */}
                       <h3 className="text-xl font-bold text-[#323232] tracking-tight">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {step.title}
                       {/* Closes the <h3> element so later content is no longer part of this region. */}
                       </h3>
                       {/* Starts the <p> element to organize this part of the interface. */}
                       <p className="mt-3 text-[#595552] text-sm sm:text-base leading-relaxed font-light">
-                        {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                        // Continues the component or data expression so its related values and behavior stay grouped together.
                         {step.description}
                       {/* Closes the <p> element so later content is no longer part of this region. */}
                       </p>
@@ -198,23 +194,30 @@ export const HowItWorks: React.FC = () => {
                   </div>
 
                   {/* Desktop Connecting Arrow between steps */}
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   {!isLast && (
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     <div
+                      /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                       className="hidden lg:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#323232] text-[#DDD0C8] shadow-md items-center justify-center ring-4 ring-[#DDD0C8]"
+                      /* Provides aria-hidden accessibility information so assistive technology can describe the element. */
                       aria-hidden="true"
                     >
                       {/* Starts the <ArrowRight> element to organize this part of the interface. */}
                       <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                     {/* Closes the <div> element so later content is no longer part of this region. */}
                     </div>
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   )}
 
                   {/* Mobile Connecting Arrow between steps */}
-                  {/* Adds this JSX content to the surrounding interface so related information or controls appear in the right place. */}
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   {!isLast && (
+                    // Continues the component or data expression so its related values and behavior stay grouped together.
                     <div
+                      /* Applies utility classes so the element’s layout, spacing, and appearance match the design. */
                       className="flex lg:hidden justify-center items-center py-4 text-[#323232]"
+                      /* Provides aria-hidden accessibility information so assistive technology can describe the element. */
                       aria-hidden="true"
                     >
                       {/* Starts the <div> element to organize this part of the interface. */}
@@ -225,9 +228,11 @@ export const HowItWorks: React.FC = () => {
                       </div>
                     {/* Closes the <div> element so later content is no longer part of this region. */}
                     </div>
+                  // Continues the component or data expression so its related values and behavior stay grouped together.
                   )}
                 {/* Closes the <div> element so later content is no longer part of this region. */}
                 </div>
+              // Closes this function call or grouped expression so the surrounding code can continue.
               );
             // Continues the component or data expression so its related values and behavior stay grouped together.
             })}
@@ -246,4 +251,3 @@ export const HowItWorks: React.FC = () => {
 
 // Exports HowItWorks as this file’s default value so other modules can load the main feature.
 export default HowItWorks;
-// File purpose: Renders the reusable HowItWorks interface component.
