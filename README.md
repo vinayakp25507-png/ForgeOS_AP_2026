@@ -22,8 +22,8 @@ auth flows (password + OTP + Google OAuth) and the permission matrix.
 
 - **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript 5**
 - **Tailwind CSS 4** with **shadcn/ui** (New York) components
-- **Prisma ORM** with **SQLite** (`db/custom.db` locally)
-- **Vitest** — unit, integration (real SQLite, seeded) and jsdom frontend suites
+- **Prisma ORM** with **PostgreSQL** (Supabase / Render Postgres / any Postgres 14+)
+- **Vitest** — unit, integration (real PostgreSQL, seeded) and jsdom frontend suites
 - **GitHub Actions** CI with a job per part (lint / typecheck / backend /
   frontend / build) and a single `ci-ok` gate for branch protection
 
@@ -37,7 +37,7 @@ bun install                      # install dependencies
 cp .env.example .env             # then edit .env:
 #   JWT_SECRET=$(openssl rand -hex 32)   # required, >= 32 chars
 
-bun run db:push                  # create the SQLite schema (db/custom.db)
+bun run db:push                  # create the PostgreSQL schema
 bun run db:seed                  # seed a realistic demo portfolio
 
 bun run dev                      # http://localhost:3000
@@ -67,8 +67,9 @@ All seeded users share the password **`ForgeOS2026`**.
 | `bun run test:unit` / `test:integration` / `test:frontend` | Individual suites |
 | `bun run db:push` / `db:seed` / `db:generate` | Prisma schema push, demo seed, client generate |
 
-Integration tests run against a throwaway `db/test.db` that CI recreates and
-reseeds on every run — the dev database is never touched.
+Integration tests run against a throwaway PostgreSQL database that CI
+recreates and reseeds on every run via a `postgres:16` service container —
+the dev database is never touched.
 
 ## Project structure
 

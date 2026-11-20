@@ -4,7 +4,13 @@ import { resolve } from 'node:path'
 // This file runs inside every vitest worker BEFORE any test module (and hence
 // before the first import of anything that pulls @/lib/db, which constructs
 // the PrismaClient against process.env.DATABASE_URL at import time).
-process.env.DATABASE_URL = 'file:' + resolve(process.cwd(), 'db/test.db');
+//
+// CI provides a PostgreSQL DATABASE_URL via a service container. Locally we
+// fall back to a Postgres instance on localhost:5432 — adjust .env to point
+// at your own DB. The Prisma schema uses the `postgresql` provider.
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = 'postgresql://forgeos:forgeos@localhost:5432/forgeos_test'
+}
 (process.env as Record<string, string>).NODE_ENV = 'test'
 
 // Load required secrets (JWT_SECRET etc.) from .env without overriding

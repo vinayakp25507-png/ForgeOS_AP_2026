@@ -2,7 +2,7 @@ import { expect } from 'vitest'
 import { POST as loginPOST } from '@/app/api/auth/login/route'
 import { db } from '@/lib/db'
 
-/** Shared helpers for the ForgeOS backend test suite (runs against db/test.db). */
+/** Shared helpers for the ForgeOS backend test suite (runs against a PostgreSQL test database). */
 
 export const DEMO_PASSWORD = 'ForgeOS2026'
 export const RUN_TAG = 't8' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)

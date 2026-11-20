@@ -1,12 +1,12 @@
 // ForgeOS — construction ERP for Indian builders (original contract)
-// SQLite datasource; enum-like fields are stored as strings.
+// PostgreSQL datasource (Supabase / Render Postgres); enum-like fields are stored as strings.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

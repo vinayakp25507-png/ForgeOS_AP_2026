@@ -34,7 +34,7 @@ quality gates that protect all of it.
 └──────────────────────────────────────────────────────────────────┘
                          │
                          ▼
-              SQLite via Prisma ORM (db/custom.db)
+              PostgreSQL via Prisma ORM
               17 models — see §6
 ```
 
@@ -172,7 +172,7 @@ Admins are exempt; VIEWERs hold no write permission at all.
   `STATUS_CHANGE`, `ROLE_CHANGE`) is recorded with actor, entity and metadata
   through the shared `writeAudit` helper; the audit viewer is ADMIN-only.
 
-## 6. Data model (Prisma / SQLite)
+## 6. Data model (Prisma / PostgreSQL)
 
 ```
 User ──< Project >── Land          (project: land, PM, budget, status, dates)
@@ -199,7 +199,7 @@ separate jobs (`.github/workflows/ci.yml`):
 | Suite | Scope | Environment |
 |---|---|---|
 | `bun run test:unit` | auth crypto, JWT roundtrips, RBAC matrix, guards, rate limiter, API helpers | in-memory / mocked DB |
-| `bun run test:integration` | every route handler: RBAC, validation, scoping, business rules, audit | isolated `db/test.db` (recreated + seeded in CI) |
+| `bun run test:integration` | every route handler: RBAC, validation, scoping, business rules, audit | isolated PostgreSQL DB (recreated + seeded in CI via `postgres:16` service container) |
 | `bun run test:frontend` | hash router, API client, RBAC helpers, auth/projects/dashboard hooks and pages | jsdom + Testing Library, fetch mocked |
 
 CI pipeline: **lint → typecheck → backend-unit → backend-integration →
@@ -210,7 +210,7 @@ concurrency cancellation and read-only permissions.
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | SQLite file path (`file:…/db/custom.db`); tests pin their own `db/test.db` |
+| `DATABASE_URL` | PostgreSQL connection string (`postgresql://user:pass@host:5432/db`); CI uses a `postgres:16` service container |
 | `JWT_SECRET` | **required**, ≥32 chars, checked at boot — no insecure default |
 | SMTP / OAuth credentials | Gmail app password for OTP; Google OAuth client for sign-in |
 
