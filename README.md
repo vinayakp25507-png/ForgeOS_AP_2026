@@ -5,6 +5,12 @@ estate developers in India. Administrators manage the full portfolio while
 project managers run project-scoped site operations — materials, stock, daily
 logs, progress and billing — with every action captured in an audit trail.
 
+**Live deployment:** <https://forgeos-6sj7.onrender.com> — the app (frontend +
+API) runs as a Render web service with a managed Render PostgreSQL in the same
+workspace. Log in with any demo account below (password `ForgeOS2026`).
+Note: the free-tier instance spins down after ~15 min of inactivity, so the
+first request after sleep can take a few seconds to wake up.
+
 ## Roles
 
 | Role | Scope |
