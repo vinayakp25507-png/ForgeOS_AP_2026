@@ -52,7 +52,7 @@ All seeded users share the password **`ForgeOS2026`**.
 | `admin@forgeos.local` | ADMIN — Vaibhav Todi |
 | `riya@forgeos.local` | PROJECT_MANAGER — Riya Sharma |
 | `yashmeen@forgeos.local` | PROJECT_MANAGER — Yashmeen Khan |
-| `vinayak@forgeos.local` | PROJECT_MANAGER — Vinayak Patil |
+| `vinayak@forgeos.local` | PROJECT_MANAGER — Vinayak Pachauri |
 | `aisha@forgeos.local` | VIEWER — Aisha Rao |
 
 ## Scripts
@@ -90,4 +90,4 @@ ARCHITECTURE.md          system design, auth, RBAC matrix, quality gates
 - [@vaibhavtodi81](https://github.com/vaibhavtodi81) — Vaibhav Todi
 - [@itsriy-aa](https://github.com/itsriy-aa) — Riya
 - [@yashmeeny25707-dev](https://github.com/yashmeeny25707-dev) — Yashmeen Khan
-- [@vinayakp25507-png](https://github.com/vinayakp25507-png) — Vinayak Patil
+- [@vinayakp25507-png](https://github.com/vinayakp25507-png) — Vinayak Pachauri
