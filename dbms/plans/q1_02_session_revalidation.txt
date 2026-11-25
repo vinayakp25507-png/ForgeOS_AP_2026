@@ -1,0 +1,23 @@
+EXPLAIN (ANALYZE, BUFFERS, TIMING, COSTS, VERBOSE)
+SELECT 
+    u."id", 
+    u."name", 
+    u."email", 
+    u."role", 
+    u."isActive"
+FROM "User" u
+WHERE u."id" = 'usr_001_vaibhav' 
+  AND u."isActive" = TRUE;
+
+                                                         QUERY PLAN                                                         
+----------------------------------------------------------------------------------------------------------------------------
+ Index Scan using "User_pkey" on public."User" u  (cost=0.15..8.17 rows=1 width=88) (actual time=0.042..0.044 rows=1 loops=1)
+   Output: id, name, email, role, "isActive"
+   Index Cond: ((u.id)::text = 'usr_001_vaibhav'::text)
+   Filter: (u."isActive" = true)
+   Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=2
+ Planning Time: 0.088 ms
+ Execution Time: 0.063 ms
+(9 rows)

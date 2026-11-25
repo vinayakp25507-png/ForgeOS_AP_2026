@@ -1,0 +1,46 @@
+EXPLAIN (ANALYZE, BUFFERS, TIMING, COSTS, VERBOSE)
+SELECT 
+    i."id" AS "invoiceId",
+    i."invoiceNo",
+    p."code" AS "projectCode",
+    p."name" AS "projectName",
+    i."amount" AS "baseAmount",
+    i."gstPct",
+    ROUND((i."amount" * (1 + i."gstPct" / 100.0))::numeric, 2) AS "totalPayable",
+    COALESCE(SUM(py."amount"), 0) AS "totalPaid",
+    ROUND((i."amount" * (1 + i."gstPct" / 100.0) - COALESCE(SUM(py."amount"), 0))::numeric, 2) AS "balanceDue",
+    i."status" AS "invoiceStatus",
+    i."dueDate"
+FROM "Invoice" i
+INNER JOIN "Project" p ON p."id" = i."projectId"
+LEFT JOIN "Payment" py ON py."invoiceId" = i."id"
+GROUP BY i."id", i."invoiceNo", p."code", p."name", i."amount", i."gstPct", i."status", i."dueDate"
+ORDER BY i."dueDate" ASC;
+
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=35.12..38.85 rows=35 width=220) (actual time=0.510..0.685 rows=24 loops=1)
+   Output: i.id, i."invoiceNo", p.code, p.name, i.amount, i."gstPct", i.status, i."dueDate", ...
+   Group Key: i."dueDate", i.id, p.code, p.name
+   Buffers: shared hit=28
+   ->  Sort  (cost=35.12..35.25 rows=48 width=180) (actual time=0.465..0.480 rows=36 loops=1)
+         Sort Key: i."dueDate", i.id, p.code, p.name
+         Sort Method: quicksort  Memory: 30kB
+         Buffers: shared hit=28
+         ->  Hash Left Join  (cost=14.85..33.72 rows=48 width=180) (actual time=0.180..0.410 rows=36 loops=1)
+               Hash Cond: ((py."invoiceId")::text = (i.id)::text)
+               Buffers: shared hit=28
+               ->  Seq Scan on public."Payment" py  (cost=0.00..15.50 rows=55 width=44) (actual time=0.015..0.085 rows=30 loops=1)
+                     Buffers: shared hit=6
+               ->  Hash  (cost=14.25..14.25 rows=35 width=152) (actual time=0.145..0.145 rows=24 loops=1)
+                     ->  Hash Join  (cost=1.35..14.25 rows=35 width=152) (actual time=0.040..0.120 rows=24 loops=1)
+                           Hash Cond: ((i."projectId")::text = (p.id)::text)
+                           Buffers: shared hit=22
+                           ->  Seq Scan on public."Invoice" i  (cost=0.00..11.80 rows=35 width=72) (actual time=0.010..0.055 rows=24 loops=1)
+                                 Buffers: shared hit=14
+                           ->  Hash  (cost=1.15..1.15 rows=12 width=92) (actual time=0.020..0.020 rows=4 loops=1)
+                                 ->  Seq Scan on public."Project" p  (cost=0.00..1.15 rows=12 width=92) (actual time=0.005..0.012 rows=4 loops=1)
+                                       Buffers: shared hit=8
+ Planning Time: 0.420 ms
+ Execution Time: 0.745 ms
+(25 rows)
