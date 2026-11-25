@@ -1,0 +1,57 @@
+EXPLAIN (ANALYZE, BUFFERS, TIMING, COSTS, VERBOSE)
+SELECT 
+    p."id",
+    p."code",
+    p."name" AS "projectName",
+    p."status",
+    p."startDate",
+    p."expectedEndDate",
+    p."totalBudget",
+    p."wastageThresholdPct",
+    l."name" AS "landName",
+    l."city" AS "landCity",
+    pm."name" AS "pmName",
+    pm."email" AS "pmEmail"
+FROM "Project" p
+INNER JOIN "Land" l ON l."id" = p."landId"
+LEFT JOIN "User" pm ON pm."id" = p."assignedPmId"
+WHERE (p."assignedPmId" = 'usr_004_vinayak' OR 'ADMIN' = 'ADMIN')
+ORDER BY p."createdAt" DESC;
+
+                                                                 QUERY PLAN                                                                  
+---------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=28.45..28.52 rows=28 width=264) (actual time=0.485..0.489 rows=4 loops=1)
+   Output: p.id, p.code, p.name, p.status, p."startDate", p."expectedEndDate", p."totalBudget", p."wastageThresholdPct", l.name, l.city, pm.name, pm.email, p."createdAt"
+   Sort Key: p."createdAt" DESC
+   Sort Method: quicksort  Memory: 27kB
+   Buffers: shared hit=14
+   ->  Hash Left Join  (cost=12.85..27.76 rows=28 width=264) (actual time=0.210..0.442 rows=4 loops=1)
+         Output: p.id, p.code, p.name, p.status, p."startDate", p."expectedEndDate", p."totalBudget", p."wastageThresholdPct", l.name, l.city, pm.name, pm.email, p."createdAt"
+         Hash Cond: ((p."assignedPmId")::text = (pm.id)::text)
+         Buffers: shared hit=14
+         ->  Hash Join  (cost=11.45..26.28 rows=28 width=188) (actual time=0.165..0.380 rows=4 loops=1)
+               Output: p.id, p.code, p.name, p.status, p."startDate", p."expectedEndDate", p."totalBudget", p."wastageThresholdPct", p."assignedPmId", p."createdAt", l.name, l.city
+               Hash Cond: ((p."landId")::text = (l.id)::text)
+               Buffers: shared hit=11
+               ->  Seq Scan on public."Project" p  (cost=0.00..14.28 rows=28 width=140) (actual time=0.021..0.215 rows=4 loops=1)
+                     Output: p.id, p.code, p.name, p."landId", p.status, p."startDate", p."expectedEndDate", p."totalBudget", p."wastageThresholdPct", p."assignedPmId", p."createdAt"
+                     Buffers: shared hit=5
+               ->  Hash  (cost=11.20..11.20 rows=20 width=64) (actual time=0.118..0.119 rows=15 loops=1)
+                     Output: l.name, l.city, l.id
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=6
+                     ->  Seq Scan on public."Land" l  (cost=0.00..11.20 rows=20 width=64) (actual time=0.012..0.085 rows=15 loops=1)
+                           Output: l.name, l.city, l.id
+                           Buffers: shared hit=6
+         ->  Hash  (cost=1.20..1.20 rows=16 width=92) (actual time=0.035..0.035 rows=5 loops=1)
+               Output: pm.name, pm.email, pm.id
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=3
+               ->  Seq Scan on public."User" pm  (cost=0.00..1.20 rows=16 width=92) (actual time=0.008..0.022 rows=5 loops=1)
+                     Output: pm.name, pm.email, pm.id
+                     Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=6
+ Planning Time: 0.382 ms
+ Execution Time: 0.548 ms
+(34 rows)

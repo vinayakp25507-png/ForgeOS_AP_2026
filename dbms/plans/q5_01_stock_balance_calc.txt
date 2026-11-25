@@ -1,0 +1,71 @@
+EXPLAIN (ANALYZE, BUFFERS, TIMING, COSTS, VERBOSE)
+SELECT 
+    m."id" AS "materialId",
+    m."name" AS "materialName",
+    m."unit" AS "materialUnit",
+    COALESCE(mp."openingQuantity", 0) AS "openingStock",
+    COALESCE(mp."plannedQuantity", 0) AS "plannedStock",
+    COALESCE(mp."lowStockThreshold", 0) AS "lowStockThreshold",
+    COALESCE(SUM(
+        CASE 
+            WHEN t."voidedAt" IS NOT NULL THEN 0
+            WHEN t."txnType" = 'IN' THEN t."quantity"
+            WHEN t."txnType" = 'OUT' THEN -t."quantity"
+            WHEN t."txnType" = 'ADJUSTMENT' THEN t."quantity"
+            ELSE 0 
+        END
+    ), 0) + COALESCE(mp."openingQuantity", 0) AS "currentStock"
+FROM "Material" m
+INNER JOIN "MaterialPlan" mp ON mp."materialId" = m."id" AND mp."projectId" = 'prj_001_cyber_heights'
+LEFT JOIN "InventoryTransaction" t ON t."materialId" = m."id" AND t."projectId" = 'prj_001_cyber_heights'
+WHERE m."isActive" = TRUE
+GROUP BY m."id", m."name", m."unit", mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold"
+ORDER BY m."name" ASC;
+
+                                                                           QUERY PLAN                                                                            
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=42.85..45.12 rows=18 width=128) (actual time=0.725..0.892 rows=8 loops=1)
+   Output: m.id, m.name, m.unit, COALESCE(mp."openingQuantity", '0'::double precision), COALESCE(mp."plannedQuantity", '0'::double precision), COALESCE(mp."lowStockThreshold", '0'::double precision), (COALESCE(sum(CASE WHEN (t."voidedAt" IS NOT NULL) THEN '0'::double precision WHEN ((t."txnType")::text = 'IN'::text) THEN t.quantity WHEN ((t."txnType")::text = 'OUT'::text) THEN (- t.quantity) WHEN ((t."txnType")::text = 'ADJUSTMENT'::text) THEN t.quantity ELSE '0'::double precision END), '0'::double precision) + COALESCE(mp."openingQuantity", '0'::double precision))
+   Group Key: m.name, m.id, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold"
+   Buffers: shared hit=42
+   ->  Sort  (cost=42.85..43.10 rows=98 width=96) (actual time=0.680..0.710 rows=48 loops=1)
+         Output: m.name, m.id, m.unit, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold", t."voidedAt", t."txnType", t.quantity
+         Sort Key: m.name, m.id, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold"
+         Sort Method: quicksort  Memory: 31kB
+         Buffers: shared hit=42
+         ->  Hash Right Join  (cost=18.40..39.62 rows=98 width=96) (actual time=0.250..0.612 rows=48 loops=1)
+               Output: m.name, m.id, m.unit, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold", t."voidedAt", t."txnType", t.quantity
+               Hash Cond: ((t."materialId")::text = (m.id)::text)
+               Buffers: shared hit=42
+               ->  Bitmap Heap Scan on public."InventoryTransaction" t  (cost=4.20..24.80 rows=92 width=48) (actual time=0.082..0.320 rows=46 loops=1)
+                     Output: t.id, t."projectId", t."materialId", t."vendorId", t."txnType", t.quantity, t."unitRate", t."challanNumber", t."outReason", t."txnDate", t."dailyLogId", t.remarks, t."recordedById", t."voidedAt", t."voidReason", t."voidedById", t."createdAt"
+                     Recheck Cond: ((t."projectId")::text = 'prj_001_cyber_heights'::text)
+                     Buffers: shared hit=28
+                     ->  Bitmap Index Scan on "idx_txn_project"  (cost=0.00..4.18 rows=92 width=0) (actual time=0.045..0.046 rows=46 loops=1)
+                           Index Cond: ((t."projectId")::text = 'prj_001_cyber_heights'::text)
+                           Buffers: shared hit=3
+               ->  Hash  (cost=13.98..13.98 rows=18 width=64) (actual time=0.145..0.146 rows=8 loops=1)
+                     Output: m.name, m.id, m.unit, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold"
+                     Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                     Buffers: shared hit=14
+                     ->  Hash Join  (cost=3.25..13.98 rows=18 width=64) (actual time=0.065..0.132 rows=8 loops=1)
+                           Output: m.name, m.id, m.unit, mp."openingQuantity", mp."plannedQuantity", mp."lowStockThreshold"
+                           Hash Cond: ((mp."materialId")::text = (m.id)::text)
+                           Buffers: shared hit=14
+                           ->  Seq Scan on public."MaterialPlan" mp  (cost=0.00..10.50 rows=18 width=48) (actual time=0.015..0.048 rows=8 loops=1)
+                                 Output: mp.id, mp."projectId", mp."materialId", mp."openingQuantity", mp."plannedQuantity", mp."plannedUnitRate", mp."lowStockThreshold", mp."wastageThresholdPct", mp.status, mp.notes, mp."createdById", mp."createdAt", mp."updatedAt"
+                                 Filter: ((mp."projectId")::text = 'prj_001_cyber_heights'::text)
+                                 Buffers: shared hit=5
+                           ->  Hash  (cost=2.85..2.85 rows=32 width=40) (actual time=0.040..0.040 rows=12 loops=1)
+                                 Output: m.name, m.id, m.unit
+                                 Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                 Buffers: shared hit=9
+                                 ->  Seq Scan on public."Material" m  (cost=0.00..2.85 rows=32 width=40) (actual time=0.010..0.028 rows=12 loops=1)
+                                       Output: m.name, m.id, m.unit
+                                       Filter: (m."isActive" = true)
+                                       Buffers: shared hit=9
+ Planning:
+   Buffers: shared hit=8
+ Planning Time: 0.540 ms
+ Execution Time: 0.985 ms
+(44 rows)
